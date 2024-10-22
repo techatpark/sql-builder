@@ -80,12 +80,11 @@ class SqlBuilderTest {
 
         Assertions.assertThrows(SQLException.class, () -> {
             Transaction
-                    .begin()
-                        .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
+                    .begin(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
                                         .param("Inception")
                                         .param("Christopher Nolan"))
                         // Invalid Insert (title can not be null). Should Fail.
-                        .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )")
+                        .thenApply(value -> new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )")
                                 .param("Christopher Nolan"))
                     .commit(dataSource);
         });

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * The {@code Transaction} class represents a transactional context
@@ -33,38 +34,49 @@ public final class Transaction {
 
     /**
      * Begins a new transaction.
-     *
+     * @param sql the sql
      * @return a new instance of {@code Transaction}
      */
-    public static Transaction begin() {
-        return new Transaction();
+    public static Transaction begin(final Sql<?> sql) {
+        return new Transaction(sql);
     }
 
     /**
      * SQL Statements.
      */
-    private final List<Sql<?>> sqls;
+    private final Sql<?> sql;
+
+    /**
+     * SQL Functions.
+     */
+    private final List<Function<Object, Sql<?>>> sqlFunctions;
 
     /**
      * Private constructor to initialize the list of SQL statements.
+     * @param theSql
      */
-    private Transaction() {
-        this.sqls = new ArrayList<>();
+    private Transaction(final Sql<?> theSql) {
+        this.sql = theSql;
+        this.sqlFunctions = new ArrayList<>();
     }
 
     /**
      * Commits the transaction, executing all registered SQL statements.
      *
-     * @param dataSource@throws SQLException if an error occurs during SQL execution
-     *                          or committing the transaction
+     * @param dataSource
+     * @throws SQLException if an error occurs during
+     *                  SQL execution or committing the transaction
      */
     public void commit(final DataSource dataSource) throws SQLException {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
-            for (Sql<?> sql : sqls) {
-                sql.execute(connection);
+            Object value = sql.execute(connection);
+            for (Function<Object, Sql<?>> sqlFunction : sqlFunctions) {
+                value = sqlFunction
+                        .apply(value)
+                        .execute(connection);
             }
             connection.commit();
         } catch (SQLException sqlException) {
@@ -85,8 +97,8 @@ public final class Transaction {
      * @param statement the SQL statement to perform
      * @return this {@code Transaction} instance for method chaining
      */
-    public Transaction perform(final Sql<?> statement) {
-        sqls.add(statement);
+    public Transaction thenApply(final Function<Object, Sql<?>> statement) {
+        sqlFunctions.add(statement);
         return this;
     }
 }
