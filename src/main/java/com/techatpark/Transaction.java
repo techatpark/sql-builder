@@ -1,5 +1,6 @@
 package com.techatpark;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,21 +55,27 @@ public final class Transaction {
     /**
      * Commits the transaction, executing all registered SQL statements.
      *
-     * @param connection the database connection to be used for executing
-     *                   the SQL statements
-     * @throws SQLException if an error occurs during SQL execution
-     * or committing the transaction
+     * @param dataSource@throws SQLException if an error occurs during SQL execution
+     *                          or committing the transaction
      */
-    public void commit(final Connection connection) throws SQLException {
-        try (connection) {
+    public void commit(final DataSource dataSource) throws SQLException {
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
             connection.setAutoCommit(false);
             for (Sql<?> sql : sqls) {
                 sql.execute(connection);
             }
             connection.commit();
         } catch (SQLException sqlException) {
-            connection.rollback();
+            if (connection != null) {
+                connection.rollback();
+            }
             throw sqlException;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 

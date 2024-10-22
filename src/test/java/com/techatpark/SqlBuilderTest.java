@@ -1,121 +1,94 @@
 package com.techatpark;
 
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class SqlBuilderTest {
 
-    static final String DB_URL = "jdbc:h2:mem:test_mem";
-    //  Database credentials
-    static final String USER = "sa";
-    static final String PASS = "";
+    private final JdbcDataSource dataSource;
 
+    SqlBuilderTest() {
+        try {
+            // Setup
+            dataSource = new JdbcDataSource();
+            dataSource.setURL("jdbc:h2:~/test");
+            dataSource.setUser("sa");
+            dataSource.setPassword("sa");
 
-    @BeforeAll
-    static void beforeAll() throws SQLException {
-        final String ddl = """
-                CREATE TABLE movie (
-                    id bigint auto_increment PRIMARY KEY,
-                    title VARCHAR(80) NOT NULL,
-                    directed_by VARCHAR(80)
-                )
-                """;
+            new SqlBuilder("DROP TABLE movie IF EXISTS")
+                    .execute(dataSource);
 
-        int updateRows = new SqlBuilder(ddl).execute(DriverManager.getConnection(DB_URL,USER,PASS));
+            new SqlBuilder("""
+                    CREATE TABLE movie (
+                        id bigint auto_increment PRIMARY KEY,
+                        title VARCHAR(80) NOT NULL,
+                        directed_by VARCHAR(80)
+                    )
+                    """)
+                    .execute(dataSource);
 
-        Assertions.assertEquals(0,updateRows);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @BeforeEach
     void beforeEach() throws SQLException {
-        final String ddl = """
+        new SqlBuilder("""
                 TRUNCATE TABLE movie
-                """;
-
-        new SqlBuilder(ddl).execute(DriverManager.getConnection(DB_URL,USER,PASS));
-
+                """)
+                .execute(dataSource);
     }
-
 
     @Test
     void testSQL() throws SQLException {
 
-        final String query = """
-                SELECT id, title, directed_by from movie where id = ?
-                """;
-
-        try (Connection connection = DriverManager.getConnection(DB_URL,USER,PASS)) {
-
-            int updateRows = new SqlBuilder("INSERT INTO movie(title,directed_by) VALUES(?,?)")
+        int updateRows =
+                new SqlBuilder("INSERT INTO movie(title,directed_by) VALUES(?,?)")
                     .param("Coolie")
                     .param("Lokesh")
-                    .execute(connection);
+                .execute(dataSource);
 
-            Assertions.assertEquals(1,updateRows);
+        Assertions.assertEquals(1, updateRows);
 
-            Movie movie = new SqlBuilder(query)
-                    .param(1)
-                    .queryForOne(SqlBuilderTest::mapRow)
-                    .execute(connection);
+        final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
-            Assertions.assertEquals("Coolie",movie.title());
+        Movie movie = new SqlBuilder(sql).param(1).queryForOne(SqlBuilderTest::mapRow).execute(dataSource);
 
-            new SqlBuilder("INSERT INTO movie(title,directed_by) VALUES('Managaram','Lokesh')").execute(connection);
+        Assertions.assertEquals("Coolie", movie.title());
 
-            Assertions.assertEquals(2, new SqlBuilder("SELECT id, title, directed_by from movie")
-                    .query(SqlBuilderTest::mapRow)
-                    .execute(connection)
-                    .size());
+        new SqlBuilder("INSERT INTO movie(title,directed_by) VALUES('Managaram','Lokesh')").execute(dataSource);
+
+        Assertions.assertEquals(2, new SqlBuilder("SELECT id, title, directed_by from movie").queryForList(SqlBuilderTest::mapRow).execute(dataSource).size());
 
 
-            Assertions.assertEquals(1, new SqlBuilder("SELECT id, title, directed_by from movie where id=? AND directed_by=?")
-                    .param(1)
-                    .param("Lokesh")
-                    .query(SqlBuilderTest::mapRow)
-                    .execute(connection)
-                    .size());
+        Assertions.assertEquals(1, new SqlBuilder("SELECT id, title, directed_by from movie where id=? AND directed_by=?").param(1).param("Lokesh").queryForList(SqlBuilderTest::mapRow).execute(dataSource).size());
 
-        }
 
     }
 
     @Test
     void testTransaction() throws SQLException {
 
-        try (Connection connection = DriverManager.getConnection(DB_URL,USER,PASS)) {
 
-            Assertions.assertThrows(SQLException.class, () -> {
-                Transaction
-                        .begin()
-                            .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
-                                    .param("Inception")
-                                    .param("Christopher Nolan"))
-                            // Invalid Insert. Should Fail.
-                            .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )")
-                                    .param("Christopher Nolan"))
-                        .commit(connection);
-            });
+        Assertions.assertThrows(SQLException.class, () -> {
+            Transaction.begin().perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )").param("Inception").param("Christopher Nolan"))
+                    // Invalid Insert. Should Fail.
+                    .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )").param("Christopher Nolan")).commit(dataSource);
+        });
 
-            Assertions.assertEquals(0, new SqlBuilder("SELECT id, title, directed_by from movie")
-                    .query(SqlBuilderTest::mapRow)
-                    .execute(DriverManager.getConnection(DB_URL,USER,PASS))
-                    .size());
-        }
+        Assertions.assertEquals(0, new SqlBuilder("SELECT id, title, directed_by from movie").queryForList(SqlBuilderTest::mapRow).execute(dataSource).size());
+
 
     }
 
     private static Movie mapRow(ResultSet rs) throws SQLException {
-        return new Movie(rs.getShort(1),
-                rs.getString(2),
-                rs.getString(3)
-        );
+        return new Movie(rs.getShort(1), rs.getString(2), rs.getString(3));
     }
 
 }

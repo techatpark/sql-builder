@@ -108,7 +108,7 @@ public class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> SqlBuilder.MultipleRecordQuery<T> query(
+    public <T> SqlBuilder.MultipleRecordQuery<T> queryForList(
             final RowMapper<T> rowMapper) {
         return this.new MultipleRecordQuery<>(rowMapper);
     }

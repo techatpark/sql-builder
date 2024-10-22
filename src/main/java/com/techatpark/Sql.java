@@ -1,5 +1,6 @@
 package com.techatpark;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -18,4 +19,17 @@ public interface Sql<R> {
      * @throws SQLException if an SQL error occurs during the execution
      */
     R execute(Connection connection) throws SQLException;
+
+    /**
+     * Executes the SQL operation using the provided JDBC dataSource.
+     *
+     * @param dataSource the JDBC dataSource to use for executing the operation
+     * @return the result of the SQL operation
+     * @throws SQLException if an SQL error occurs during the execution
+     */
+    default R execute(final DataSource dataSource) throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            return execute(conn);
+        }
+    }
 }
