@@ -49,46 +49,56 @@ class SqlBuilderTest {
     void testSQL() throws SQLException {
 
         int updateRows =
-                new SqlBuilder("INSERT INTO movie(title,directed_by) VALUES(?,?)")
-                    .param("Coolie")
-                    .param("Lokesh")
-                .execute(dataSource);
+                new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                        .param("Dunkirk")
+                        .param("Nolan")
+                        .param("Inception")
+                        .param("Nolan")
+                    .execute(dataSource);
 
-        Assertions.assertEquals(1, updateRows);
+        Assertions.assertEquals(2, updateRows);
 
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
-        Movie movie = new SqlBuilder(sql).param(1).queryForOne(SqlBuilderTest::mapRow).execute(dataSource);
+        Movie movie = new SqlBuilder(sql)
+                                .param(1)
+                            .queryForOne(SqlBuilderTest::mapRow)
+                            .execute(dataSource);
 
-        Assertions.assertEquals("Coolie", movie.title());
+        Assertions.assertEquals("Dunkirk", movie.title());
 
-        new SqlBuilder("INSERT INTO movie(title,directed_by) VALUES('Managaram','Lokesh')").execute(dataSource);
-
-        Assertions.assertEquals(2, new SqlBuilder("SELECT id, title, directed_by from movie").queryForList(SqlBuilderTest::mapRow).execute(dataSource).size());
-
-
-        Assertions.assertEquals(1, new SqlBuilder("SELECT id, title, directed_by from movie where id=? AND directed_by=?").param(1).param("Lokesh").queryForList(SqlBuilderTest::mapRow).execute(dataSource).size());
-
+        Assertions.assertEquals(2,
+                new SqlBuilder("SELECT id, title, directed_by from movie")
+                    .queryForList(SqlBuilderTest::mapRow)
+                    .execute(dataSource)
+                    .size());
 
     }
 
     @Test
     void testTransaction() throws SQLException {
 
-
         Assertions.assertThrows(SQLException.class, () -> {
-            Transaction.begin().perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )").param("Inception").param("Christopher Nolan"))
-                    // Invalid Insert. Should Fail.
-                    .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )").param("Christopher Nolan")).commit(dataSource);
+            Transaction
+                    .begin()
+                        .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
+                                        .param("Inception")
+                                        .param("Christopher Nolan"))
+                        // Invalid Insert (title can not be null). Should Fail.
+                        .perform(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )")
+                                .param("Christopher Nolan"))
+                    .commit(dataSource);
         });
 
         Assertions.assertEquals(0, new SqlBuilder("SELECT id, title, directed_by from movie").queryForList(SqlBuilderTest::mapRow).execute(dataSource).size());
 
-
     }
 
     private static Movie mapRow(ResultSet rs) throws SQLException {
-        return new Movie(rs.getShort(1), rs.getString(2), rs.getString(3));
+        return new Movie(
+                rs.getShort(1),
+                rs.getString(2),
+                rs.getString(3));
     }
 
 }

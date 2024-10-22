@@ -19,11 +19,11 @@ import java.util.List;
  *
  * <p>Example usage:</p>
  * <pre>
- *     try (Connection connection = dataSource.getConnection()) {
+ *     try {
  *         Transaction.begin()
  *             .perform(new Sql<>("INSERT INTO ..."))
  *             .perform(new Sql<>("UPDATE ..."))
- *             .commit(connection);
+ *             .commit(dataSource);
  *     } catch (SQLException e) {
  *         // Handle exception
  *     }
