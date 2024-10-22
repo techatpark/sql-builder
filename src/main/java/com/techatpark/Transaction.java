@@ -30,32 +30,32 @@ import java.util.function.Function;
  *     }
  * </pre>
  */
-public final class Transaction {
+public final class Transaction<T>  {
 
     /**
      * Begins a new transaction.
      * @param sql the sql
      * @return a new instance of {@code Transaction}
      */
-    public static Transaction begin(final Sql<?> sql) {
-        return new Transaction(sql);
+    public static <T> Transaction<T>  begin(final Sql<T> sql) {
+        return new Transaction<>(sql);
     }
 
     /**
      * SQL Statements.
      */
-    private final Sql<?> sql;
+    private final Sql<T> sql;
 
     /**
      * SQL Functions.
      */
-    private final List<Function<Object, Sql<?>>> sqlFunctions;
+    private final List<Function<Object, Sql<T>>> sqlFunctions;
 
     /**
      * Private constructor to initialize the list of SQL statements.
      * @param theSql
      */
-    private Transaction(final Sql<?> theSql) {
+    private Transaction(final Sql<T> theSql) {
         this.sql = theSql;
         this.sqlFunctions = new ArrayList<>();
     }
@@ -73,7 +73,7 @@ public final class Transaction {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
             Object value = sql.execute(connection);
-            for (Function<Object, Sql<?>> sqlFunction : sqlFunctions) {
+            for (Function<Object, Sql<T>> sqlFunction : sqlFunctions) {
                 value = sqlFunction
                         .apply(value)
                         .execute(connection);
@@ -97,8 +97,8 @@ public final class Transaction {
      * @param statement the SQL statement to perform
      * @return this {@code Transaction} instance for method chaining
      */
-    public Transaction thenApply(final Function<Object, Sql<?>> statement) {
-        sqlFunctions.add(statement);
+    public Transaction<T> thenApply(final Function<T, Sql<T>> statement) {
+        sqlFunctions.add((Function<Object, Sql<T>>) statement);
         return this;
     }
 }
