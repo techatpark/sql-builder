@@ -13,7 +13,7 @@ import java.util.function.Function;
  * It allows for batching multiple SQL operations into a single transaction,
  * ensuring that either
  * all operations are committed or none are applied in case of an error.
- *
+ * @param <T> return type of transaction
  * <p>This class is designed to be used in a try-with-resources block
  * to ensure that the
  * {@code Connection} is properly managed.</p>
@@ -35,6 +35,7 @@ public final class Transaction<T>  {
     /**
      * Begins a new transaction.
      * @param sql the sql
+     * @param <T>
      * @return a new instance of {@code Transaction}
      */
     public static <T> Transaction<T>  begin(final Sql<T> sql) {
