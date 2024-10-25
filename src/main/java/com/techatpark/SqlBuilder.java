@@ -21,7 +21,7 @@ public class SqlBuilder implements Sql<Integer> {
     /**
      * A list of parameters for the query.
      */
-    private final List<ParamMapper<?>> parameters;
+    private final List<ParamMapper<?>> paramMappers;
 
     /**
      * Constructor that initializes the SqlBuilder with a given SQL query.
@@ -30,7 +30,7 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder(final String theSql) {
         this.sql = theSql;
-        this.parameters = new ArrayList<>();
+        this.paramMappers = new ArrayList<>();
     }
 
     /**
@@ -41,8 +41,8 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Integer value) {
-        final int index = this.parameters.size() + 1;
-        this.parameters
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers
                 .add((preparedStatement)
                         -> preparedStatement.setInt(index, value));
         return this;
@@ -56,8 +56,8 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final String value) {
-        final int index = this.parameters.size() + 1;
-        this.parameters
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers
                 .add((preparedStatement)
                         -> preparedStatement.setString(index, value));
         return this;
@@ -81,6 +81,22 @@ public class SqlBuilder implements Sql<Integer> {
             updatedRows = preparedStatement.executeUpdate();
         }
         return updatedRows;
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Integer.
+     *
+
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Integer> queryForInt() {
+        return this.new SingleValueQuery<>() {
+            @Override
+            Integer getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getInt(1);
+            }
+        };
     }
 
     /**
@@ -184,7 +200,34 @@ public class SqlBuilder implements Sql<Integer> {
         }
     }
 
-    public final class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
+    /**
+     * Query to get Single Value.
+     * @param <T> type of value
+     */
+    public abstract class SingleValueQuery<T> extends SingleRecordQuery<T> {
+
+        /**
+         * Private constructor for creating a Query instance.
+         */
+        private SingleValueQuery() {
+            super(null);
+        }
+
+        @Override
+        T mapRow(final ResultSet resultSet) throws SQLException {
+            return getValue(resultSet);
+        }
+
+        /**
+         * Gets Value from Result set.
+         * @param resultSet
+         * @return value
+         * @throws SQLException
+         */
+        abstract T getValue(ResultSet resultSet) throws SQLException;
+    }
+
+    public class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
 
         /**
          * Private constructor for creating a Query instance with
@@ -269,7 +312,7 @@ public class SqlBuilder implements Sql<Integer> {
      */
     private void prepare(final PreparedStatement preparedStatement)
             throws SQLException {
-        for (ParamMapper<?> paramMapper: parameters) {
+        for (ParamMapper<?> paramMapper: paramMappers) {
             paramMapper.mapParam(preparedStatement);
         }
     }

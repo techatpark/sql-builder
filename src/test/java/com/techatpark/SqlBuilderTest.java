@@ -1,11 +1,8 @@
 package com.techatpark;
 
-import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class SqlBuilderTest extends BaseTest {
@@ -32,15 +29,10 @@ class SqlBuilderTest extends BaseTest {
         Assertions.assertEquals("Dunkirk", movie.title());
 
         Assertions.assertEquals(2,
-                new SqlBuilder("SELECT id, title, directed_by from movie")
-                    .queryForList(this::mapRow)
-                    .execute(dataSource)
-                    .size());
+                new SqlBuilder("SELECT COUNT(id) from movie")
+                    .queryForInt()
+                    .execute(dataSource));
 
     }
-
-
-
-
 
 }
