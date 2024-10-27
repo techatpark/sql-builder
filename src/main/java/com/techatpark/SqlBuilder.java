@@ -1,5 +1,6 @@
 package com.techatpark;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,6 +35,41 @@ public class SqlBuilder implements Sql<Integer> {
     }
 
     /**
+     * Adds a parameter with a null.
+     *
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder paramNull() {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers
+                .add((preparedStatement)
+                        -> preparedStatement.setObject(index, null));
+        return this;
+    }
+
+    /**
+     * Adds a parameter with a specific SQL type and type name as `NULL`
+     * to the SQL query.
+     * This method is used when the SQL parameter should be set to `NULL`
+     * for types
+     * that require a type name in addition to the SQL type, such as SQL
+     * `STRUCT` or `ARRAY`.
+     *
+     * @param sqlType  the SQL type of the parameter,
+ *                 as defined in {@link java.sql.Types}
+     * @param typeName the type name of the parameter,
+ *                 used for SQL types that require specific type information
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder paramNull(final int sqlType, final String typeName) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers
+                .add((preparedStatement)
+                        -> preparedStatement.setNull(index, sqlType, typeName));
+        return this;
+    }
+
+    /**
      * Adds a parameter to the SQL query. The method allows chaining and is used
      * to bind values to placeholders in the SQL query.
      *
@@ -45,6 +81,19 @@ public class SqlBuilder implements Sql<Integer> {
         this.paramMappers
                 .add((preparedStatement)
                         -> preparedStatement.setInt(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Short parameter to the SQL query.
+     *
+     * @param value the Short value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Short value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setShort(index, value));
         return this;
     }
 
@@ -62,6 +111,151 @@ public class SqlBuilder implements Sql<Integer> {
                         -> preparedStatement.setString(index, value));
         return this;
     }
+
+    /**
+     * Adds a Double parameter to the SQL query.
+     *
+     * @param value the Double value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Double value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setDouble(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Boolean parameter to the SQL query.
+     *
+     * @param value the Boolean value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Boolean value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setBoolean(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Long parameter to the SQL query.
+     *
+     * @param value the Long value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Long value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setLong(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Date parameter to the SQL query.
+     *
+     * @param value the Date value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final java.sql.Date value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setDate(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Float parameter to the SQL query.
+     *
+     * @param value the Float value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Float value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setFloat(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a byte array parameter to the SQL query.
+     *
+     * @param value the byte array to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final byte[] value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setBytes(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a BigDecimal parameter to the SQL query.
+     *
+     * @param value the BigDecimal value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final BigDecimal value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setBigDecimal(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Time parameter to the SQL query.
+     *
+     * @param value the Time value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final java.sql.Time value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setTime(index, value));
+        return this;
+    }
+
+    /**
+     * Adds a Timestamp parameter to the SQL query.
+     *
+     * @param value the Timestamp value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final java.sql.Timestamp value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setTimestamp(index, value));
+        return this;
+    }
+
+    /**
+     * Adds an Object parameter to the SQL query.
+     *
+     * @param value the Object value to be added
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Object value) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setObject(index, value));
+        return this;
+    }
+
+    /**
+     * Adds an Object parameter to the SQL query with targetSqlType.
+     *
+     * @param value the Object value to be added
+     * @param targetSqlType the targeted SqlType.
+     * @return the current SqlBuilder instance, for method chaining
+     */
+    public SqlBuilder param(final Object value, final int targetSqlType) {
+        final int index = this.paramMappers.size() + 1;
+        this.paramMappers.add(preparedStatement
+                -> preparedStatement.setObject(index, value, targetSqlType));
+        return this;
+    }
+
 
     /**
      * Executes an update (such as INSERT, UPDATE, DELETE) using the prepared
@@ -84,17 +278,121 @@ public class SqlBuilder implements Sql<Integer> {
     }
 
     /**
-     * Creates a new Query object that can be used to execute
-     * a SELECT query and map the result set to a Integer.
+     * Provides if record exists.
      *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Boolean> queryForExists() {
+        return new SingleValueQuery<>() {
+            @Override
+            Boolean getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.next();
+            }
+        };
+    }
 
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to an Integer.
+     *
      * @return a new Query instance for execution
      */
     public SingleValueQuery<Integer> queryForInt() {
-        return this.new SingleValueQuery<>() {
+        return new SingleValueQuery<>() {
             @Override
             Integer getValue(final ResultSet resultSet) throws SQLException {
                 return resultSet.getInt(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a String.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<String> queryForString() {
+        return new SingleValueQuery<>() {
+            @Override
+            String getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getString(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Double.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Double> queryForDouble() {
+        return new SingleValueQuery<>() {
+            @Override
+            Double getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getDouble(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Boolean.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Boolean> queryForBoolean() {
+        return new SingleValueQuery<>() {
+            @Override
+            Boolean getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getBoolean(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Long.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Long> queryForLong() {
+        return new SingleValueQuery<>() {
+            @Override
+            Long getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getLong(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Date.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<java.sql.Date> queryForDate() {
+        return new SingleValueQuery<>() {
+            @Override
+            java.sql.Date getValue(final ResultSet resultSet)
+                    throws SQLException {
+                return resultSet.getDate(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to an Object.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Object> queryForObject() {
+        return new SingleValueQuery<>() {
+            @Override
+            Object getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getObject(1);
             }
         };
     }
