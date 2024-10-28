@@ -476,7 +476,7 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @param <T> the type of object to map the result set to
      */
-    public static class Query<T> {
+    public class Query<T> {
 
         /**
          * Mapper for Result set.
@@ -491,6 +491,23 @@ public class SqlBuilder implements Sql<Integer> {
          */
         private Query(final RowMapper<T> theRowMapper) {
             this.rowMapper = theRowMapper;
+        }
+
+        /**
+         * Checks if record exists for given Query
+         * @param connection
+         * @return exists
+         * @throws SQLException
+         */
+        protected boolean exists(final Connection connection) throws SQLException {
+            boolean exists ;
+            try (PreparedStatement preparedStatement
+                         = connection.prepareStatement(sql)) {
+                prepare(preparedStatement);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                exists = resultSet.next();
+            }
+            return exists;
         }
 
         T mapRow(final ResultSet resultSet) throws SQLException {

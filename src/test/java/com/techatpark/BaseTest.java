@@ -23,7 +23,7 @@ public class BaseTest {
             dataSource = new JdbcDataSource();
             dataSource.setURL("jdbc:h2:~/test");
             dataSource.setUser("sa");
-            dataSource.setPassword("");
+            dataSource.setPassword("sa");
 
             RunScript.execute(dataSource.getConnection(),
                     new FileReader(Objects.requireNonNull(getClass().getClassLoader()
