@@ -4,7 +4,6 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.RunScript;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.ResultSet;
@@ -14,14 +13,14 @@ import java.util.Objects;
 /**
  * Basic Setup for Test cases.
  */
-public class BaseTest {
+class BaseTest {
     protected final JdbcDataSource dataSource;
 
     BaseTest() {
         try {
             // Setup
             dataSource = new JdbcDataSource();
-            dataSource.setURL("jdbc:h2:~/test");
+            dataSource.setURL("jdbc:h2:mem:AZ");
             dataSource.setUser("sa");
             dataSource.setPassword("");
 

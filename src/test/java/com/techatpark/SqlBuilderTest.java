@@ -21,6 +21,11 @@ class SqlBuilderTest extends BaseTest {
 
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
+        Assertions.assertTrue(new SqlBuilder(sql)
+                .param(1)
+                .queryForExists()
+                .execute(dataSource));
+
         Movie movie = new SqlBuilder(sql)
                                 .param(1)
                             .queryForOne(this::mapRow)
