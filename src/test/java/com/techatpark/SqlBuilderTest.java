@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.util.List;
 
 class SqlBuilderTest extends BaseTest {
 
@@ -19,12 +20,39 @@ class SqlBuilderTest extends BaseTest {
 
         Assertions.assertEquals(2, updateRows);
 
+        long generetedId = new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                .param("Interstellar")
+                .param("Nolan")
+                .queryGeneratedKeysForOne(resultSet -> resultSet.getLong(1))
+                .execute(dataSource);
+
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
         Assertions.assertTrue(new SqlBuilder(sql)
-                .param(1)
+                .param(generetedId)
                 .queryForExists()
                 .execute(dataSource));
+
+        List<Long> generetedIds = new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                .param("Catch Me If you Can")
+                .param("Cameroon")
+                .param("Jurrasic Park")
+                .param("Cameroon")
+                .queryGeneratedKeysForList(resultSet -> resultSet.getLong(1))
+                .execute(dataSource);
+
+        for (Long aLong : generetedIds) {
+            Assertions.assertTrue(new SqlBuilder(sql)
+                    .param(aLong)
+                    .queryForExists()
+                    .execute(dataSource));
+        }
+
+
+        Assertions.assertEquals(5,
+                new SqlBuilder("SELECT COUNT(id) from movie")
+                        .queryForInt()
+                        .execute(dataSource));
 
         Movie movie = new SqlBuilder(sql)
                                 .param(1)
@@ -33,10 +61,7 @@ class SqlBuilderTest extends BaseTest {
 
         Assertions.assertEquals("Dunkirk", movie.title());
 
-        Assertions.assertEquals(2,
-                new SqlBuilder("SELECT COUNT(id) from movie")
-                    .queryForInt()
-                    .execute(dataSource));
+
 
     }
 

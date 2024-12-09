@@ -615,6 +615,122 @@ public class SqlBuilder implements Sql<Integer> {
     }
 
     /**
+     * Creates a new Generated Keys object that can be used to execute
+     * a SELECT query and map the result set to a specific object type
+     * using the provided RowMapper.
+     *
+     * @param <T> the type of object to map the result set to
+     * @param rowMapper an implementation of
+     *                  RowMapper to map each row of the result set
+     * @return a new Query instance for execution
+     */
+    public <T> SqlBuilder.SingleGeneratedKeysQuery<T> queryGeneratedKeysForOne(
+            final RowMapper<T> rowMapper) {
+        return this.new SingleGeneratedKeysQuery<>(rowMapper);
+    }
+
+    /**
+     * Creates a new Generated Keys object that can be used to execute
+     * a SELECT query and map the result set to list of a specific object type
+     * using the provided RowMapper.
+     *
+     * @param <T> the type of object to map the result set to
+     * @param rowMapper an implementation of
+     *                  RowMapper to map each row of the result set
+     * @return a new Query instance for execution
+     */
+    public <T> SqlBuilder.MultipleGeneratedKeysQuery<T>
+            queryGeneratedKeysForList(final RowMapper<T> rowMapper) {
+        return this.new MultipleGeneratedKeysQuery<>(rowMapper);
+    }
+
+    /**
+     * Single GeneratedKeys Query.
+     * @param <T>
+     */
+    public final class SingleGeneratedKeysQuery<T>
+            extends Query<T> implements Sql<T> {
+
+        /**
+         * Private constructor for creating a Query instance with
+         * the specified RowMapper.
+         *
+         * @param theRowMapper the RowMapper used to map the ResultSet rows
+         */
+        private SingleGeneratedKeysQuery(final RowMapper<T> theRowMapper) {
+            super(theRowMapper);
+        }
+
+        /**
+         * Executes the SQL query and returns a single mapped result
+         * from the ResultSet.
+         *
+         * @param connection the database connection used to execute the query
+         * @return the single mapped result, or null if no result is found
+         * @throws SQLException if a database access error occurs
+         */
+        @Override
+        public T execute(final Connection connection) throws SQLException {
+            T result = null;
+            try (PreparedStatement preparedStatement
+                         = connection.prepareStatement(sql,
+                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                prepare(preparedStatement);
+                preparedStatement.executeUpdate();
+                ResultSet resultSet = preparedStatement.getGeneratedKeys();
+
+                if (resultSet.next()) {
+                    result = mapRow(resultSet);
+                }
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Multiple Generated Keys Query.
+     * @param <T>
+     */
+    public final class MultipleGeneratedKeysQuery<T>
+            extends Query<T> implements Sql<List<T>> {
+
+        /**
+         * Private constructor for creating a Query instance with
+         * the specified RowMapper.
+         *
+         * @param theRowMapper the RowMapper used to map the ResultSet rows
+         */
+        private MultipleGeneratedKeysQuery(final RowMapper<T> theRowMapper) {
+            super(theRowMapper);
+        }
+
+        /**
+         * Executes the SQL query and returns a list of mapped result
+         * from the ResultSet.
+         *
+         * @param connection the database connection used to execute the query
+         * @return the list of mapped result, or empty if no result is found
+         * @throws SQLException if a database access error occurs
+         */
+        @Override
+        public List<T> execute(final Connection connection)
+                throws SQLException {
+            List<T> result = new ArrayList<>();
+            try (PreparedStatement preparedStatement
+                         = connection.prepareStatement(sql,
+                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                prepare(preparedStatement);
+                preparedStatement.executeUpdate();
+                ResultSet resultSet = preparedStatement.getGeneratedKeys();
+
+                while (resultSet.next()) {
+                    result.add(mapRow(resultSet));
+                }
+            }
+            return result;
+        }
+    }
+    /**
      * Prepares the PreparedStatement by binding all the parameters
      * to their respective
      * positions in the SQL query.
