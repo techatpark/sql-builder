@@ -624,7 +624,7 @@ public class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> SqlBuilder.SingleGeneratedKeysQuery<T> queryGeneratedKeysForOne(
+    public <T> SqlBuilder.SingleGeneratedKeysQuery<T> queryGeneratedKeys(
             final RowMapper<T> rowMapper) {
         return this.new SingleGeneratedKeysQuery<>(rowMapper);
     }
@@ -640,7 +640,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public <T> SqlBuilder.MultipleGeneratedKeysQuery<T>
-            queryGeneratedKeysForList(final RowMapper<T> rowMapper) {
+            queryGeneratedKeysAsList(final RowMapper<T> rowMapper) {
         return this.new MultipleGeneratedKeysQuery<>(rowMapper);
     }
 

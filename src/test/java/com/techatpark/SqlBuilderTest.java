@@ -23,7 +23,7 @@ class SqlBuilderTest extends BaseTest {
         long generetedId = new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                 .param("Interstellar")
                 .param("Nolan")
-                .queryGeneratedKeysForOne(resultSet -> resultSet.getLong(1))
+                .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
                 .execute(dataSource);
 
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
@@ -38,7 +38,7 @@ class SqlBuilderTest extends BaseTest {
                 .param("Cameroon")
                 .param("Jurrasic Park")
                 .param("Cameroon")
-                .queryGeneratedKeysForList(resultSet -> resultSet.getLong(1))
+                .queryGeneratedKeysAsList(resultSet -> resultSet.getLong(1))
                 .execute(dataSource);
 
         for (Long aLong : generetedIds) {
@@ -47,7 +47,6 @@ class SqlBuilderTest extends BaseTest {
                     .queryForExists()
                     .execute(dataSource));
         }
-
 
         Assertions.assertEquals(5,
                 new SqlBuilder("SELECT COUNT(id) from movie")
@@ -60,8 +59,6 @@ class SqlBuilderTest extends BaseTest {
                             .execute(dataSource);
 
         Assertions.assertEquals("Dunkirk", movie.title());
-
-
 
     }
 
