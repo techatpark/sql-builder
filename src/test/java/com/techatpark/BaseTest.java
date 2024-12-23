@@ -41,7 +41,7 @@ class BaseTest {
                 .execute(dataSource);
     }
 
-    protected Movie mapRow(ResultSet rs) throws SQLException {
+    public static Movie mapMovie(ResultSet rs) throws SQLException {
         return new Movie(
                 rs.getShort(1),
                 rs.getString(2),

@@ -42,7 +42,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SqlBuilder paramNull() {
         final int index = this.paramMappers.size() + 1;
         this.paramMappers
-                .add((preparedStatement)
+                .add(preparedStatement
                         -> preparedStatement.setObject(index, null));
         return this;
     }
@@ -64,7 +64,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SqlBuilder paramNull(final int sqlType, final String typeName) {
         final int index = this.paramMappers.size() + 1;
         this.paramMappers
-                .add((preparedStatement)
+                .add(preparedStatement
                         -> preparedStatement.setNull(index, sqlType, typeName));
         return this;
     }
@@ -79,7 +79,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SqlBuilder param(final Integer value) {
         final int index = this.paramMappers.size() + 1;
         this.paramMappers
-                .add((preparedStatement)
+                .add(preparedStatement
                         -> preparedStatement.setInt(index, value));
         return this;
     }
@@ -107,7 +107,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SqlBuilder param(final String value) {
         final int index = this.paramMappers.size() + 1;
         this.paramMappers
-                .add((preparedStatement)
+                .add(preparedStatement
                         -> preparedStatement.setString(index, value));
         return this;
     }

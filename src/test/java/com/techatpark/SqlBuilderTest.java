@@ -26,6 +26,12 @@ class SqlBuilderTest extends BaseTest {
                 .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
                 .execute(dataSource);
 
+        List<Movie> movies = new SqlBuilder("SELECT id, title, directed_by from movie")
+                .queryForList(BaseTest::mapMovie)
+                .execute(dataSource);
+
+        Assertions.assertEquals(3, movies.size());
+
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
         Assertions.assertTrue(new SqlBuilder(sql)
@@ -55,7 +61,7 @@ class SqlBuilderTest extends BaseTest {
 
         Movie movie = new SqlBuilder(sql)
                                 .param(1)
-                            .queryForOne(this::mapRow)
+                            .queryForOne(BaseTest::mapMovie)
                             .execute(dataSource);
 
         Assertions.assertEquals("Dunkirk", movie.title());

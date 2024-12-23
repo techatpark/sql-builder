@@ -25,7 +25,7 @@ class TransactionTest extends BaseTest {
 
         Assertions.assertEquals(0,
                 new SqlBuilder("SELECT id, title, directed_by from movie")
-                .queryForList(this::mapRow)
+                .queryForList(BaseTest::mapMovie)
                 .execute(dataSource).size());
 
     }
