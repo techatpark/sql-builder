@@ -35,7 +35,6 @@ int updateRows =
         .param("Nolan")
         .execute(dataSource);
 
-System.out.println("Inserted Rows: " + updateRows);
 ```
 
 ---
@@ -49,7 +48,6 @@ long generatedId = new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES 
     .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
     .execute(dataSource);
 
-System.out.println("Generated ID: " + generatedId);
 ```
 
 ---
@@ -62,13 +60,10 @@ Movie movie = new SqlBuilder("SELECT id, title, directed_by FROM movie WHERE id 
     .queryForOne(this::mapRow)
     .execute(dataSource);
 
-System.out.println("Fetched Movie: " + movie.title());
-
 // Check if the inserted record exists
 boolean exists = new SqlBuilder("SELECT id FROM movie WHERE id = ?")
     .param(generatedId)
     .queryForExists()
     .execute(dataSource);
 
-System.out.println("Record Exists: " + exists);
 ```

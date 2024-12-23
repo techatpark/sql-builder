@@ -6,9 +6,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -45,8 +43,8 @@ class AllinAllTest extends BaseTest {
         new SqlBuilder("""
                 INSERT INTO AllTypes 
                 (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
-                dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal, nullVal)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """)
                 .param(STR_VAL)
                 .param(INT_VAL)
@@ -61,7 +59,9 @@ class AllinAllTest extends BaseTest {
                 .param(TIMESTAMP_VAL)
                 .param(BIG_DECIMAL_VAL)
                 .param(BYTES_VAL)
-                .param(URL_STR).execute(dataSource);
+                .param(URL_STR)
+                .paramNull()
+                .execute(dataSource);
     }
 
     private void verifyData() throws Exception {
@@ -82,7 +82,8 @@ class AllinAllTest extends BaseTest {
                                 rs.getTimestamp("timestampVal"),
                                 rs.getBigDecimal("bigDecimalVal"),
                                 rs.getBytes("bytesVal"),
-                                new URL(rs.getString("urlVal"))
+                                new URL(rs.getString("urlVal")),
+                                rs.getString("nullVal")
                         );
                     } catch (MalformedURLException e) {
                         throw new RuntimeException(e);
@@ -105,7 +106,8 @@ class AllinAllTest extends BaseTest {
                 () -> assertEquals(TIMESTAMP_VAL, record.timestampVal()),
                 () -> assertEquals(BIG_DECIMAL_VAL, record.bigDecimalVal()),
                 () -> assertArrayEquals(BYTES_VAL, record.bytesVal()),
-                () -> assertEquals(new URL(URL_STR), record.urlVal())
+                () -> assertEquals(new URL(URL_STR), record.urlVal()),
+                () -> assertNull(record.nullVal())
         );
 
     }
@@ -113,7 +115,7 @@ class AllinAllTest extends BaseTest {
     // Define Java record for table mapping
     record AllTypesRecord(String str, int intVal, long longVal, double doubleVal, float floatVal, boolean boolVal,
                           short shortVal, byte byteVal, Date dateVal, Time timeVal, Timestamp timestampVal,
-                          BigDecimal bigDecimalVal, byte[] bytesVal, URL urlVal) {
+                          BigDecimal bigDecimalVal, byte[] bytesVal, URL urlVal, String nullVal) {
     }
 
 

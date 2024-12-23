@@ -9,6 +9,7 @@ CREATE TABLE movie (
 DROP TABLE AllTypes IF EXISTS;
 
 CREATE TABLE AllTypes (
+    nullVal VARCHAR,
     str VARCHAR(255),
     intVal INT,
     longVal BIGINT,
