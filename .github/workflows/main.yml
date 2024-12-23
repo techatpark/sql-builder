@@ -26,5 +26,5 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Build with Maven
+    - name: Quality Check
       run: mvn -B jacoco:prepare-agent install jacoco:report --file pom.xml
