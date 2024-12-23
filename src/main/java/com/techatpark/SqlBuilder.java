@@ -283,9 +283,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Boolean> queryForExists() {
-        return new SingleValueQuery<>() {
-
+    public SingleRecordQuery<Boolean> queryForExists() {
+        return new SingleRecordQuery<>(null) {
             @Override
             public Boolean execute(final Connection connection)
                     throws SQLException {
@@ -298,11 +297,6 @@ public class SqlBuilder implements Sql<Integer> {
                     exists = resultSet.next();
                 }
                 return exists;
-            }
-
-            @Override
-            Boolean getValue(final ResultSet resultSet) throws SQLException {
-                return resultSet.next();
             }
         };
     }
