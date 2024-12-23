@@ -1,6 +1,7 @@
 package com.techatpark;
 
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -308,6 +309,36 @@ public class SqlBuilder implements Sql<Integer> {
 
     /**
      * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Byte.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Byte> queryForByte() {
+        return new SingleValueQuery<>() {
+            @Override
+            Byte getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getByte(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Byte Array.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<byte[]> queryForBytes() {
+        return new SingleValueQuery<>() {
+            @Override
+            byte[] getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getBytes(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
      * a SELECT query and map the result set to an Integer.
      *
      * @return a new Query instance for execution
@@ -317,6 +348,21 @@ public class SqlBuilder implements Sql<Integer> {
             @Override
             Integer getValue(final ResultSet resultSet) throws SQLException {
                 return resultSet.getInt(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Short.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Short> queryForShort() {
+        return new SingleValueQuery<>() {
+            @Override
+            Short getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getShort(1);
             }
         };
     }
@@ -338,6 +384,21 @@ public class SqlBuilder implements Sql<Integer> {
 
     /**
      * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a URL.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<URL> queryForURL() {
+        return new SingleValueQuery<>() {
+            @Override
+            URL getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getURL(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
      * a SELECT query and map the result set to a Double.
      *
      * @return a new Query instance for execution
@@ -347,6 +408,36 @@ public class SqlBuilder implements Sql<Integer> {
             @Override
             Double getValue(final ResultSet resultSet) throws SQLException {
                 return resultSet.getDouble(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Float.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<Float> queryForFloat() {
+        return new SingleValueQuery<>() {
+            @Override
+            Float getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getFloat(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a BigDecimal.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<BigDecimal> queryForBigDecimal() {
+        return new SingleValueQuery<>() {
+            @Override
+            BigDecimal getValue(final ResultSet resultSet) throws SQLException {
+                return resultSet.getBigDecimal(1);
             }
         };
     }
@@ -393,6 +484,38 @@ public class SqlBuilder implements Sql<Integer> {
             java.sql.Date getValue(final ResultSet resultSet)
                     throws SQLException {
                 return resultSet.getDate(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Time.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<java.sql.Time> queryForTime() {
+        return new SingleValueQuery<>() {
+            @Override
+            java.sql.Time getValue(final ResultSet resultSet)
+                    throws SQLException {
+                return resultSet.getTime(1);
+            }
+        };
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a Timestamp.
+     *
+     * @return a new Query instance for execution
+     */
+    public SingleValueQuery<java.sql.Timestamp> queryForTimestamp() {
+        return new SingleValueQuery<>() {
+            @Override
+            java.sql.Timestamp getValue(final ResultSet resultSet)
+                    throws SQLException {
+                return resultSet.getTimestamp(1);
             }
         };
     }

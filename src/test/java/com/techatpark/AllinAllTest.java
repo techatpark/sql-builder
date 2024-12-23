@@ -1,11 +1,13 @@
 package com.techatpark;
 
+import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,6 +37,7 @@ class AllinAllTest extends BaseTest {
     static final BigDecimal BIG_DECIMAL_VAL = new BigDecimal("12345.67");
     static final byte[] BYTES_VAL = new byte[]{1, 2, 3, 4, 5};
     static final String URL_STR = "http://example.com";
+    private static final SqlBuilder ALL_RESULS_QUERY = new SqlBuilder("SELECT * FROM AllTypes");
 
     private static AllTypesRecord mapRow(ResultSet rs) {
         try {
@@ -62,21 +65,19 @@ class AllinAllTest extends BaseTest {
 
     @BeforeEach
     void init() throws SQLException {
-        new SqlBuilder("TRUNCATE TABLE AllTypes")
+        new SqlBuilder("DELETE FROM AllTypes")
                 .execute(dataSource);
     }
 
     @Test
     void testEmptyResult() throws Exception {
 
-        final SqlBuilder emptyResulsQuery = new SqlBuilder("SELECT * FROM AllTypes");
-
-        assertEquals(0, emptyResulsQuery
+        assertEquals(0, ALL_RESULS_QUERY
                 .queryForList(AllinAllTest::mapRow)
                 .execute(dataSource)
                 .size());
 
-        assertNull(emptyResulsQuery
+        assertNull(ALL_RESULS_QUERY
                 .queryForOne(AllinAllTest::mapRow)
                 .execute(dataSource));
     }
@@ -109,6 +110,9 @@ class AllinAllTest extends BaseTest {
 
     @Test
     void testInsertAndRetrieveData() throws Exception {
+
+        final Connection connection = dataSource.getConnection();
+
         new SqlBuilder("""
                 INSERT INTO AllTypes
                 (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
@@ -130,12 +134,12 @@ class AllinAllTest extends BaseTest {
                 .param(BYTES_VAL)
                 .param(URL_STR)
                 .paramNull()
-                .execute(dataSource);
+                .execute(connection);
 
-        AllTypesRecord record = new SqlBuilder("SELECT * FROM AllTypes")
+        AllTypesRecord record = ALL_RESULS_QUERY
                 .queryForOne(AllinAllTest::mapRow)
-                .execute(dataSource);
-        // Assertions
+                .execute(connection);
+
         assertAll("Verify Data",
                 () -> assertEquals(STR_VAL, record.str()),
                 () -> assertEquals(INT_VAL, record.intVal()),
@@ -153,6 +157,74 @@ class AllinAllTest extends BaseTest {
                 () -> assertEquals(new URL(URL_STR), record.urlVal()),
                 () -> assertNull(record.nullVal())
         );
+
+        assertEquals(STR_VAL,
+                new SqlBuilder("select str from AllTypes")
+                        .queryForString()
+                        .execute(connection));
+
+        assertEquals(STR_VAL,
+                new SqlBuilder("select str from AllTypes")
+                        .queryForObject()
+                        .execute(connection));
+
+        assertEquals(INT_VAL,
+                        new SqlBuilder("select intVal from AllTypes")
+                                .queryForInt()
+                                .execute(connection));
+
+         assertEquals(LONG_VAL,
+                 new SqlBuilder("select longVal from AllTypes")
+                         .queryForLong()
+                         .execute(connection));
+
+         assertEquals(DOUBLE_VAL,
+                 new SqlBuilder("select doubleVal from AllTypes")
+                         .queryForDouble()
+                         .execute(connection));
+         assertEquals(FLOAT_VAL,
+                 new SqlBuilder("select floatVal from AllTypes")
+                         .queryForFloat()
+                         .execute(connection));
+         assertEquals(BOOL_VAL,
+                 new SqlBuilder("select boolVal from AllTypes")
+                         .queryForBoolean()
+                         .execute(connection));
+         assertEquals(SHORT_VAL,
+                 new SqlBuilder("select shortVal from AllTypes")
+                         .queryForShort()
+                         .execute(connection));
+         assertEquals(BYTE_VAL,
+                 new SqlBuilder("select byteVal from AllTypes")
+                         .queryForByte()
+                         .execute(connection));
+        assertArrayEquals(BYTES_VAL,
+                new SqlBuilder("select bytesVal from AllTypes")
+                        .queryForBytes()
+                        .execute(connection));
+         assertEquals(DATE_VAL,
+                 new SqlBuilder("select dateVal from AllTypes")
+                         .queryForDate()
+                         .execute(connection));
+         assertEquals(TIME_VAL,
+                 new SqlBuilder("select timeVal from AllTypes")
+                         .queryForTime()
+                         .execute(connection));
+         assertEquals(TIMESTAMP_VAL,
+                 new SqlBuilder("select timestampVal from AllTypes")
+                         .queryForTimestamp()
+                         .execute(connection));
+         assertEquals(BIG_DECIMAL_VAL,
+                 new SqlBuilder("select bigDecimalVal from AllTypes")
+                         .queryForBigDecimal()
+                         .execute(connection));
+
+        assertThrows(JdbcSQLFeatureNotSupportedException.class, () -> {
+            assertEquals(new URL(URL_STR),
+                    new SqlBuilder("select urlVal from AllTypes")
+                            .queryForURL()
+                            .execute(connection));
+        });
     }
 
     // Define Java record for table mapping
