@@ -1,8 +1,8 @@
-# SQL Builder - Lightweight Open-Source SQL Utility
+# SQL Builder
 
-SQL Builders like **Spring JDBC Template** and **MyBatis** have become essential tools for developers managing database interactions in Java applications. They simplify SQL execution, parameter binding, and result mapping. However, these libraries come with learning curves, heavy dependencies, and complex configurations.
+**Spring JDBC Template** and **MyBatis** have become essential tools for developers managing database interactions in Java applications. They simplify SQL execution, parameter binding, and result mapping. However, these libraries come with learning curves, heavy dependencies, and complex configurations.
 
-**SQL Builder** aims to **provide the same functionality with less than 1000 lines of simple, readable, and native Java** code.
+**SQL Builder** aims to **provide the same functionality with small (~1000 lines), simple, readable, and native Java** code.
 
 ---
 
@@ -20,7 +20,6 @@ This project is ideal for developers looking for a simple, dependency-free SQL e
 2. **Simpler Fluent API:** Focused on readability and minimal configuration.
 
 ---
-
 ## Description / Usage
 Here’s how you can use **SQL Builder** for common database operations.
 
@@ -60,10 +59,9 @@ Movie movie = new SqlBuilder("SELECT id, title, directed_by FROM movie WHERE id 
     .queryForOne(this::mapRow)
     .execute(dataSource);
 
-// Check if the inserted record exists
+// Check if the record exists
 boolean exists = new SqlBuilder("SELECT id FROM movie WHERE id = ?")
     .param(generatedId)
     .queryForExists()
     .execute(dataSource);
-
 ```

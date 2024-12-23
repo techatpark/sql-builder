@@ -114,6 +114,9 @@
               <goal>prepare-agent</goal>
             </goals>
             <configuration>
+              <includes>
+                <include>com/techatpark/*</include>
+              </includes>
               <!-- Sets the path to the file which contains the execution data. -->
               <destFile>target/coverage-reports/jacoco-ut.exec</destFile>
             </configuration>
