@@ -21,8 +21,8 @@
     <sonar.version>5.0.0.4389</sonar.version>
     <jacoco.version>0.8.12</jacoco.version>
 
+    <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
-    <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
     <checkstyle.version>10.21.0</checkstyle.version>
     <asm.version>9.4</asm.version>
 
@@ -70,6 +70,10 @@
   <build>
     <plugins>
 
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
