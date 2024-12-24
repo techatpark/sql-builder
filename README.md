@@ -1,9 +1,14 @@
 # SQL Builder
 
-**Spring JDBC Template** and **MyBatis** have become essential tools for developers managing database interactions in Java applications. They simplify SQL execution, parameter binding, and result mapping. However, these libraries come with learning curves, heavy dependencies, and complex configurations.
+**[Spring JDBC Template](https://spring.io/guides/gs/relational-data-access)** and **[MyBatis](https://mybatis.org/mybatis-3/)** have become essential tools for developers managing database interactions in Java applications. They simplify SQL execution, parameter binding, and result mapping. However, these libraries come with learning curves, heavy dependencies, and complex configurations.
 
-**SQL Builder** aims to **provide the same functionality with small (~1000 lines), simple, readable, and native Java** code.
+**SQL Builder** is a lightweight library designed to provide the same essential functionality as these tools but with a focus on simplicity, readability, and native Java. With SQL Builder, you can streamline your database operations without being tied down by unnecessary complexity.
 
+### What Makes SQL Builder Unique?
+
+- **Inspired by JEP 269**: SQL Builder draws its [design philosophy](https://techatpark.com/posts/api-design/) from **[JEP 269: Convenience Factory Methods for Collections](https://openjdk.org/jeps/269)**, which introduced fluent and optimized APIs for Java collections. Similarly, SQL Builder adopts a fluent approach to make database interactions intuitive and efficient.
+- **Minimalistic**: At around 1000 lines of code, SQL Builder is lightweight and avoids the heavy dependencies that often accompany larger frameworks.
+- **Native Java**: Built with plain Java, SQL Builder ensures that you have full control over your codebase while benefiting from the convenience of a well-designed API.
 ---
 
 ## Why Use SQL Builder?
