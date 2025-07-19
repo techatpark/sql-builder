@@ -292,9 +292,10 @@ public class SqlBuilder implements Sql<Integer> {
                 try (PreparedStatement preparedStatement
                              = connection.prepareStatement(sql)) {
                     prepare(preparedStatement);
-                    ResultSet resultSet = preparedStatement.executeQuery();
-
-                    exists = resultSet.next();
+                    try (ResultSet resultSet =
+                                 preparedStatement.executeQuery()) {
+                        exists = resultSet.next();
+                    }
                 }
                 return exists;
             }
@@ -683,10 +684,10 @@ public class SqlBuilder implements Sql<Integer> {
             try (PreparedStatement preparedStatement
                          = connection.prepareStatement(sql)) {
                 prepare(preparedStatement);
-                ResultSet resultSet = preparedStatement.executeQuery();
-
-                if (resultSet.next()) {
-                    result = mapRow(resultSet);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        result = mapRow(resultSet);
+                    }
                 }
             }
             return result;
@@ -721,10 +722,10 @@ public class SqlBuilder implements Sql<Integer> {
             try (PreparedStatement preparedStatement
                          = connection.prepareStatement(sql)) {
                 prepare(preparedStatement);
-                ResultSet resultSet = preparedStatement.executeQuery();
-
-                while (resultSet.next()) {
-                    result.add(mapRow(resultSet));
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(mapRow(resultSet));
+                    }
                 }
             }
             return result;
@@ -794,11 +795,14 @@ public class SqlBuilder implements Sql<Integer> {
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
                 prepare(preparedStatement);
                 preparedStatement.executeUpdate();
-                ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-                if (resultSet.next()) {
-                    result = mapRow(resultSet);
+                try (ResultSet resultSet =
+                            preparedStatement.getGeneratedKeys()) {
+                    if (resultSet.next()) {
+                        result = mapRow(resultSet);
+                    }
                 }
+
+
             }
             return result;
         }
@@ -838,10 +842,11 @@ public class SqlBuilder implements Sql<Integer> {
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
                 prepare(preparedStatement);
                 preparedStatement.executeUpdate();
-                ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-                while (resultSet.next()) {
-                    result.add(mapRow(resultSet));
+                try (ResultSet resultSet =
+                            preparedStatement.getGeneratedKeys()) {
+                    while (resultSet.next()) {
+                        result.add(mapRow(resultSet));
+                    }
                 }
             }
             return result;
