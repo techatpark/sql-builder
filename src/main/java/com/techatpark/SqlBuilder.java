@@ -42,10 +42,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder paramNull() {
         final int index = nextIndex();
-        this.paramMappers
-                .add(preparedStatement
+        return param(preparedStatement
                         -> preparedStatement.setObject(index, null));
-        return this;
     }
 
     /**
@@ -64,10 +62,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder paramNull(final int sqlType, final String typeName) {
         final int index = nextIndex();
-        this.paramMappers
-                .add(preparedStatement
+        return param(preparedStatement
                         -> preparedStatement.setNull(index, sqlType, typeName));
-        return this;
     }
 
     /**
@@ -79,10 +75,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Integer value) {
         final int index = nextIndex();
-        this.paramMappers
-                .add(preparedStatement
+        return param(preparedStatement
                         -> preparedStatement.setInt(index, value));
-        return this;
     }
 
     /**
@@ -93,9 +87,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Short value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setShort(index, value));
-        return this;
     }
 
     /**
@@ -107,10 +100,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final String value) {
         final int index = nextIndex();
-        this.paramMappers
-                .add(preparedStatement
+        return param(preparedStatement
                         -> preparedStatement.setString(index, value));
-        return this;
     }
 
     /**
@@ -121,9 +112,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Double value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setDouble(index, value));
-        return this;
     }
 
     /**
@@ -134,9 +124,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Boolean value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setBoolean(index, value));
-        return this;
     }
 
     /**
@@ -147,9 +136,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Long value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setLong(index, value));
-        return this;
     }
 
     /**
@@ -160,9 +148,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final java.sql.Date value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setDate(index, value));
-        return this;
     }
 
     /**
@@ -173,9 +160,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Float value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setFloat(index, value));
-        return this;
     }
 
     /**
@@ -186,9 +172,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final byte[] value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setBytes(index, value));
-        return this;
     }
 
     /**
@@ -199,9 +184,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final BigDecimal value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setBigDecimal(index, value));
-        return this;
     }
 
     /**
@@ -212,9 +196,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final java.sql.Time value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setTime(index, value));
-        return this;
     }
 
     /**
@@ -225,9 +208,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final java.sql.Timestamp value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setTimestamp(index, value));
-        return this;
     }
 
     /**
@@ -238,9 +220,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Object value) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setObject(index, value));
-        return this;
     }
 
     /**
@@ -252,9 +233,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     public SqlBuilder param(final Object value, final int targetSqlType) {
         final int index = nextIndex();
-        this.paramMappers.add(preparedStatement
+        return param(preparedStatement
                 -> preparedStatement.setObject(index, value, targetSqlType));
-        return this;
     }
 
 
@@ -866,6 +846,16 @@ public class SqlBuilder implements Sql<Integer> {
         for (ParamMapper<?> paramMapper: paramMappers) {
             paramMapper.mapParam(preparedStatement);
         }
+    }
+
+    /**
+     * Add new Param Mapper.
+     * @param paramMapper
+     * @return sqlbuilder
+     */
+    private SqlBuilder param(final ParamMapper<?> paramMapper) {
+        this.paramMappers.add(paramMapper);
+        return this;
     }
 
     /**
