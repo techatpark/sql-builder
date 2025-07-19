@@ -41,7 +41,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder paramNull() {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers
                 .add(preparedStatement
                         -> preparedStatement.setObject(index, null));
@@ -63,7 +63,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder paramNull(final int sqlType, final String typeName) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers
                 .add(preparedStatement
                         -> preparedStatement.setNull(index, sqlType, typeName));
@@ -78,7 +78,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Integer value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers
                 .add(preparedStatement
                         -> preparedStatement.setInt(index, value));
@@ -92,7 +92,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Short value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setShort(index, value));
         return this;
@@ -106,7 +106,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final String value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers
                 .add(preparedStatement
                         -> preparedStatement.setString(index, value));
@@ -120,7 +120,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Double value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setDouble(index, value));
         return this;
@@ -133,7 +133,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Boolean value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setBoolean(index, value));
         return this;
@@ -146,7 +146,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Long value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setLong(index, value));
         return this;
@@ -159,7 +159,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Date value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setDate(index, value));
         return this;
@@ -172,7 +172,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Float value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setFloat(index, value));
         return this;
@@ -185,7 +185,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final byte[] value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setBytes(index, value));
         return this;
@@ -198,7 +198,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final BigDecimal value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setBigDecimal(index, value));
         return this;
@@ -211,7 +211,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Time value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setTime(index, value));
         return this;
@@ -224,7 +224,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Timestamp value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setTimestamp(index, value));
         return this;
@@ -237,7 +237,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Object value) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setObject(index, value));
         return this;
@@ -251,7 +251,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Object value, final int targetSqlType) {
-        final int index = this.paramMappers.size() + 1;
+        final int index = nextIndex();
         this.paramMappers.add(preparedStatement
                 -> preparedStatement.setObject(index, value, targetSqlType));
         return this;
@@ -861,5 +861,13 @@ public class SqlBuilder implements Sql<Integer> {
         for (ParamMapper<?> paramMapper: paramMappers) {
             paramMapper.mapParam(preparedStatement);
         }
+    }
+
+    /**
+     * Gets next parameter index.
+     * @return index
+     */
+    private int nextIndex() {
+        return this.paramMappers.size() + 1;
     }
 }
