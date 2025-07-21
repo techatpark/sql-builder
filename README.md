@@ -44,6 +44,10 @@ Movie movie = new SqlBuilder("SELECT id, title, directed_by FROM movie WHERE id 
     .queryForOne(this::mapRow)
     .execute(dataSource);
 
+List<Movie> movies = new SqlBuilder("SELECT id, title, directed_by from movie")
+        .queryForList(BaseTest::mapMovie)
+        .execute(dataSource);
+
 // Check if the record exists
 boolean exists = new SqlBuilder("SELECT id FROM movie WHERE id = ?")
     .param(generatedId)
