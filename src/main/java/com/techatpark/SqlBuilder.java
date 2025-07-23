@@ -291,7 +291,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Byte> queryForByte() {
         return new SingleValueQuery<>() {
             @Override
-            Byte getValue(final ResultSet resultSet) throws SQLException {
+            Byte mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getByte(1);
             }
         };
@@ -306,7 +306,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<byte[]> queryForBytes() {
         return new SingleValueQuery<>() {
             @Override
-            byte[] getValue(final ResultSet resultSet) throws SQLException {
+            byte[] mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getBytes(1);
             }
         };
@@ -321,7 +321,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Integer> queryForInt() {
         return new SingleValueQuery<>() {
             @Override
-            Integer getValue(final ResultSet resultSet) throws SQLException {
+            Integer mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getInt(1);
             }
         };
@@ -336,7 +336,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Short> queryForShort() {
         return new SingleValueQuery<>() {
             @Override
-            Short getValue(final ResultSet resultSet) throws SQLException {
+            Short mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getShort(1);
             }
         };
@@ -351,7 +351,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<String> queryForString() {
         return new SingleValueQuery<>() {
             @Override
-            String getValue(final ResultSet resultSet) throws SQLException {
+            String mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getString(1);
             }
         };
@@ -366,7 +366,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<URL> queryForURL() {
         return new SingleValueQuery<>() {
             @Override
-            URL getValue(final ResultSet resultSet) throws SQLException {
+            URL mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getURL(1);
             }
         };
@@ -381,7 +381,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Double> queryForDouble() {
         return new SingleValueQuery<>() {
             @Override
-            Double getValue(final ResultSet resultSet) throws SQLException {
+            Double mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getDouble(1);
             }
         };
@@ -396,7 +396,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Float> queryForFloat() {
         return new SingleValueQuery<>() {
             @Override
-            Float getValue(final ResultSet resultSet) throws SQLException {
+            Float mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getFloat(1);
             }
         };
@@ -411,7 +411,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<BigDecimal> queryForBigDecimal() {
         return new SingleValueQuery<>() {
             @Override
-            BigDecimal getValue(final ResultSet resultSet) throws SQLException {
+            BigDecimal mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getBigDecimal(1);
             }
         };
@@ -426,7 +426,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Boolean> queryForBoolean() {
         return new SingleValueQuery<>() {
             @Override
-            Boolean getValue(final ResultSet resultSet) throws SQLException {
+            Boolean mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getBoolean(1);
             }
         };
@@ -441,7 +441,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Long> queryForLong() {
         return new SingleValueQuery<>() {
             @Override
-            Long getValue(final ResultSet resultSet) throws SQLException {
+            Long mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getLong(1);
             }
         };
@@ -456,7 +456,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<java.sql.Date> queryForDate() {
         return new SingleValueQuery<>() {
             @Override
-            java.sql.Date getValue(final ResultSet resultSet)
+            java.sql.Date mapRow(final ResultSet resultSet)
                     throws SQLException {
                 return resultSet.getDate(1);
             }
@@ -472,7 +472,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<java.sql.Time> queryForTime() {
         return new SingleValueQuery<>() {
             @Override
-            java.sql.Time getValue(final ResultSet resultSet)
+            java.sql.Time mapRow(final ResultSet resultSet)
                     throws SQLException {
                 return resultSet.getTime(1);
             }
@@ -488,7 +488,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<java.sql.Timestamp> queryForTimestamp() {
         return new SingleValueQuery<>() {
             @Override
-            java.sql.Timestamp getValue(final ResultSet resultSet)
+            java.sql.Timestamp mapRow(final ResultSet resultSet)
                     throws SQLException {
                 return resultSet.getTimestamp(1);
             }
@@ -504,7 +504,7 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Object> queryForObject() {
         return new SingleValueQuery<>() {
             @Override
-            Object getValue(final ResultSet resultSet) throws SQLException {
+            Object mapRow(final ResultSet resultSet) throws SQLException {
                 return resultSet.getObject(1);
             }
         };
@@ -623,19 +623,6 @@ public class SqlBuilder implements Sql<Integer> {
         private SingleValueQuery() {
             super(null);
         }
-
-        @Override
-        T mapRow(final ResultSet resultSet) throws SQLException {
-            return getValue(resultSet);
-        }
-
-        /**
-         * Gets Value from Result set.
-         * @param resultSet
-         * @return value
-         * @throws SQLException
-         */
-        abstract T getValue(ResultSet resultSet) throws SQLException;
     }
 
     public class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
