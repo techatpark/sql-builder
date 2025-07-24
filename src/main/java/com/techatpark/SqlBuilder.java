@@ -23,7 +23,7 @@ public class SqlBuilder implements Sql<Integer> {
     /**
      * A list of parameters for the query.
      */
-    private final List<ParamMapper<?>> paramMappers;
+    private final List<ParamMapper> paramMappers;
 
     /**
      * Constructor that initializes the SqlBuilder with a given SQL query.
@@ -565,9 +565,8 @@ public class SqlBuilder implements Sql<Integer> {
      * to the appropriate placeholder
      * in the SQL query.
      *
-     * @param <T> the type of the parameter to be mapped
      */
-    public interface ParamMapper<T> {
+    public interface ParamMapper {
 
         /**
          * Binds the provided parameters to the placeholders in the given
@@ -830,7 +829,7 @@ public class SqlBuilder implements Sql<Integer> {
      */
     private void prepare(final PreparedStatement preparedStatement)
             throws SQLException {
-        for (ParamMapper<?> paramMapper: paramMappers) {
+        for (ParamMapper paramMapper: paramMappers) {
             paramMapper.mapParam(preparedStatement);
         }
     }
@@ -840,7 +839,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @param paramMapper
      * @return sqlbuilder
      */
-    private SqlBuilder param(final ParamMapper<?> paramMapper) {
+    private SqlBuilder param(final ParamMapper paramMapper) {
         this.paramMappers.add(paramMapper);
         return this;
     }
