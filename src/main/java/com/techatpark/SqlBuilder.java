@@ -41,8 +41,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder paramNull() {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                         -> preparedStatement.setObject(index, null));
     }
 
@@ -61,8 +60,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder paramNull(final int sqlType, final String typeName) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                         -> preparedStatement.setNull(index, sqlType, typeName));
     }
 
@@ -74,8 +72,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Integer value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                         -> preparedStatement.setInt(index, value));
     }
 
@@ -86,8 +83,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Short value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setShort(index, value));
     }
 
@@ -99,8 +95,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final String value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                         -> preparedStatement.setString(index, value));
     }
 
@@ -111,8 +106,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Double value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setDouble(index, value));
     }
 
@@ -123,8 +117,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Boolean value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setBoolean(index, value));
     }
 
@@ -135,8 +128,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Long value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setLong(index, value));
     }
 
@@ -147,8 +139,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Date value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setDate(index, value));
     }
 
@@ -159,8 +150,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Float value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setFloat(index, value));
     }
 
@@ -171,8 +161,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final byte[] value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setBytes(index, value));
     }
 
@@ -183,8 +172,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final BigDecimal value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setBigDecimal(index, value));
     }
 
@@ -195,8 +183,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Time value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setTime(index, value));
     }
 
@@ -207,8 +194,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Timestamp value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setTimestamp(index, value));
     }
 
@@ -219,8 +205,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Object value) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setObject(index, value));
     }
 
@@ -232,8 +217,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Object value, final int targetSqlType) {
-        final int index = nextIndex();
-        return param(preparedStatement
+        return param((preparedStatement, index)
                 -> preparedStatement.setObject(index, value, targetSqlType));
     }
 
@@ -575,10 +559,12 @@ public class SqlBuilder implements Sql<Integer> {
          *
          * @param preparedStatement the {@link PreparedStatement}
          *                          to bind parameters to
+         * @param index iddex of the parameter.
          * @throws SQLException if a database access error occurs or if
          *                      parameter binding fails
          */
-        void mapParam(PreparedStatement preparedStatement) throws SQLException;
+        void mapParam(PreparedStatement preparedStatement,
+                      int index) throws SQLException;
     }
 
     /**
@@ -829,8 +815,8 @@ public class SqlBuilder implements Sql<Integer> {
      */
     private void prepare(final PreparedStatement preparedStatement)
             throws SQLException {
-        for (ParamMapper paramMapper: paramMappers) {
-            paramMapper.mapParam(preparedStatement);
+        for (int i = 0; i < paramMappers.size(); i++) {
+            paramMappers.get(i).mapParam(preparedStatement, (i + 1));
         }
     }
 
