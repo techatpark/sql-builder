@@ -253,13 +253,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Byte> queryForByte() {
-        return new SingleValueQuery<>() {
-            @Override
-            Byte mapRow(final ResultSet rs) throws SQLException {
-                return rs.getByte(1);
-            }
-        };
+    public SingleRecordQuery<Byte> queryForByte() {
+        return new SingleRecordQuery<>(rs -> rs.getByte(1));
     }
 
     /**
@@ -268,13 +263,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<byte[]> queryForBytes() {
-        return new SingleValueQuery<>() {
-            @Override
-            byte[] mapRow(final ResultSet rs) throws SQLException {
-                return rs.getBytes(1);
-            }
-        };
+    public SingleRecordQuery<byte[]> queryForBytes() {
+        return new SingleRecordQuery<>(rs  -> rs.getBytes(1));
     }
 
     /**
@@ -283,13 +273,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Integer> queryForInt() {
-        return new SingleValueQuery<>() {
-            @Override
-            Integer mapRow(final ResultSet rs) throws SQLException {
-                return rs.getInt(1);
-            }
-        };
+    public SingleRecordQuery<Integer> queryForInt() {
+        return new SingleRecordQuery<>(rs -> rs.getInt(1));
     }
 
     /**
@@ -298,13 +283,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Short> queryForShort() {
-        return new SingleValueQuery<>() {
-            @Override
-            Short mapRow(final ResultSet rs) throws SQLException {
-                return rs.getShort(1);
-            }
-        };
+    public SingleRecordQuery<Short> queryForShort() {
+        return new SingleRecordQuery<>(rs -> rs.getShort(1));
     }
 
     /**
@@ -313,13 +293,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<String> queryForString() {
-        return new SingleValueQuery<>() {
-            @Override
-            String mapRow(final ResultSet rs) throws SQLException {
-                return rs.getString(1);
-            }
-        };
+    public SingleRecordQuery<String> queryForString() {
+        return new SingleRecordQuery<>(rs -> rs.getString(1));
     }
 
     /**
@@ -328,13 +303,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<URL> queryForURL() {
-        return new SingleValueQuery<>() {
-            @Override
-            URL mapRow(final ResultSet rs) throws SQLException {
-                return rs.getURL(1);
-            }
-        };
+    public SingleRecordQuery<URL> queryForURL() {
+        return new SingleRecordQuery<>(rs -> rs.getURL(1));
     }
 
     /**
@@ -343,13 +313,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Double> queryForDouble() {
-        return new SingleValueQuery<>() {
-            @Override
-            Double mapRow(final ResultSet rs) throws SQLException {
-                return rs.getDouble(1);
-            }
-        };
+    public SingleRecordQuery<Double> queryForDouble() {
+        return new SingleRecordQuery<>(rs -> rs.getDouble(1));
     }
 
     /**
@@ -358,13 +323,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Float> queryForFloat() {
-        return new SingleValueQuery<>() {
-            @Override
-            Float mapRow(final ResultSet rs) throws SQLException {
-                return rs.getFloat(1);
-            }
-        };
+    public SingleRecordQuery<Float> queryForFloat() {
+        return new SingleRecordQuery<>(rs -> rs.getFloat(1));
     }
 
     /**
@@ -373,13 +333,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<BigDecimal> queryForBigDecimal() {
-        return new SingleValueQuery<>() {
-            @Override
-            BigDecimal mapRow(final ResultSet rs) throws SQLException {
-                return rs.getBigDecimal(1);
-            }
-        };
+    public SingleRecordQuery<BigDecimal> queryForBigDecimal() {
+        return new SingleRecordQuery<>(rs -> rs.getBigDecimal(1));
     }
 
     /**
@@ -388,13 +343,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Boolean> queryForBoolean() {
-        return new SingleValueQuery<>() {
-            @Override
-            Boolean mapRow(final ResultSet rs) throws SQLException {
-                return rs.getBoolean(1);
-            }
-        };
+    public SingleRecordQuery<Boolean> queryForBoolean() {
+        return new SingleRecordQuery<>(rs -> rs.getBoolean(1));
     }
 
     /**
@@ -403,13 +353,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Long> queryForLong() {
-        return new SingleValueQuery<>() {
-            @Override
-            Long mapRow(final ResultSet rs) throws SQLException {
-                return rs.getLong(1);
-            }
-        };
+    public SingleRecordQuery<Long> queryForLong() {
+        return new SingleRecordQuery<>(rs -> rs.getLong(1));
     }
 
     /**
@@ -418,14 +363,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<java.sql.Date> queryForDate() {
-        return new SingleValueQuery<>() {
-            @Override
-            java.sql.Date mapRow(final ResultSet rs)
-                    throws SQLException {
-                return rs.getDate(1);
-            }
-        };
+    public SingleRecordQuery<java.sql.Date> queryForDate() {
+        return new SingleRecordQuery<>(rs -> rs.getDate(1));
     }
 
     /**
@@ -434,14 +373,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<java.sql.Time> queryForTime() {
-        return new SingleValueQuery<>() {
-            @Override
-            java.sql.Time mapRow(final ResultSet rs)
-                    throws SQLException {
-                return rs.getTime(1);
-            }
-        };
+    public SingleRecordQuery<java.sql.Time> queryForTime() {
+        return new SingleRecordQuery<>(rs -> rs.getTime(1));
     }
 
     /**
@@ -450,14 +383,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<java.sql.Timestamp> queryForTimestamp() {
-        return new SingleValueQuery<>() {
-            @Override
-            java.sql.Timestamp mapRow(final ResultSet rs)
-                    throws SQLException {
-                return rs.getTimestamp(1);
-            }
-        };
+    public SingleRecordQuery<java.sql.Timestamp> queryForTimestamp() {
+        return new SingleRecordQuery<>(rs -> rs.getTimestamp(1));
     }
 
     /**
@@ -466,13 +393,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleValueQuery<Object> queryForObject() {
-        return new SingleValueQuery<>() {
-            @Override
-            Object mapRow(final ResultSet rs) throws SQLException {
-                return rs.getObject(1);
-            }
-        };
+    public SingleRecordQuery<Object> queryForObject() {
+        return new SingleRecordQuery<>(rs -> rs.getObject(1));
     }
 
     /**
@@ -573,20 +495,6 @@ public class SqlBuilder implements Sql<Integer> {
 
         T mapRow(final ResultSet rs) throws SQLException {
             return rowMapper.mapRow(rs);
-        }
-    }
-
-    /**
-     * Query to get Single Value.
-     * @param <T> type of value
-     */
-    public abstract class SingleValueQuery<T> extends SingleRecordQuery<T> {
-
-        /**
-         * Private constructor for creating a Query instance.
-         */
-        private SingleValueQuery() {
-            super(null);
         }
     }
 
