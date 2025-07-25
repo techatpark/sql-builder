@@ -753,8 +753,6 @@ public class SqlBuilder implements Sql<Integer> {
                         result = mapRow(resultSet);
                     }
                 }
-
-
             }
             return result;
         }
@@ -830,11 +828,4 @@ public class SqlBuilder implements Sql<Integer> {
         return this;
     }
 
-    /**
-     * Gets next parameter index.
-     * @return index
-     */
-    private int nextIndex() {
-        return this.paramMappers.size() + 1;
-    }
 }
