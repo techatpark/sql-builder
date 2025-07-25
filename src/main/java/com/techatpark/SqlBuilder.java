@@ -41,8 +41,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder paramNull() {
-        return param((preparedStatement, index)
-                        -> preparedStatement.setObject(index, null));
+        return param((ps, index) -> ps.setObject(index, null));
     }
 
     /**
@@ -60,8 +59,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder paramNull(final int sqlType, final String typeName) {
-        return param((preparedStatement, index)
-                        -> preparedStatement.setNull(index, sqlType, typeName));
+        return param((ps, index) -> ps.setNull(index, sqlType, typeName));
     }
 
     /**
@@ -72,8 +70,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Integer value) {
-        return param((preparedStatement, index)
-                        -> preparedStatement.setInt(index, value));
+        return param((ps, index) -> ps.setInt(index, value));
     }
 
     /**
@@ -83,8 +80,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Short value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setShort(index, value));
+        return param((ps, index) -> ps.setShort(index, value));
     }
 
     /**
@@ -95,8 +91,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final String value) {
-        return param((preparedStatement, index)
-                        -> preparedStatement.setString(index, value));
+        return param((ps, index) -> ps.setString(index, value));
     }
 
     /**
@@ -106,8 +101,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Double value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setDouble(index, value));
+        return param((ps, index) -> ps.setDouble(index, value));
     }
 
     /**
@@ -117,8 +111,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Boolean value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setBoolean(index, value));
+        return param((ps, index) -> ps.setBoolean(index, value));
     }
 
     /**
@@ -128,8 +121,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Long value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setLong(index, value));
+        return param((ps, index) -> ps.setLong(index, value));
     }
 
     /**
@@ -139,8 +131,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Date value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setDate(index, value));
+        return param((ps, index) -> ps.setDate(index, value));
     }
 
     /**
@@ -150,8 +141,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Float value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setFloat(index, value));
+        return param((ps, index) -> ps.setFloat(index, value));
     }
 
     /**
@@ -161,8 +151,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final byte[] value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setBytes(index, value));
+        return param((ps, index) -> ps.setBytes(index, value));
     }
 
     /**
@@ -172,8 +161,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final BigDecimal value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setBigDecimal(index, value));
+        return param((ps, index) -> ps.setBigDecimal(index, value));
     }
 
     /**
@@ -183,8 +171,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Time value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setTime(index, value));
+        return param((ps, index) -> ps.setTime(index, value));
     }
 
     /**
@@ -194,8 +181,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final java.sql.Timestamp value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setTimestamp(index, value));
+        return param((ps, index) -> ps.setTimestamp(index, value));
     }
 
     /**
@@ -205,8 +191,7 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Object value) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setObject(index, value));
+        return param((ps, index) -> ps.setObject(index, value));
     }
 
     /**
@@ -217,10 +202,8 @@ public class SqlBuilder implements Sql<Integer> {
      * @return the current SqlBuilder instance, for method chaining
      */
     public SqlBuilder param(final Object value, final int targetSqlType) {
-        return param((preparedStatement, index)
-                -> preparedStatement.setObject(index, value, targetSqlType));
+        return param((ps, index) -> ps.setObject(index, value, targetSqlType));
     }
-
 
     /**
      * Executes an update (such as INSERT, UPDATE, DELETE) using the prepared
@@ -234,10 +217,9 @@ public class SqlBuilder implements Sql<Integer> {
     @Override
     public Integer execute(final Connection connection) throws SQLException {
         int updatedRows;
-        try (PreparedStatement preparedStatement
-                     = connection.prepareStatement(sql)) {
-            prepare(preparedStatement);
-            updatedRows = preparedStatement.executeUpdate();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            prepare(ps);
+            updatedRows = ps.executeUpdate();
         }
         return updatedRows;
     }
@@ -253,12 +235,11 @@ public class SqlBuilder implements Sql<Integer> {
             public Boolean execute(final Connection connection)
                     throws SQLException {
                 boolean exists;
-                try (PreparedStatement preparedStatement
-                             = connection.prepareStatement(sql)) {
-                    prepare(preparedStatement);
-                    try (ResultSet resultSet =
-                                 preparedStatement.executeQuery()) {
-                        exists = resultSet.next();
+                try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                    prepare(ps);
+                    try (ResultSet rs =
+                                 ps.executeQuery()) {
+                        exists = rs.next();
                     }
                 }
                 return exists;
@@ -275,8 +256,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Byte> queryForByte() {
         return new SingleValueQuery<>() {
             @Override
-            Byte mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getByte(1);
+            Byte mapRow(final ResultSet rs) throws SQLException {
+                return rs.getByte(1);
             }
         };
     }
@@ -290,8 +271,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<byte[]> queryForBytes() {
         return new SingleValueQuery<>() {
             @Override
-            byte[] mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getBytes(1);
+            byte[] mapRow(final ResultSet rs) throws SQLException {
+                return rs.getBytes(1);
             }
         };
     }
@@ -305,8 +286,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Integer> queryForInt() {
         return new SingleValueQuery<>() {
             @Override
-            Integer mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getInt(1);
+            Integer mapRow(final ResultSet rs) throws SQLException {
+                return rs.getInt(1);
             }
         };
     }
@@ -320,8 +301,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Short> queryForShort() {
         return new SingleValueQuery<>() {
             @Override
-            Short mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getShort(1);
+            Short mapRow(final ResultSet rs) throws SQLException {
+                return rs.getShort(1);
             }
         };
     }
@@ -335,8 +316,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<String> queryForString() {
         return new SingleValueQuery<>() {
             @Override
-            String mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getString(1);
+            String mapRow(final ResultSet rs) throws SQLException {
+                return rs.getString(1);
             }
         };
     }
@@ -350,8 +331,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<URL> queryForURL() {
         return new SingleValueQuery<>() {
             @Override
-            URL mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getURL(1);
+            URL mapRow(final ResultSet rs) throws SQLException {
+                return rs.getURL(1);
             }
         };
     }
@@ -365,8 +346,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Double> queryForDouble() {
         return new SingleValueQuery<>() {
             @Override
-            Double mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getDouble(1);
+            Double mapRow(final ResultSet rs) throws SQLException {
+                return rs.getDouble(1);
             }
         };
     }
@@ -380,8 +361,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Float> queryForFloat() {
         return new SingleValueQuery<>() {
             @Override
-            Float mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getFloat(1);
+            Float mapRow(final ResultSet rs) throws SQLException {
+                return rs.getFloat(1);
             }
         };
     }
@@ -395,8 +376,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<BigDecimal> queryForBigDecimal() {
         return new SingleValueQuery<>() {
             @Override
-            BigDecimal mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getBigDecimal(1);
+            BigDecimal mapRow(final ResultSet rs) throws SQLException {
+                return rs.getBigDecimal(1);
             }
         };
     }
@@ -410,8 +391,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Boolean> queryForBoolean() {
         return new SingleValueQuery<>() {
             @Override
-            Boolean mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getBoolean(1);
+            Boolean mapRow(final ResultSet rs) throws SQLException {
+                return rs.getBoolean(1);
             }
         };
     }
@@ -425,8 +406,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Long> queryForLong() {
         return new SingleValueQuery<>() {
             @Override
-            Long mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getLong(1);
+            Long mapRow(final ResultSet rs) throws SQLException {
+                return rs.getLong(1);
             }
         };
     }
@@ -440,9 +421,9 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<java.sql.Date> queryForDate() {
         return new SingleValueQuery<>() {
             @Override
-            java.sql.Date mapRow(final ResultSet resultSet)
+            java.sql.Date mapRow(final ResultSet rs)
                     throws SQLException {
-                return resultSet.getDate(1);
+                return rs.getDate(1);
             }
         };
     }
@@ -456,9 +437,9 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<java.sql.Time> queryForTime() {
         return new SingleValueQuery<>() {
             @Override
-            java.sql.Time mapRow(final ResultSet resultSet)
+            java.sql.Time mapRow(final ResultSet rs)
                     throws SQLException {
-                return resultSet.getTime(1);
+                return rs.getTime(1);
             }
         };
     }
@@ -472,9 +453,9 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<java.sql.Timestamp> queryForTimestamp() {
         return new SingleValueQuery<>() {
             @Override
-            java.sql.Timestamp mapRow(final ResultSet resultSet)
+            java.sql.Timestamp mapRow(final ResultSet rs)
                     throws SQLException {
-                return resultSet.getTimestamp(1);
+                return rs.getTimestamp(1);
             }
         };
     }
@@ -488,8 +469,8 @@ public class SqlBuilder implements Sql<Integer> {
     public SingleValueQuery<Object> queryForObject() {
         return new SingleValueQuery<>() {
             @Override
-            Object mapRow(final ResultSet resultSet) throws SQLException {
-                return resultSet.getObject(1);
+            Object mapRow(final ResultSet rs) throws SQLException {
+                return rs.getObject(1);
             }
         };
     }
@@ -534,11 +515,11 @@ public class SqlBuilder implements Sql<Integer> {
         /**
          * Maps a single row of the result set to an object.
          *
-         * @param resultSet the result set obtained from executing the SQL query
+         * @param rs the result set obtained from executing the SQL query
          * @return the mapped object
          * @throws SQLException if an SQL error occurs during mapping
          */
-        T mapRow(ResultSet resultSet) throws SQLException;
+        T mapRow(ResultSet rs) throws SQLException;
     }
 
     /**
@@ -548,7 +529,6 @@ public class SqlBuilder implements Sql<Integer> {
      * responsible for mapping a specific parameter
      * to the appropriate placeholder
      * in the SQL query.
-     *
      */
     public interface ParamMapper {
 
@@ -557,14 +537,14 @@ public class SqlBuilder implements Sql<Integer> {
          * {@link PreparedStatement}. This method is called to map and set
          * parameter values for the SQL query.
          *
-         * @param preparedStatement the {@link PreparedStatement}
+         * @param ps the {@link PreparedStatement}
          *                          to bind parameters to
          * @param index iddex of the parameter.
          * @throws SQLException if a database access error occurs or if
          *                      parameter binding fails
          */
-        void mapParam(PreparedStatement preparedStatement,
-                      int index) throws SQLException;
+        void set(PreparedStatement ps,
+                 int index) throws SQLException;
     }
 
     /**
@@ -591,8 +571,8 @@ public class SqlBuilder implements Sql<Integer> {
             this.rowMapper = theRowMapper;
         }
 
-        T mapRow(final ResultSet resultSet) throws SQLException {
-            return rowMapper.mapRow(resultSet);
+        T mapRow(final ResultSet rs) throws SQLException {
+            return rowMapper.mapRow(rs);
         }
     }
 
@@ -633,12 +613,12 @@ public class SqlBuilder implements Sql<Integer> {
         @Override
         public T execute(final Connection connection) throws SQLException {
             T result = null;
-            try (PreparedStatement preparedStatement
+            try (PreparedStatement ps
                          = connection.prepareStatement(sql)) {
-                prepare(preparedStatement);
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        result = mapRow(resultSet);
+                prepare(ps);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        result = mapRow(rs);
                     }
                 }
             }
@@ -671,12 +651,11 @@ public class SqlBuilder implements Sql<Integer> {
         public List<T> execute(final Connection connection)
                 throws SQLException {
             List<T> result = new ArrayList<>();
-            try (PreparedStatement preparedStatement
-                         = connection.prepareStatement(sql)) {
-                prepare(preparedStatement);
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        result.add(mapRow(resultSet));
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                prepare(ps);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(mapRow(rs));
                     }
                 }
             }
@@ -742,15 +721,13 @@ public class SqlBuilder implements Sql<Integer> {
         @Override
         public T execute(final Connection connection) throws SQLException {
             T result = null;
-            try (PreparedStatement preparedStatement
-                         = connection.prepareStatement(sql,
+            try (PreparedStatement ps = connection.prepareStatement(sql,
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                prepare(preparedStatement);
-                preparedStatement.executeUpdate();
-                try (ResultSet resultSet =
-                            preparedStatement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        result = mapRow(resultSet);
+                prepare(ps);
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        result = mapRow(rs);
                     }
                 }
             }
@@ -787,15 +764,14 @@ public class SqlBuilder implements Sql<Integer> {
         public List<T> execute(final Connection connection)
                 throws SQLException {
             List<T> result = new ArrayList<>();
-            try (PreparedStatement preparedStatement
-                         = connection.prepareStatement(sql,
+            try (PreparedStatement ps = connection.prepareStatement(sql,
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                prepare(preparedStatement);
-                preparedStatement.executeUpdate();
-                try (ResultSet resultSet =
-                            preparedStatement.getGeneratedKeys()) {
-                    while (resultSet.next()) {
-                        result.add(mapRow(resultSet));
+                prepare(ps);
+                ps.executeUpdate();
+                try (ResultSet rs =
+                            ps.getGeneratedKeys()) {
+                    while (rs.next()) {
+                        result.add(mapRow(rs));
                     }
                 }
             }
@@ -807,14 +783,14 @@ public class SqlBuilder implements Sql<Integer> {
      * to their respective
      * positions in the SQL query.
      *
-     * @param preparedStatement the PreparedStatement to bind parameters to
+     * @param ps the PreparedStatement to bind parameters to
      * @throws SQLException if a database access error occurs during parameter
      * binding
      */
-    private void prepare(final PreparedStatement preparedStatement)
+    private void prepare(final PreparedStatement ps)
             throws SQLException {
         for (int i = 0; i < paramMappers.size(); i++) {
-            paramMappers.get(i).mapParam(preparedStatement, (i + 1));
+            paramMappers.get(i).set(ps, (i + 1));
         }
     }
 
