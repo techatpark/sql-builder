@@ -229,11 +229,8 @@ public class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Boolean> queryForExists() {
-        return new SingleRecordQuery<>(null) {
-            @Override
-            public Boolean execute(final Connection connection)
-                    throws SQLException {
+    public Sql<Boolean> queryForExists() {
+        return ((connection)  -> {
                 boolean exists;
                 try (PreparedStatement ps = connection.prepareStatement(sql)) {
                     prepare(ps);
@@ -244,7 +241,8 @@ public class SqlBuilder implements Sql<Integer> {
                 }
                 return exists;
             }
-        };
+        );
+
     }
 
     /**
@@ -498,7 +496,7 @@ public class SqlBuilder implements Sql<Integer> {
         }
     }
 
-    public class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
+    public final class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
 
         /**
          * Private constructor for creating a Query instance with
