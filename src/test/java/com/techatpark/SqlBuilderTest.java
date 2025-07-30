@@ -1,12 +1,21 @@
 package com.techatpark;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class SqlBuilderTest extends BaseTest {
+
+    @BeforeEach
+    void init() throws SQLException {
+        SqlBuilder.sql("DELETE FROM movie")
+                .execute(dataSource);
+    }
 
     @Test
     void testSQL() throws SQLException {
@@ -66,6 +75,20 @@ class SqlBuilderTest extends BaseTest {
 
         Assertions.assertEquals("Dunkirk", movie.title());
 
+    }
+
+    @Test
+    void testBatch() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            SqlBuilder
+                    .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                        .param("Interstellar")
+                        .param("Nolan")
+                    .addBatch()
+                        .param("Dunkrik")
+                        .param("Nolan")
+                    .executeBatch(dataSource);
+        });
     }
 
 }
