@@ -20,7 +20,7 @@ class BaseTest {
         try {
             // Setup
             dataSource = new JdbcDataSource();
-            dataSource.setURL("jdbc:h2:mem:AZ");
+            dataSource.setURL("jdbc:h2:file:./target/sampledb");
             dataSource.setUser("sa");
             dataSource.setPassword("");
 
