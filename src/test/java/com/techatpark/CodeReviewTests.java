@@ -59,7 +59,8 @@ class CodeReviewTests {
                                 Object.class,
                                 ArrayList.class,
                                 List.class,
-                                Iterator.class) ;// see next section
+                                Iterator.class,
+                                UnsupportedOperationException.class) ;// see next section
 
         rule.check(importedClasses);
     }

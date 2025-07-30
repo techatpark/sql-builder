@@ -1,17 +1,26 @@
 package com.techatpark;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class SqlBuilderTest extends BaseTest {
+
+    @BeforeEach
+    void init() throws SQLException {
+        SqlBuilder.sql("DELETE FROM movie")
+                .execute(dataSource);
+    }
 
     @Test
     void testSQL() throws SQLException {
         int updateRows =
-                new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
                         .param("Dunkirk")
                         .param("Nolan")
                         .param("Inception")
@@ -20,13 +29,13 @@ class SqlBuilderTest extends BaseTest {
 
         Assertions.assertEquals(2, updateRows);
 
-        long generetedId = new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+        long generetedId = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                 .param("Interstellar")
                 .param("Nolan")
                 .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
                 .execute(dataSource);
 
-        List<Movie> movies = new SqlBuilder("SELECT id, title, directed_by from movie")
+        List<Movie> movies = SqlBuilder.sql("SELECT id, title, directed_by from movie")
                 .queryForList(BaseTest::mapMovie)
                 .execute(dataSource);
 
@@ -34,12 +43,12 @@ class SqlBuilderTest extends BaseTest {
 
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
-        Assertions.assertTrue(new SqlBuilder(sql)
+        Assertions.assertTrue(SqlBuilder.sql(sql)
                 .param(generetedId)
                 .queryForExists()
                 .execute(dataSource));
 
-        List<Long> generetedIds = new SqlBuilder("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+        List<Long> generetedIds = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
                 .param("Catch Me If you Can")
                 .param("Cameroon")
                 .param("Jurrasic Park")
@@ -48,24 +57,38 @@ class SqlBuilderTest extends BaseTest {
                 .execute(dataSource);
 
         for (Long aLong : generetedIds) {
-            Assertions.assertTrue(new SqlBuilder(sql)
+            Assertions.assertTrue(SqlBuilder.sql(sql)
                     .param(aLong)
                     .queryForExists()
                     .execute(dataSource));
         }
 
         Assertions.assertEquals(5,
-                new SqlBuilder("SELECT COUNT(id) from movie")
+                SqlBuilder.sql("SELECT COUNT(id) from movie")
                         .queryForInt()
                         .execute(dataSource));
 
-        Movie movie = new SqlBuilder(sql)
+        Movie movie = SqlBuilder.sql(sql)
                                 .param(1)
                             .queryForOne(BaseTest::mapMovie)
                             .execute(dataSource);
 
         Assertions.assertEquals("Dunkirk", movie.title());
 
+    }
+
+    @Test
+    void testBatch() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            SqlBuilder
+                    .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                        .param("Interstellar")
+                        .param("Nolan")
+                    .addBatch()
+                        .param("Dunkrik")
+                        .param("Nolan")
+                    .executeBatch(dataSource);
+        });
     }
 
 }

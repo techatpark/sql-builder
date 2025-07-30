@@ -37,7 +37,7 @@ class AllinAllTest extends BaseTest {
     static final BigDecimal BIG_DECIMAL_VAL = new BigDecimal("12345.67");
     static final byte[] BYTES_VAL = new byte[]{1, 2, 3, 4, 5};
     static final String URL_STR = "http://example.com";
-    private static final SqlBuilder ALL_RESULS_QUERY = new SqlBuilder("SELECT * FROM AllTypes");
+    private static final SqlBuilder ALL_RESULS_QUERY = SqlBuilder.sql("SELECT * FROM AllTypes");
 
     private static AllTypesRecord mapRow(ResultSet rs) {
         try {
@@ -65,7 +65,7 @@ class AllinAllTest extends BaseTest {
 
     @BeforeEach
     void init() throws SQLException {
-        new SqlBuilder("DELETE FROM AllTypes")
+        SqlBuilder.sql("DELETE FROM AllTypes")
                 .execute(dataSource);
     }
 
@@ -86,7 +86,7 @@ class AllinAllTest extends BaseTest {
     @Test
     void testNullData() throws Exception {
 
-        new SqlBuilder("""
+        SqlBuilder.sql("""
                 INSERT INTO AllTypes
                 (timeVal)
                 VALUES (?)
@@ -94,7 +94,7 @@ class AllinAllTest extends BaseTest {
                 .paramNull(Types.TIME, "TIME")
                 .execute(dataSource);
 
-        new SqlBuilder("""
+        SqlBuilder.sql("""
                 INSERT INTO AllTypes
                 (timeVal)
                 VALUES (?)
@@ -102,7 +102,7 @@ class AllinAllTest extends BaseTest {
                 .param(TIME_VAL, Types.TIME)
                 .execute(dataSource);
 
-        assertEquals(2L, new SqlBuilder("SELECT COUNT(*) FROM AllTypes")
+        assertEquals(2L, SqlBuilder.sql("SELECT COUNT(*) FROM AllTypes")
                 .queryForLong()
                 .execute(dataSource));
 
@@ -113,7 +113,7 @@ class AllinAllTest extends BaseTest {
 
         final Connection connection = dataSource.getConnection();
 
-        new SqlBuilder("""
+        SqlBuilder.sql("""
                 INSERT INTO AllTypes
                 (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
                 dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal, nullVal)
@@ -159,69 +159,69 @@ class AllinAllTest extends BaseTest {
         );
 
         assertEquals(STR_VAL,
-                new SqlBuilder("select str from AllTypes")
+                SqlBuilder.sql("select str from AllTypes")
                         .queryForString()
                         .execute(connection));
 
         assertEquals(STR_VAL,
-                new SqlBuilder("select str from AllTypes")
+                SqlBuilder.sql("select str from AllTypes")
                         .queryForObject()
                         .execute(connection));
 
         assertEquals(INT_VAL,
-                        new SqlBuilder("select intVal from AllTypes")
+                        SqlBuilder.sql("select intVal from AllTypes")
                                 .queryForInt()
                                 .execute(connection));
 
          assertEquals(LONG_VAL,
-                 new SqlBuilder("select longVal from AllTypes")
+                 SqlBuilder.sql("select longVal from AllTypes")
                          .queryForLong()
                          .execute(connection));
 
          assertEquals(DOUBLE_VAL,
-                 new SqlBuilder("select doubleVal from AllTypes")
+                 SqlBuilder.sql("select doubleVal from AllTypes")
                          .queryForDouble()
                          .execute(connection));
          assertEquals(FLOAT_VAL,
-                 new SqlBuilder("select floatVal from AllTypes")
+                 SqlBuilder.sql("select floatVal from AllTypes")
                          .queryForFloat()
                          .execute(connection));
          assertEquals(BOOL_VAL,
-                 new SqlBuilder("select boolVal from AllTypes")
+                 SqlBuilder.sql("select boolVal from AllTypes")
                          .queryForBoolean()
                          .execute(connection));
          assertEquals(SHORT_VAL,
-                 new SqlBuilder("select shortVal from AllTypes")
+                 SqlBuilder.sql("select shortVal from AllTypes")
                          .queryForShort()
                          .execute(connection));
          assertEquals(BYTE_VAL,
-                 new SqlBuilder("select byteVal from AllTypes")
+                 SqlBuilder.sql("select byteVal from AllTypes")
                          .queryForByte()
                          .execute(connection));
         assertArrayEquals(BYTES_VAL,
-                new SqlBuilder("select bytesVal from AllTypes")
+                SqlBuilder.sql("select bytesVal from AllTypes")
                         .queryForBytes()
                         .execute(connection));
          assertEquals(DATE_VAL,
-                 new SqlBuilder("select dateVal from AllTypes")
+                 SqlBuilder.sql("select dateVal from AllTypes")
                          .queryForDate()
                          .execute(connection));
          assertEquals(TIME_VAL,
-                 new SqlBuilder("select timeVal from AllTypes")
+                 SqlBuilder.sql("select timeVal from AllTypes")
                          .queryForTime()
                          .execute(connection));
          assertEquals(TIMESTAMP_VAL,
-                 new SqlBuilder("select timestampVal from AllTypes")
+                 SqlBuilder.sql("select timestampVal from AllTypes")
                          .queryForTimestamp()
                          .execute(connection));
          assertEquals(BIG_DECIMAL_VAL,
-                 new SqlBuilder("select bigDecimalVal from AllTypes")
+                 SqlBuilder.sql("select bigDecimalVal from AllTypes")
                          .queryForBigDecimal()
                          .execute(connection));
 
         assertThrows(JdbcSQLFeatureNotSupportedException.class, () -> {
             assertEquals(new URL(URL_STR),
-                    new SqlBuilder("select urlVal from AllTypes")
+                    SqlBuilder.sql("select urlVal from AllTypes")
                             .queryForURL()
                             .execute(connection));
         });
