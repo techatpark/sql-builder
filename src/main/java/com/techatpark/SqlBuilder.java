@@ -243,11 +243,8 @@ public final class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Boolean> queryForExists() {
-        return new SingleRecordQuery<>(null) {
-            @Override
-            public Boolean execute(final Connection connection)
-                    throws SQLException {
+    public Sql<Boolean> queryForExists() {
+        return ((connection)  -> {
                 boolean exists;
                 try (PreparedStatement ps = connection.prepareStatement(sql)) {
                     prepare(ps);
@@ -258,7 +255,8 @@ public final class SqlBuilder implements Sql<Integer> {
                 }
                 return exists;
             }
-        };
+        );
+
     }
 
     /**
@@ -465,6 +463,14 @@ public final class SqlBuilder implements Sql<Integer> {
          */
         private Batch(final SqlBuilder theSqlBuilder) {
             this.sqlBuilder = theSqlBuilder;
+        }
+
+        /**
+         * Adds JDBC Batch Builder.
+         * @return batch
+         */
+        public Batch addBatch() {
+            return new Batch(this.sqlBuilder);
         }
 
         /**
@@ -732,7 +738,7 @@ public final class SqlBuilder implements Sql<Integer> {
         }
     }
 
-    public class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
+    public final class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
 
         /**
          * Private constructor for creating a Query instance with
