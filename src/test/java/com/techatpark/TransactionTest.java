@@ -18,18 +18,18 @@ class TransactionTest extends BaseTest {
     void testTransaction() throws SQLException {
 
         Transaction
-            .begin(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
+            .begin(SqlBuilder.sql("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
                     .param("Inception")
                     .param("Christopher Nolan"))
             // Invalid Insert (title can not be null). Should Fail.
-            .thenApply(value -> new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
+            .thenApply(value -> SqlBuilder.sql("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
                     .param("Dunkrik")
                     .param("Christopher Nolan"))
             .commit(dataSource);
 
 
         Assertions.assertEquals(2,
-                new SqlBuilder("SELECT id, title, directed_by from movie")
+                SqlBuilder.sql("SELECT id, title, directed_by from movie")
                         .queryForList(BaseTest::mapMovie)
                         .execute(dataSource).size());
 
@@ -40,17 +40,17 @@ class TransactionTest extends BaseTest {
 
         Assertions.assertThrows(SQLException.class, () -> {
             Transaction
-                    .begin(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
+                    .begin(SqlBuilder.sql("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
                             .param("Inception")
                             .param("Christopher Nolan"))
                     // Invalid Insert (title can not be null). Should Fail.
-                    .thenApply(value -> new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )")
+                    .thenApply(value -> SqlBuilder.sql("INSERT INTO movie ( title ,directed_by ) VALUES ( NULL ,? )")
                             .param("Christopher Nolan"))
                     .commit(dataSource);
         });
 
         Assertions.assertEquals(0,
-                new SqlBuilder("SELECT id, title, directed_by from movie")
+                SqlBuilder.sql("SELECT id, title, directed_by from movie")
                 .queryForList(BaseTest::mapMovie)
                 .execute(dataSource).size());
 
@@ -107,7 +107,7 @@ class TransactionTest extends BaseTest {
 
         Assertions.assertThrows(SQLException.class, () -> {
             Transaction
-                    .begin(new SqlBuilder("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
+                    .begin(SqlBuilder.sql("INSERT INTO movie ( title ,directed_by ) VALUES ( ? ,? )")
                             .param("Inception")
                             .param("Christopher Nolan"))
                     .commit(dataSource1);

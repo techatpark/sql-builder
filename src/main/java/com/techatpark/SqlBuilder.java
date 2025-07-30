@@ -14,7 +14,7 @@ import java.util.List;
  * manage SQL queries more efficiently with less boilerplate code, supporting
  * both query execution and parameterized updates.
  */
-public class SqlBuilder implements Sql<Integer> {
+public final class SqlBuilder implements Sql<Integer> {
 
     /**
      * The SQL query to be executed.
@@ -26,11 +26,21 @@ public class SqlBuilder implements Sql<Integer> {
     private final List<ParamMapper> paramMappers;
 
     /**
+     * Builds Sql Builder from Sql.
+     *
+     * @param theSql the SQL query to be prepared and executed
+     * @return sqlBuilder
+     */
+    public static SqlBuilder sql(final String theSql) {
+        return new SqlBuilder(theSql);
+    }
+
+    /**
      * Constructor that initializes the SqlBuilder with a given SQL query.
      *
      * @param theSql the SQL query to be prepared and executed
      */
-    public SqlBuilder(final String theSql) {
+    private SqlBuilder(final String theSql) {
         this.sql = theSql;
         this.paramMappers = new ArrayList<>();
     }

@@ -35,7 +35,7 @@ class BaseTest {
 
     @BeforeEach
     void beforeEach() throws SQLException {
-        new SqlBuilder("""
+        SqlBuilder.sql("""
                 TRUNCATE TABLE movie
                 """)
                 .execute(dataSource);
