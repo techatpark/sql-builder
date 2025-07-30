@@ -466,6 +466,14 @@ public final class SqlBuilder implements Sql<Integer> {
         }
 
         /**
+         * Adds JDBC Batch Builder.
+         * @return batch
+         */
+        public Batch addBatch() {
+            return new Batch(this.sqlBuilder);
+        }
+
+        /**
          * executes the Batch.
          * @param dataSource
          */

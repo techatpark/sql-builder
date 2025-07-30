@@ -87,6 +87,9 @@ class SqlBuilderTest extends BaseTest {
                     .addBatch()
                         .param("Dunkrik")
                         .param("Nolan")
+                    .addBatch()
+                        .param("Dunkrik")
+                        .param("Nolan")
                     .executeBatch(dataSource);
         });
     }
