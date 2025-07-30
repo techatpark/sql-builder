@@ -39,6 +39,28 @@ class AllinAllTest extends BaseTest {
     static final String URL_STR = "http://example.com";
     private static final SqlBuilder ALL_RESULS_QUERY = SqlBuilder.sql("SELECT * FROM AllTypes");
 
+    private final SqlBuilder sqlBuilder = SqlBuilder.sql("""
+                INSERT INTO AllTypes
+                (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
+                dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal, nullVal)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """)
+            .param(STR_VAL)
+            .param(INT_VAL)
+            .param(LONG_VAL)
+            .param(DOUBLE_VAL)
+            .param(FLOAT_VAL)
+            .param(BOOL_VAL)
+            .param(SHORT_VAL)
+            .param(BYTE_VAL)
+            .param(DATE_VAL)
+            .param(TIME_VAL)
+            .param(TIMESTAMP_VAL)
+            .param(BIG_DECIMAL_VAL)
+            .param(BYTES_VAL)
+            .param(URL_STR)
+            .paramNull();
+
     private static AllTypesRecord mapRow(ResultSet rs) {
         try {
             return new AllTypesRecord(
@@ -67,6 +89,30 @@ class AllinAllTest extends BaseTest {
     void init() throws SQLException {
         SqlBuilder.sql("DELETE FROM AllTypes")
                 .execute(dataSource);
+    }
+
+    @Test
+    void testBatch() throws Exception {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            sqlBuilder
+                    .addBatch()
+                        .param(STR_VAL)
+                        .param(INT_VAL)
+                        .param(LONG_VAL)
+                        .param(DOUBLE_VAL)
+                        .param(FLOAT_VAL)
+                        .param(BOOL_VAL)
+                        .param(SHORT_VAL)
+                        .param(BYTE_VAL)
+                        .param(DATE_VAL)
+                        .param(TIME_VAL)
+                        .param(TIMESTAMP_VAL)
+                        .param(BIG_DECIMAL_VAL)
+                        .param(BYTES_VAL)
+                        .param(URL_STR)
+                        .paramNull()
+                    .executeBatch(dataSource);
+        });
     }
 
     @Test
@@ -113,28 +159,10 @@ class AllinAllTest extends BaseTest {
 
         final Connection connection = dataSource.getConnection();
 
-        SqlBuilder.sql("""
-                INSERT INTO AllTypes
-                (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
-                dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal, nullVal)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """)
-                .param(STR_VAL)
-                .param(INT_VAL)
-                .param(LONG_VAL)
-                .param(DOUBLE_VAL)
-                .param(FLOAT_VAL)
-                .param(BOOL_VAL)
-                .param(SHORT_VAL)
-                .param(BYTE_VAL)
-                .param(DATE_VAL)
-                .param(TIME_VAL)
-                .param(TIMESTAMP_VAL)
-                .param(BIG_DECIMAL_VAL)
-                .param(BYTES_VAL)
-                .param(URL_STR)
-                .paramNull()
-                .execute(connection);
+
+
+
+        sqlBuilder.execute(connection);
 
         AllTypesRecord record = ALL_RESULS_QUERY
                 .queryForOne(AllinAllTest::mapRow)
