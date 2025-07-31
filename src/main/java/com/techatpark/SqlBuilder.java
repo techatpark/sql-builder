@@ -477,7 +477,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * Adds JDBC Batch Builder.
          * @return batch
          */
-        public Batch addBatch() {
+        public NestedBatch addBatch() {
             return new NestedBatch(this, this.paramsPerBatch * 2);
         }
 
@@ -498,7 +498,7 @@ public final class SqlBuilder implements Sql<Integer> {
             return updatedRows;
         }
 
-        private void prepare(final PreparedStatement ps)
+        protected void prepare(final PreparedStatement ps)
                 throws SQLException {
             prepareWithMappers(ps, this.sqlBuilder
                     .paramMappers.subList(0, this.paramsPerBatch));
@@ -730,9 +730,17 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return batch
          */
         @Override
-        public Batch addBatch() {
-            return new NestedBatch(parent,
+        public NestedBatch addBatch() {
+            return new NestedBatch(this,
                     super.paramsPerBatch + this.startingFrom);
+        }
+
+        @Override
+        protected void prepare(final PreparedStatement ps)
+                throws SQLException {
+            this.parent.prepare(ps);
+
+            this.prepare(ps, this.startingFrom);
         }
         /**
          * executes the Batch.
@@ -745,10 +753,7 @@ public final class SqlBuilder implements Sql<Integer> {
             int[] updatedRows;
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement ps = connection.prepareStatement(sql)) {
-                parent.prepare(ps);
-
-                prepare(ps, this.startingFrom);
-
+                this.prepare(ps);
                 updatedRows = ps.executeBatch();
             }
             return updatedRows;

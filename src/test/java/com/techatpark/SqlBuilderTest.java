@@ -89,27 +89,44 @@ class SqlBuilderTest extends BaseTest {
                     .param("Nolan")
                 .executeBatch(dataSource);
 
-        Assertions.assertEquals(2,
-                SqlBuilder.sql("SELECT COUNT(id) from movie")
-                        .queryForInt()
-                        .execute(dataSource));
+        Assertions.assertEquals(2L,
+                IntStream.of(updatedRows).count());
 
         updatedRows = SqlBuilder
                 .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
-                    .param("Interstellar")
-                    .param("Nolan")
+                    .param("Jurasic Park")
+                    .param("Cameroon")
                 .addBatch()
-                    .param("Dunkrik")
-                    .param("Nolan")
+                    .param("Terminator 2")
+                    .param("Cameroon")
                 .addBatch()
-                    .param("Inception")
-                    .param("Nolan")
+                    .param("Titanic")
+                    .param("Cameroon")
+                .addBatch()
+                    .param("Avatar")
+                    .param("Cameroon")
                 .executeBatch(dataSource);
 
-        Assertions.assertEquals(5,
-                SqlBuilder.sql("SELECT COUNT(id) from movie")
-                        .queryForInt()
-                        .execute(dataSource));
+        Assertions.assertEquals(4,
+                IntStream.of(updatedRows).count());
+
+        List<Movie> movies = SqlBuilder.sql("SELECT id, title, directed_by from movie")
+                .queryForList(BaseTest::mapMovie)
+                .execute(dataSource);
+
+        Assertions.assertEquals("Interstellar",
+                movies.get(0).title());
+        Assertions.assertEquals("Dunkrik",
+                movies.get(1).title());
+        Assertions.assertEquals("Jurasic Park",
+                movies.get(2).title());
+        Assertions.assertEquals("Terminator 2",
+                movies.get(3).title());
+        Assertions.assertEquals("Titanic",
+                movies.get(4).title());
+        Assertions.assertEquals("Avatar",
+                movies.get(5).title());
+
     }
 
 
