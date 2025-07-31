@@ -478,7 +478,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return batch
          */
         public Batch addBatch() {
-            return new NestedBatch(this, this.paramsPerBatch);
+            return new NestedBatch(this, this.paramsPerBatch * 2);
         }
 
         /**
