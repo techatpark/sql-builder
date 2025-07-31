@@ -444,13 +444,13 @@ public final class SqlBuilder implements Sql<Integer> {
      * @return batch
      */
     public Batch addBatch() {
-        return this.new Batch(this);
+        return this.new Batch(this, paramMappers.size());
     }
 
     /**
      * JDBC Batch Builder.
      */
-    public final class Batch {
+    public class Batch {
 
         /**
          * SQL Builder for the query.
@@ -458,11 +458,19 @@ public final class SqlBuilder implements Sql<Integer> {
         private final SqlBuilder sqlBuilder;
 
         /**
+         * No ofParams in Batch Statement.
+         */
+        private final int paramsPerBatch;
+
+        /**
          * SQL Builder for the query.
          * @param theSqlBuilder
+         * @param theParamsPerBatch
          */
-        private Batch(final SqlBuilder theSqlBuilder) {
+        private Batch(final SqlBuilder theSqlBuilder,
+                      final int theParamsPerBatch) {
             this.sqlBuilder = theSqlBuilder;
+            this.paramsPerBatch = theParamsPerBatch;
         }
 
         /**
@@ -470,17 +478,46 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return batch
          */
         public Batch addBatch() {
-            return new Batch(this.sqlBuilder);
+            return new NestedBatch(this, this.paramsPerBatch);
         }
 
         /**
          * executes the Batch.
          * @param dataSource
+         * @return an array of update counts
          */
-        public void executeBatch(final DataSource dataSource) {
-            throw
-                    new UnsupportedOperationException(
-                            "Batch Not Supported Exception");
+        public int[] executeBatch(final DataSource dataSource)
+                throws SQLException {
+            int[] updatedRows;
+            try (Connection connection = dataSource.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(sql)) {
+
+                prepare(ps);
+                updatedRows = ps.executeBatch();
+            }
+            return updatedRows;
+        }
+
+        private void prepare(final PreparedStatement ps)
+                throws SQLException {
+            prepareWithMappers(ps, this.sqlBuilder
+                    .paramMappers.subList(0, this.paramsPerBatch));
+            ps.addBatch();
+
+            prepare(ps, this.paramsPerBatch);
+        }
+
+        /**
+         * Prepares SQL from startingFrom.
+         * @param ps
+         * @param startsFrom
+         * @throws SQLException
+         */
+        public void prepare(final PreparedStatement ps, final int startsFrom)
+                throws SQLException {
+            prepareWithMappers(ps, this.sqlBuilder.paramMappers
+                    .subList(startsFrom, startsFrom + this.paramsPerBatch));
+            ps.addBatch();
         }
         /**
          * Adds a parameter with a null.
@@ -667,6 +704,56 @@ public final class SqlBuilder implements Sql<Integer> {
         }
     }
 
+    public class NestedBatch extends Batch {
+        /**
+         * Parent Batch.
+         */
+        private final Batch parent;
+        /**
+         * Starting Point Index.
+         */
+        private final int startingFrom;
+
+        /**
+         * Creates Nested Batch from a Batch.
+         * @param theParent
+         * @param theStartingFrom
+         */
+        public NestedBatch(final Batch theParent, final int theStartingFrom) {
+            super(theParent.sqlBuilder, theParent.paramsPerBatch);
+            this.startingFrom = theStartingFrom;
+            this.parent = theParent;
+        }
+
+        /**
+         * Adds JDBC Batch Builder.
+         * @return batch
+         */
+        @Override
+        public Batch addBatch() {
+            return new NestedBatch(parent,
+                    super.paramsPerBatch + this.startingFrom);
+        }
+        /**
+         * executes the Batch.
+         * @param dataSource
+         * @return an array of update counts
+         */
+        @Override
+        public int[] executeBatch(final DataSource dataSource)
+                throws SQLException {
+            int[] updatedRows;
+            try (Connection connection = dataSource.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(sql)) {
+                parent.prepare(ps);
+
+                prepare(ps, this.startingFrom);
+
+                updatedRows = ps.executeBatch();
+            }
+            return updatedRows;
+        }
+    }
     /**
      * RowMapper is an interface that defines how to map each row of a ResultSet
      * to a Java object.
@@ -937,8 +1024,14 @@ public final class SqlBuilder implements Sql<Integer> {
      */
     private void prepare(final PreparedStatement ps)
             throws SQLException {
-        for (int i = 0; i < paramMappers.size(); i++) {
-            paramMappers.get(i).set(ps, (i + 1));
+        prepareWithMappers(ps, this.paramMappers);
+    }
+
+    private void prepareWithMappers(final PreparedStatement ps,
+                                    final List<ParamMapper> pMappers)
+            throws SQLException {
+        for (int i = 0; i < pMappers.size(); i++) {
+            pMappers.get(i).set(ps, (i + 1));
         }
     }
 

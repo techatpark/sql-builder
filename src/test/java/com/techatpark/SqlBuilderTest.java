@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -78,20 +79,38 @@ class SqlBuilderTest extends BaseTest {
     }
 
     @Test
-    void testBatch() {
-        assertThrows(UnsupportedOperationException.class, () -> {
-            SqlBuilder
-                    .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
-                        .param("Interstellar")
-                        .param("Nolan")
-                    .addBatch()
-                        .param("Dunkrik")
-                        .param("Nolan")
-                    .addBatch()
-                        .param("Dunkrik")
-                        .param("Nolan")
-                    .executeBatch(dataSource);
-        });
+    void testBatch() throws SQLException {
+        int[] updatedRows = SqlBuilder
+                .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                    .param("Interstellar")
+                    .param("Nolan")
+                .addBatch()
+                    .param("Dunkrik")
+                    .param("Nolan")
+                .executeBatch(dataSource);
+
+        Assertions.assertEquals(2,
+                SqlBuilder.sql("SELECT COUNT(id) from movie")
+                        .queryForInt()
+                        .execute(dataSource));
+
+        updatedRows = SqlBuilder
+                .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                    .param("Interstellar")
+                    .param("Nolan")
+                .addBatch()
+                    .param("Dunkrik")
+                    .param("Nolan")
+                .addBatch()
+                    .param("Inception")
+                    .param("Nolan")
+                .executeBatch(dataSource);
+
+        Assertions.assertEquals(5,
+                SqlBuilder.sql("SELECT COUNT(id) from movie")
+                        .queryForInt()
+                        .execute(dataSource));
     }
+
 
 }
