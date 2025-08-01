@@ -231,8 +231,7 @@ public final class SqlBuilder implements Sql<Integer> {
     @Override
     public Integer execute(final Connection connection) throws SQLException {
         int updatedRows;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            prepare(ps);
+        try (PreparedStatement ps = getStatement(connection, sql)) {
             updatedRows = ps.executeUpdate();
         }
         return updatedRows;
@@ -246,8 +245,8 @@ public final class SqlBuilder implements Sql<Integer> {
     public Sql<Boolean> queryForExists() {
         return ((connection)  -> {
                 boolean exists;
-                try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                    prepare(ps);
+                try (PreparedStatement ps = getStatement(connection, sql)) {
+
                     try (ResultSet rs =
                                  ps.executeQuery()) {
                         exists = rs.next();
@@ -483,8 +482,8 @@ public final class SqlBuilder implements Sql<Integer> {
             int[] updatedRows;
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement ps = connection.prepareStatement(sql)) {
-
                 prepare(ps);
+
                 updatedRows = ps.executeBatch();
             }
             return updatedRows;
@@ -784,8 +783,8 @@ public final class SqlBuilder implements Sql<Integer> {
         public T execute(final Connection connection) throws SQLException {
             T result = null;
             try (PreparedStatement ps
-                         = connection.prepareStatement(sql)) {
-                prepare(ps);
+                         = getStatement(connection, sql)) {
+
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         result = mapRow(rs);
@@ -821,8 +820,8 @@ public final class SqlBuilder implements Sql<Integer> {
         public List<T> execute(final Connection connection)
                 throws SQLException {
             List<T> result = new ArrayList<>();
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                prepare(ps);
+            try (PreparedStatement ps = getStatement(connection, sql)) {
+
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         result.add(mapRow(rs));
@@ -978,6 +977,21 @@ public final class SqlBuilder implements Sql<Integer> {
     private SqlBuilder param(final ParamMapper paramMapper) {
         this.paramMappers.add(paramMapper);
         return this;
+    }
+
+    /**
+     * Get the Statement for Query.
+     * @param connection
+     * @param theSql
+     * @return statement to be executed
+     * @throws SQLException
+     */
+    private PreparedStatement getStatement(final Connection connection,
+                                           final String theSql)
+            throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(theSql);
+        prepare(ps);
+        return ps;
     }
 
 }
