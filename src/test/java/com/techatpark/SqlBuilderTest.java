@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class SqlBuilderTest extends BaseTest {
 
     @BeforeEach

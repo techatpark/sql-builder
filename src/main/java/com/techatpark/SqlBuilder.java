@@ -444,18 +444,13 @@ public final class SqlBuilder implements Sql<Integer> {
      * @return batch
      */
     public Batch addBatch() {
-        return this.new Batch(this, paramMappers.size());
+        return this.new Batch(paramMappers.size());
     }
 
     /**
      * JDBC Batch Builder.
      */
-    public class Batch {
-
-        /**
-         * SQL Builder for the query.
-         */
-        private final SqlBuilder sqlBuilder;
+    public final class Batch {
 
         /**
          * No ofParams in Batch Statement.
@@ -464,12 +459,9 @@ public final class SqlBuilder implements Sql<Integer> {
 
         /**
          * SQL Builder for the query.
-         * @param theSqlBuilder
          * @param theParamsPerBatch
          */
-        private Batch(final SqlBuilder theSqlBuilder,
-                      final int theParamsPerBatch) {
-            this.sqlBuilder = theSqlBuilder;
+        private Batch(final int theParamsPerBatch) {
             this.paramsPerBatch = theParamsPerBatch;
         }
 
@@ -477,8 +469,8 @@ public final class SqlBuilder implements Sql<Integer> {
          * Adds JDBC Batch Builder.
          * @return batch
          */
-        public NestedBatch addBatch() {
-            return new NestedBatch(this, this.paramsPerBatch * 2);
+        public Batch addBatch() {
+            return this;
         }
 
         /**
@@ -498,26 +490,19 @@ public final class SqlBuilder implements Sql<Integer> {
             return updatedRows;
         }
 
-        protected void prepare(final PreparedStatement ps)
+        private void prepare(final PreparedStatement ps)
                 throws SQLException {
-            prepareWithMappers(ps, this.sqlBuilder
-                    .paramMappers.subList(0, this.paramsPerBatch));
-            ps.addBatch();
 
-            prepare(ps, this.paramsPerBatch);
-        }
+            int batchCount = (SqlBuilder.this.paramMappers.size()
+                    / this.paramsPerBatch);
 
-        /**
-         * Prepares SQL from startingFrom.
-         * @param ps
-         * @param startsFrom
-         * @throws SQLException
-         */
-        public void prepare(final PreparedStatement ps, final int startsFrom)
-                throws SQLException {
-            prepareWithMappers(ps, this.sqlBuilder.paramMappers
-                    .subList(startsFrom, startsFrom + this.paramsPerBatch));
-            ps.addBatch();
+            for (int i = 0; i < batchCount; i++) {
+                int from = i * this.paramsPerBatch;
+                prepareWithMappers(ps, SqlBuilder.this
+                        .paramMappers.subList(from,
+                                from + this.paramsPerBatch));
+                ps.addBatch();
+            }
         }
         /**
          * Adds a parameter with a null.
@@ -525,7 +510,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch paramNull() {
-            sqlBuilder.paramNull();
+            SqlBuilder.this.paramNull();
             return this;
         }
 
@@ -545,7 +530,7 @@ public final class SqlBuilder implements Sql<Integer> {
          */
         public Batch paramNull(final int sqlType,
                                final String typeName) {
-            sqlBuilder.paramNull(sqlType, typeName);
+            SqlBuilder.this.paramNull(sqlType, typeName);
             return this;
         }
         /**
@@ -556,7 +541,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Integer value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -566,7 +551,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Short value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -577,7 +562,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final String value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -588,7 +573,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Double value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
 
@@ -600,7 +585,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Boolean value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -611,7 +596,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Long value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -622,7 +607,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Date value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -633,7 +618,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Float value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -644,7 +629,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final byte[] value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -655,7 +640,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final BigDecimal value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -666,7 +651,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Time value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -677,7 +662,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Timestamp value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -688,7 +673,7 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Object value) {
-            sqlBuilder.param(value);
+            SqlBuilder.this.param(value);
             return this;
         }
         /**
@@ -699,66 +684,11 @@ public final class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public Batch param(final Object value, final int targetSqlType) {
-            sqlBuilder.param(value, targetSqlType);
+            SqlBuilder.this.param(value, targetSqlType);
             return this;
         }
     }
 
-    public class NestedBatch extends Batch {
-        /**
-         * Parent Batch.
-         */
-        private final Batch parent;
-        /**
-         * Starting Point Index.
-         */
-        private final int startingFrom;
-
-        /**
-         * Creates Nested Batch from a Batch.
-         * @param theParent
-         * @param theStartingFrom
-         */
-        public NestedBatch(final Batch theParent, final int theStartingFrom) {
-            super(theParent.sqlBuilder, theParent.paramsPerBatch);
-            this.startingFrom = theStartingFrom;
-            this.parent = theParent;
-        }
-
-        /**
-         * Adds JDBC Batch Builder.
-         * @return batch
-         */
-        @Override
-        public NestedBatch addBatch() {
-            return new NestedBatch(this,
-                    super.paramsPerBatch + this.startingFrom);
-        }
-
-        @Override
-        protected void prepare(final PreparedStatement ps)
-                throws SQLException {
-            this.parent.prepare(ps);
-
-            this.prepare(ps, this.startingFrom);
-        }
-        /**
-         * executes the Batch.
-         * @param dataSource
-         * @return an array of update counts
-         */
-        @Override
-        public int[] executeBatch(final DataSource dataSource)
-                throws SQLException {
-            int[] updatedRows;
-            try (Connection connection = dataSource.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(sql)) {
-                this.prepare(ps);
-                updatedRows = ps.executeBatch();
-            }
-            return updatedRows;
-        }
-    }
     /**
      * RowMapper is an interface that defines how to map each row of a ResultSet
      * to a Java object.
