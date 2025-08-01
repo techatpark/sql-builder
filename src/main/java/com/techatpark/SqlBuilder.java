@@ -890,9 +890,8 @@ public final class SqlBuilder implements Sql<Integer> {
         @Override
         public T execute(final Connection connection) throws SQLException {
             T result = null;
-            try (PreparedStatement ps = connection.prepareStatement(sql,
+            try (PreparedStatement ps = getStatement(connection, sql,
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                prepare(ps);
                 ps.executeUpdate();
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -933,9 +932,8 @@ public final class SqlBuilder implements Sql<Integer> {
         public List<T> execute(final Connection connection)
                 throws SQLException {
             List<T> result = new ArrayList<>();
-            try (PreparedStatement ps = connection.prepareStatement(sql,
+            try (PreparedStatement ps = getStatement(connection, sql,
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                prepare(ps);
                 ps.executeUpdate();
                 try (ResultSet rs =
                             ps.getGeneratedKeys()) {
@@ -990,6 +988,24 @@ public final class SqlBuilder implements Sql<Integer> {
                                            final String theSql)
             throws SQLException {
         PreparedStatement ps = connection.prepareStatement(theSql);
+        prepare(ps);
+        return ps;
+    }
+
+    /**
+     * Get the Statement for Query.
+     * @param connection
+     * @param theSql
+     * @param resultSetType
+     * @return statement to be executed
+     * @throws SQLException
+     */
+    private PreparedStatement getStatement(final Connection connection,
+                                           final String theSql,
+                                           final int resultSetType)
+            throws SQLException {
+        PreparedStatement ps = connection
+                .prepareStatement(theSql, resultSetType);
         prepare(ps);
         return ps;
     }
