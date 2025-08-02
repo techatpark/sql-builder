@@ -443,7 +443,7 @@ public final class SqlBuilder implements Sql<Integer> {
      * @return batch
      */
     public Batch addBatch() {
-        return this.new Batch(paramMappers.size());
+        return this.new Batch();
     }
 
     /**
@@ -462,12 +462,11 @@ public final class SqlBuilder implements Sql<Integer> {
 
         /**
          * SQL Builder for the query.
-         * @param theParamsPerBatch
          */
 
-        private Batch(final int theParamsPerBatch) {
-            this.paramsPerBatch = theParamsPerBatch;
-            this.capacity = 2 * theParamsPerBatch;
+        private Batch() {
+            this.paramsPerBatch = SqlBuilder.this.paramMappers.size();
+            this.capacity = 2 * paramsPerBatch;
         }
 
         /**
