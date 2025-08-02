@@ -73,19 +73,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Boolean> queryForExists() {
-        return ((connection)  -> {
-                boolean exists;
-                try (PreparedStatement ps = getStatement(connection, sql)) {
-
-                    try (ResultSet rs =
-                                 ps.executeQuery()) {
-                        exists = rs.next();
-                    }
-                }
-                return exists;
-            }
-        );
-
+        return this::exists;
     }
 
     /**
@@ -268,12 +256,35 @@ public sealed class SqlBuilder implements Sql<Integer> {
         return this.new MultipleRecordQuery<>(rowMapper);
     }
 
-    private <T> T getResult(final Query<T> query,
+    /**
+     * Checkes if Record Exists.
+     * @param connection
+     * @return exists
+     * @throws SQLException
+     */
+    protected boolean exists(final Connection connection) throws SQLException {
+        boolean exists;
+        try (PreparedStatement ps = getStatement(connection, sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                exists = rs.next();
+            }
+        }
+        return exists;
+    }
+
+    /**
+     * Get Result for a Query.
+     * @param query
+     * @param connection
+     * @return result
+     * @param <T>
+     * @throws SQLException
+     */
+    protected <T> T getResult(final Query<T> query,
                         final Connection connection) throws SQLException {
         T result = null;
         try (PreparedStatement ps
                      = getStatement(connection, sql)) {
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     result = query.mapRow(rs);
@@ -282,7 +293,70 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
         return result;
     }
-
+    /**
+     * Get Result as a List for a Query.
+     * @param query
+     * @param connection
+     * @return result
+     * @param <T>
+     * @throws SQLException
+     */
+    protected <T> List<T> getResultAsList(final Query<T> query,
+                        final Connection connection) throws SQLException {
+        List<T> result = new ArrayList<>();
+        try (PreparedStatement ps = getStatement(connection, sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    result.add(query.mapRow(rs));
+                }
+            }
+        }
+        return result;
+    }
+    /**
+     * Get Genereted Keys for a Query.
+     * @param query
+     * @param connection
+     * @return result
+     * @param <T>
+     * @throws SQLException
+     */
+    protected <T> T getGeneretedKeys(final Query<T> query,
+                             final Connection connection) throws SQLException {
+        T result = null;
+        try (PreparedStatement ps = getStatement(connection, sql,
+                java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    result = query.mapRow(rs);
+                }
+            }
+        }
+        return result;
+    }
+    /**
+     * Get Genereted Keys as List for a Query.
+     * @param query
+     * @param connection
+     * @return result
+     * @param <T>
+     * @throws SQLException
+     */
+    protected <T> List<T> getGeneretedKeysAsList(final Query<T> query,
+                         final Connection connection) throws SQLException {
+        List<T> result = new ArrayList<>();
+        try (PreparedStatement ps = getStatement(connection, sql,
+                java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                while (rs.next()) {
+                    result.add(query.mapRow(rs));
+                }
+            }
+        }
+        return result;
+    }
 
     /**
      * RowMapper is an interface that defines how to map each row of a ResultSet
@@ -379,7 +453,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         public T execute(final Connection connection) throws SQLException {
             return getResult(this, connection);
         }
-
     }
 
     public final class MultipleRecordQuery<T>
@@ -406,16 +479,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         @Override
         public List<T> execute(final Connection connection)
                 throws SQLException {
-            List<T> result = new ArrayList<>();
-            try (PreparedStatement ps = getStatement(connection, sql)) {
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        result.add(mapRow(rs));
-                    }
-                }
-            }
-            return result;
+            return getResultAsList(this, connection);
         }
     }
 
@@ -476,17 +540,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         @Override
         public T execute(final Connection connection) throws SQLException {
-            T result = null;
-            try (PreparedStatement ps = getStatement(connection, sql,
-                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        result = mapRow(rs);
-                    }
-                }
-            }
-            return result;
+            return getGeneretedKeys(this, connection);
         }
     }
 
@@ -518,18 +572,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         @Override
         public List<T> execute(final Connection connection)
                 throws SQLException {
-            List<T> result = new ArrayList<>();
-            try (PreparedStatement ps = getStatement(connection, sql,
-                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                ps.executeUpdate();
-                try (ResultSet rs =
-                            ps.getGeneratedKeys()) {
-                    while (rs.next()) {
-                        result.add(mapRow(rs));
-                    }
-                }
-            }
-            return result;
+            return getGeneretedKeysAsList(this, connection);
         }
     }
     /**
@@ -823,14 +866,12 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @return batch
              */
             public Batch addBatch() throws SQLException {
-
                 if (PreparedSqlBuilder.super.paramMappers.size() == capacity) {
                     capacity = capacity + paramsPerBatch;
                     return this;
                 }
                 throw new SQLException(
-                        "Parameters do not match with first set of parameters"
-                );
+                        "Parameters do not match with first set of parameters");
             }
 
             /**
@@ -1049,9 +1090,5 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 return this;
             }
         }
-
-
     }
-
 }
-
