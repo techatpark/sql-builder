@@ -35,7 +35,7 @@ public final class SqlBuilder implements Sql<Integer> {
      * @param theSql the SQL query to be prepared and executed
      * @return sqlBuilder
      */
-    public static SqlBuilder sql(final String theSql) {
+    public static SqlBuilder prepareSql(final String theSql) {
         return new SqlBuilder(theSql);
     }
 

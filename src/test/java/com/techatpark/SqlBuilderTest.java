@@ -12,14 +12,14 @@ class SqlBuilderTest extends BaseTest {
 
     @BeforeEach
     void init() throws SQLException {
-        SqlBuilder.sql("DELETE FROM movie")
+        SqlBuilder.prepareSql("DELETE FROM movie")
                 .execute(dataSource);
     }
 
     @Test
-    void testSQL() throws SQLException {
+    void testPrepareSql() throws SQLException {
         int updateRows =
-                SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
                         .param("Dunkirk")
                         .param("Nolan")
                         .param("Inception")
@@ -28,13 +28,13 @@ class SqlBuilderTest extends BaseTest {
 
         Assertions.assertEquals(2, updateRows);
 
-        long generetedId = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+        long generetedId = SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                 .param("Interstellar")
                 .param("Nolan")
                 .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
                 .execute(dataSource);
 
-        List<Movie> movies = SqlBuilder.sql("SELECT id, title, directed_by from movie")
+        List<Movie> movies = SqlBuilder.prepareSql("SELECT id, title, directed_by from movie")
                 .queryForList(BaseTest::mapMovie)
                 .execute(dataSource);
 
@@ -42,12 +42,12 @@ class SqlBuilderTest extends BaseTest {
 
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
-        Assertions.assertTrue(SqlBuilder.sql(sql)
+        Assertions.assertTrue(SqlBuilder.prepareSql(sql)
                 .param(generetedId)
                 .queryForExists()
                 .execute(dataSource));
 
-        List<Long> generetedIds = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+        List<Long> generetedIds = SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
                 .param("Catch Me If you Can")
                 .param("Cameroon")
                 .param("Jurrasic Park")
@@ -56,18 +56,18 @@ class SqlBuilderTest extends BaseTest {
                 .execute(dataSource);
 
         for (Long aLong : generetedIds) {
-            Assertions.assertTrue(SqlBuilder.sql(sql)
+            Assertions.assertTrue(SqlBuilder.prepareSql(sql)
                     .param(aLong)
                     .queryForExists()
                     .execute(dataSource));
         }
 
         Assertions.assertEquals(5,
-                SqlBuilder.sql("SELECT COUNT(id) from movie")
+                SqlBuilder.prepareSql("SELECT COUNT(id) from movie")
                         .queryForInt()
                         .execute(dataSource));
 
-        Movie movie = SqlBuilder.sql(sql)
+        Movie movie = SqlBuilder.prepareSql(sql)
                                 .param(1)
                             .queryForOne(BaseTest::mapMovie)
                             .execute(dataSource);
@@ -80,7 +80,7 @@ class SqlBuilderTest extends BaseTest {
     @Test
     void testBatch() throws SQLException {
         int[] updatedRows = SqlBuilder
-                .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                     .param("Interstellar")
                     .param("Nolan")
                 .addBatch()
@@ -92,7 +92,7 @@ class SqlBuilderTest extends BaseTest {
                 IntStream.of(updatedRows).count());
 
         updatedRows = SqlBuilder
-                .sql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                     .param("Jurasic Park")
                     .param("Cameroon")
                 .addBatch()
@@ -109,7 +109,7 @@ class SqlBuilderTest extends BaseTest {
         Assertions.assertEquals(4,
                 IntStream.of(updatedRows).count());
 
-        List<Movie> movies = SqlBuilder.sql("SELECT id, title, directed_by from movie")
+        List<Movie> movies = SqlBuilder.prepareSql("SELECT id, title, directed_by from movie")
                 .queryForList(BaseTest::mapMovie)
                 .execute(dataSource);
 
