@@ -268,6 +268,21 @@ public sealed class SqlBuilder implements Sql<Integer> {
         return this.new MultipleRecordQuery<>(rowMapper);
     }
 
+    private <T> T getResult(final Query<T> query,
+                        final Connection connection) throws SQLException {
+        T result = null;
+        try (PreparedStatement ps
+                     = getStatement(connection, sql)) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    result = query.mapRow(rs);
+                }
+            }
+        }
+        return result;
+    }
+
 
     /**
      * RowMapper is an interface that defines how to map each row of a ResultSet
@@ -362,18 +377,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         @Override
         public T execute(final Connection connection) throws SQLException {
-            T result = null;
-            try (PreparedStatement ps
-                         = getStatement(connection, sql)) {
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        result = mapRow(rs);
-                    }
-                }
-            }
-            return result;
+            return getResult(this, connection);
         }
+
     }
 
     public final class MultipleRecordQuery<T>
