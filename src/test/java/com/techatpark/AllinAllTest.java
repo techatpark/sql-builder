@@ -119,6 +119,36 @@ class AllinAllTest extends BaseTest {
                 .size());
 
     }
+    @Test
+    void testInvalidBatch() throws Exception {
+        assertThrows(SQLException.class, () -> {
+            // If we give less parameter
+            sqlBuilder
+                    .addBatch()
+                    .param(STR_VAL)
+                    .executeBatch(dataSource);
+            // if we give more parameters
+            sqlBuilder
+                    .addBatch()
+                    .param(STR_VAL)
+                    .param(INT_VAL)
+                    .param(LONG_VAL)
+                    .param(DOUBLE_VAL)
+                    .param(FLOAT_VAL)
+                    .param(BOOL_VAL)
+                    .param(SHORT_VAL)
+                    .param(BYTE_VAL)
+                    .param(DATE_VAL)
+                    .param(TIME_VAL)
+                    .param(TIMESTAMP_VAL)
+                    .param(BIG_DECIMAL_VAL)
+                    .param(BYTES_VAL)
+                    .param(URL_STR)
+                    .paramNull()
+                    .param(STR_VAL) // 1 More
+                    .executeBatch(dataSource);
+        });
+    }
 
     @Test
     void testEmptyResult() throws Exception {
