@@ -39,7 +39,7 @@ class AllinAllTest extends BaseTest {
     static final String URL_STR = "http://example.com";
     private static final SqlBuilder ALL_RESULS_QUERY = SqlBuilder.prepareSql("SELECT * FROM AllTypes");
 
-    private final SqlBuilder sqlBuilder = SqlBuilder.prepareSql("""
+    private final SqlBuilder.PreparedSqlBuilder sqlBuilder = SqlBuilder.prepareSql("""
                 INSERT INTO AllTypes
                 (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
                 dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal, nullVal)
@@ -93,7 +93,6 @@ class AllinAllTest extends BaseTest {
 
     @Test
     void testBatch() throws Exception {
-
         sqlBuilder
                 .addBatch()
                     .param(STR_VAL)

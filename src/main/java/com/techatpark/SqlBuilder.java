@@ -50,176 +50,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
     }
 
     /**
-     * Adds a parameter with a null.
-     *
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder paramNull() {
-        return param((ps, index) -> ps.setObject(index, null));
-    }
-
-    /**
-     * Adds a parameter with a specific SQL type and type name as `NULL`
-     * to the SQL query.
-     * This method is used when the SQL parameter should be set to `NULL`
-     * for types
-     * that require a type name in addition to the SQL type, such as SQL
-     * `STRUCT` or `ARRAY`.
-     *
-     * @param sqlType  the SQL type of the parameter,
- *                 as defined in {@link java.sql.Types}
-     * @param typeName the type name of the parameter,
- *                 used for SQL types that require specific type information
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder paramNull(final int sqlType, final String typeName) {
-        return param((ps, index) -> ps.setNull(index, sqlType, typeName));
-    }
-
-    /**
-     * Adds a parameter to the SQL query. The method allows chaining and is used
-     * to bind values to placeholders in the SQL query.
-     *
-     * @param value the value of the parameter to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Integer value) {
-        return param((ps, index) -> ps.setInt(index, value));
-    }
-
-    /**
-     * Adds a Short parameter to the SQL query.
-     *
-     * @param value the Short value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Short value) {
-        return param((ps, index) -> ps.setShort(index, value));
-    }
-
-    /**
-     * Adds a parameter to the SQL query. The method allows chaining and is used
-     * to bind values to placeholders in the SQL query.
-     *
-     * @param value the value of the parameter to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final String value) {
-        return param((ps, index) -> ps.setString(index, value));
-    }
-
-    /**
-     * Adds a Double parameter to the SQL query.
-     *
-     * @param value the Double value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Double value) {
-        return param((ps, index) -> ps.setDouble(index, value));
-    }
-
-    /**
-     * Adds a Boolean parameter to the SQL query.
-     *
-     * @param value the Boolean value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Boolean value) {
-        return param((ps, index) -> ps.setBoolean(index, value));
-    }
-
-    /**
-     * Adds a Long parameter to the SQL query.
-     *
-     * @param value the Long value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Long value) {
-        return param((ps, index) -> ps.setLong(index, value));
-    }
-
-    /**
-     * Adds a Date parameter to the SQL query.
-     *
-     * @param value the Date value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final java.sql.Date value) {
-        return param((ps, index) -> ps.setDate(index, value));
-    }
-
-    /**
-     * Adds a Float parameter to the SQL query.
-     *
-     * @param value the Float value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Float value) {
-        return param((ps, index) -> ps.setFloat(index, value));
-    }
-
-    /**
-     * Adds a byte array parameter to the SQL query.
-     *
-     * @param value the byte array to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final byte[] value) {
-        return param((ps, index) -> ps.setBytes(index, value));
-    }
-
-    /**
-     * Adds a BigDecimal parameter to the SQL query.
-     *
-     * @param value the BigDecimal value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final BigDecimal value) {
-        return param((ps, index) -> ps.setBigDecimal(index, value));
-    }
-
-    /**
-     * Adds a Time parameter to the SQL query.
-     *
-     * @param value the Time value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final java.sql.Time value) {
-        return param((ps, index) -> ps.setTime(index, value));
-    }
-
-    /**
-     * Adds a Timestamp parameter to the SQL query.
-     *
-     * @param value the Timestamp value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final java.sql.Timestamp value) {
-        return param((ps, index) -> ps.setTimestamp(index, value));
-    }
-
-    /**
-     * Adds an Object parameter to the SQL query.
-     *
-     * @param value the Object value to be added
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Object value) {
-        return param((ps, index) -> ps.setObject(index, value));
-    }
-
-    /**
-     * Adds an Object parameter to the SQL query with targetSqlType.
-     *
-     * @param value the Object value to be added
-     * @param targetSqlType the targeted SqlType.
-     * @return the current SqlBuilder instance, for method chaining
-     */
-    public SqlBuilder param(final Object value, final int targetSqlType) {
-        return param((ps, index) -> ps.setObject(index, value, targetSqlType));
-    }
-
-    /**
      * Executes an update (such as INSERT, UPDATE, DELETE) using the prepared
      * SQL query
      * and the bound parameters.
@@ -438,267 +268,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         return this.new MultipleRecordQuery<>(rowMapper);
     }
 
-    /**
-     * Builds JDBC Batch Builder.
-     * @return batch
-     */
-    public Batch addBatch() {
-        return this.new Batch();
-    }
-
-    /**
-     * JDBC Batch Builder.
-     */
-    public final class Batch {
-
-        /**
-         * No ofParams in Batch Statement.
-         */
-        private final int paramsPerBatch;
-        /**
-         * No ofParams in Batch Statement.
-         */
-        private int capacity;
-
-        /**
-         * SQL Builder for the query.
-         */
-
-        private Batch() {
-            this.paramsPerBatch = SqlBuilder.this.paramMappers.size();
-            this.capacity = 2 * paramsPerBatch;
-        }
-
-        /**
-         * Adds JDBC Batch Builder.
-         * @return batch
-         */
-        public Batch addBatch() throws SQLException {
-
-            if (SqlBuilder.this.paramMappers.size() == capacity) {
-                capacity = capacity + paramsPerBatch;
-                return this;
-            }
-            throw new SQLException(
-                    "Parameters do not match with first set of parameters"
-            );
-        }
-
-        /**
-         * executes the Batch.
-         * @param dataSource
-         * @return an array of update counts
-         */
-        public int[] executeBatch(final DataSource dataSource)
-                throws SQLException {
-            int[] updatedRows;
-            try (Connection connection = dataSource.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(sql)) {
-                prepare(ps);
-
-                updatedRows = ps.executeBatch();
-            }
-            return updatedRows;
-        }
-
-        private void prepare(final PreparedStatement ps)
-                throws SQLException {
-
-            int batchCount = (SqlBuilder.this.paramMappers.size()
-                    / this.paramsPerBatch);
-
-            for (int i = 0; i < batchCount; i++) {
-                int from = i * this.paramsPerBatch;
-                prepareWithMappers(ps, SqlBuilder.this
-                        .paramMappers.subList(from,
-                                from + this.paramsPerBatch));
-                ps.addBatch();
-            }
-        }
-        /**
-         * Adds a parameter with a null.
-         *
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch paramNull() {
-            SqlBuilder.this.paramNull();
-            return this;
-        }
-
-        /**
-         * Adds a parameter with a specific SQL type and type name as `NULL`
-         * to the SQL query.
-         * This method is used when the SQL parameter should be set to `NULL`
-         * for types
-         * that require a type name in addition to the SQL type, such as SQL
-         * `STRUCT` or `ARRAY`.
-         *
-         * @param sqlType  the SQL type of the parameter,
-         *                 as defined in {@link java.sql.Types}
-         * @param typeName the type name of the parameter,
- *                 used for SQL types that require specific type information
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch paramNull(final int sqlType,
-                               final String typeName) {
-            SqlBuilder.this.paramNull(sqlType, typeName);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Integer value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a Short parameter to the SQL query.
-         *
-         * @param value the Short value to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Short value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final String value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining and
-         * is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Double value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Boolean value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * tand is used o bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Long value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Date value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Float value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final byte[] value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final BigDecimal value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Time value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Timestamp value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds a parameter to the SQL query. The method allows chaining
-         * and is used to bind values to placeholders in the SQL query.
-         *
-         * @param value the value of the parameter to be added
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Object value) {
-            SqlBuilder.this.param(value);
-            return this;
-        }
-        /**
-         * Adds an Object parameter to the SQL query with targetSqlType.
-         *
-         * @param value the Object value to be added
-         * @param targetSqlType the targeted SqlType.
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public Batch param(final Object value, final int targetSqlType) {
-            SqlBuilder.this.param(value, targetSqlType);
-            return this;
-        }
-    }
 
     /**
      * RowMapper is an interface that defines how to map each row of a ResultSet
@@ -971,22 +540,18 @@ public sealed class SqlBuilder implements Sql<Integer> {
         prepareWithMappers(ps, this.paramMappers);
     }
 
-    private void prepareWithMappers(final PreparedStatement ps,
+    /**
+     * Prepare Statement with Parameters.
+     * @param ps
+     * @param pMappers
+     * @throws SQLException
+     */
+    protected void prepareWithMappers(final PreparedStatement ps,
                                     final List<ParamMapper> pMappers)
             throws SQLException {
         for (int i = 0; i < pMappers.size(); i++) {
             pMappers.get(i).set(ps, (i + 1));
         }
-    }
-
-    /**
-     * Add new Param Mapper.
-     * @param paramMapper
-     * @return sqlbuilder
-     */
-    private SqlBuilder param(final ParamMapper paramMapper) {
-        this.paramMappers.add(paramMapper);
-        return this;
     }
 
     /**
@@ -1031,6 +596,455 @@ public sealed class SqlBuilder implements Sql<Integer> {
         private PreparedSqlBuilder(final String theSql) {
             super(theSql);
         }
+
+        /**
+         * Adds a parameter with a null.
+         *
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder paramNull() {
+            return param((ps, index) -> ps.setObject(index, null));
+        }
+
+        /**
+         * Adds a parameter with a specific SQL type and type name as `NULL`
+         * to the SQL query.
+         * This method is used when the SQL parameter should be set to `NULL`
+         * for types
+         * that require a type name in addition to the SQL type, such as SQL
+         * `STRUCT` or `ARRAY`.
+         *
+         * @param sqlType  the SQL type of the parameter,
+         *                 as defined in {@link java.sql.Types}
+         * @param typeName the type name of the parameter,
+*                 used for SQL types that require specific type information
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder paramNull(final int sqlType,
+                                    final String typeName) {
+            return param((ps, index) -> ps.setNull(index, sqlType, typeName));
+        }
+
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Integer value) {
+            return param((ps, index) -> ps.setInt(index, value));
+        }
+
+        /**
+         * Adds a Short parameter to the SQL query.
+         *
+         * @param value the Short value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Short value) {
+            return param((ps, index) -> ps.setShort(index, value));
+        }
+
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final String value) {
+            return param((ps, index) -> ps.setString(index, value));
+        }
+
+        /**
+         * Adds a Double parameter to the SQL query.
+         *
+         * @param value the Double value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Double value) {
+            return param((ps, index) -> ps.setDouble(index, value));
+        }
+
+        /**
+         * Adds a Boolean parameter to the SQL query.
+         *
+         * @param value the Boolean value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Boolean value) {
+            return param((ps, index) -> ps.setBoolean(index, value));
+        }
+
+        /**
+         * Adds a Long parameter to the SQL query.
+         *
+         * @param value the Long value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Long value) {
+            return param((ps, index) -> ps.setLong(index, value));
+        }
+
+        /**
+         * Adds a Date parameter to the SQL query.
+         *
+         * @param value the Date value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final java.sql.Date value) {
+            return param((ps, index) -> ps.setDate(index, value));
+        }
+
+        /**
+         * Adds a Float parameter to the SQL query.
+         *
+         * @param value the Float value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Float value) {
+            return param((ps, index) -> ps.setFloat(index, value));
+        }
+
+        /**
+         * Adds a byte array parameter to the SQL query.
+         *
+         * @param value the byte array to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final byte[] value) {
+            return param((ps, index) -> ps.setBytes(index, value));
+        }
+
+        /**
+         * Adds a BigDecimal parameter to the SQL query.
+         *
+         * @param value the BigDecimal value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final BigDecimal value) {
+            return param((ps, index) -> ps.setBigDecimal(index, value));
+        }
+
+        /**
+         * Adds a Time parameter to the SQL query.
+         *
+         * @param value the Time value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final java.sql.Time value) {
+            return param((ps, index) -> ps.setTime(index, value));
+        }
+
+        /**
+         * Adds a Timestamp parameter to the SQL query.
+         *
+         * @param value the Timestamp value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final java.sql.Timestamp value) {
+            return param((ps, index) -> ps.setTimestamp(index, value));
+        }
+
+        /**
+         * Adds an Object parameter to the SQL query.
+         *
+         * @param value the Object value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Object value) {
+            return param((ps, index) -> ps.setObject(index, value));
+        }
+
+        /**
+         * Adds an Object parameter to the SQL query with targetSqlType.
+         *
+         * @param value the Object value to be added
+         * @param targetSqlType the targeted SqlType.
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public PreparedSqlBuilder param(final Object value,
+                                        final int targetSqlType) {
+            return param((ps, index)
+                    -> ps.setObject(index, value, targetSqlType));
+        }
+
+        /**
+         * Add new Param Mapper.
+         * @param paramMapper
+         * @return sqlbuilder
+         */
+        private PreparedSqlBuilder param(final ParamMapper paramMapper) {
+            super.paramMappers.add(paramMapper);
+            return this;
+        }
+
+        /**
+         * Builds JDBC Batch Builder.
+         * @return batch
+         */
+        public Batch addBatch() {
+            return this.new Batch();
+        }
+
+        /**
+         * JDBC Batch Builder.
+         */
+        public final class Batch {
+
+            /**
+             * No ofParams in Batch Statement.
+             */
+            private final int paramsPerBatch;
+            /**
+             * No ofParams in Batch Statement.
+             */
+            private int capacity;
+
+            /**
+             * SQL Builder for the query.
+             */
+
+            private Batch() {
+                this.paramsPerBatch = PreparedSqlBuilder
+                        .super.paramMappers.size();
+                this.capacity = 2 * paramsPerBatch;
+            }
+
+            /**
+             * Adds JDBC Batch Builder.
+             * @return batch
+             */
+            public Batch addBatch() throws SQLException {
+
+                if (PreparedSqlBuilder.super.paramMappers.size() == capacity) {
+                    capacity = capacity + paramsPerBatch;
+                    return this;
+                }
+                throw new SQLException(
+                        "Parameters do not match with first set of parameters"
+                );
+            }
+
+            /**
+             * executes the Batch.
+             * @param dataSource
+             * @return an array of update counts
+             */
+            public int[] executeBatch(final DataSource dataSource)
+                    throws SQLException {
+                int[] updatedRows;
+                try (Connection connection = dataSource.getConnection();
+                     PreparedStatement ps = connection
+                             .prepareStatement(PreparedSqlBuilder.super.sql)) {
+                    prepare(ps);
+
+                    updatedRows = ps.executeBatch();
+                }
+                return updatedRows;
+            }
+
+            private void prepare(final PreparedStatement ps)
+                    throws SQLException {
+
+                int batchCount = (PreparedSqlBuilder.super.paramMappers.size()
+                        / this.paramsPerBatch);
+
+                for (int i = 0; i < batchCount; i++) {
+                    int from = i * this.paramsPerBatch;
+                    prepareWithMappers(ps, PreparedSqlBuilder.super
+                            .paramMappers.subList(from,
+                                    from + this.paramsPerBatch));
+                    ps.addBatch();
+                }
+            }
+            /**
+             * Adds a parameter with a null.
+             *
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch paramNull() {
+                PreparedSqlBuilder.this.paramNull();
+                return this;
+            }
+
+            /**
+             * Adds a parameter with a specific SQL type and type name as `NULL`
+             * to the SQL query.
+             * This method is used when the SQL parameter should be set to
+             * `NULL`for types
+             * that require a type name in addition to the SQL type, such as SQL
+             * `STRUCT` or `ARRAY`.
+             *
+             * @param sqlType  the SQL type of the parameter,
+     *                 as defined in {@link java.sql.Types}
+             * @param typeName the type name of the parameter,
+     *                 used for SQL types that require specific type information
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch paramNull(final int sqlType,
+                                   final String typeName) {
+                PreparedSqlBuilder.this.paramNull(sqlType, typeName);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Integer value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a Short parameter to the SQL query.
+             *
+             * @param value the Short value to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Short value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final String value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining and
+             * is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Double value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Boolean value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * tand is used o bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Long value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Date value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Float value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final byte[] value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final BigDecimal value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Time value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Timestamp value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Object value) {
+                PreparedSqlBuilder.this.param(value);
+                return this;
+            }
+            /**
+             * Adds an Object parameter to the SQL query with targetSqlType.
+             *
+             * @param value the Object value to be added
+             * @param targetSqlType the targeted SqlType.
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public Batch param(final Object value, final int targetSqlType) {
+                PreparedSqlBuilder.this.param(value, targetSqlType);
+                return this;
+            }
+        }
+
+
     }
 
 }
