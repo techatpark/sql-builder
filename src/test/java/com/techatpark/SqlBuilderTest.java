@@ -76,6 +76,7 @@ class SqlBuilderTest extends BaseTest {
 
     }
 
+
     @Test
     void testBatch() throws SQLException {
         int[] updatedRows = SqlBuilder
