@@ -455,6 +455,9 @@ public final class SqlBuilder implements Sql<Integer> {
          * No ofParams in Batch Statement.
          */
         private final int paramsPerBatch;
+        /**
+         * No ofParams in Batch Statement.
+         */
         private int capacity;
 
         /**
@@ -477,7 +480,9 @@ public final class SqlBuilder implements Sql<Integer> {
                 capacity = capacity + paramsPerBatch;
                 return this;
             }
-            throw new SQLException("Parameters do not match with first set of parameters");
+            throw new SQLException(
+                    "Parameters do not match with first set of parameters"
+            );
         }
 
         /**

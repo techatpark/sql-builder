@@ -76,6 +76,7 @@ class SqlBuilderTest extends BaseTest {
 
     }
 
+
     @Test
     void testBatch() throws SQLException {
         int[] updatedRows = SqlBuilder
@@ -99,9 +100,13 @@ class SqlBuilderTest extends BaseTest {
                     .param("Cameroon")
                 .addBatch()
                     .param("Titanic")
+                    .param("Cameroon")
+                .addBatch()
+                    .param("Avatar")
+                    .param("Cameroon")
                 .executeBatch(dataSource);
 
-        Assertions.assertEquals(3,
+        Assertions.assertEquals(4,
                 IntStream.of(updatedRows).count());
 
         List<Movie> movies = SqlBuilder.sql("SELECT id, title, directed_by from movie")
