@@ -455,21 +455,29 @@ public final class SqlBuilder implements Sql<Integer> {
          * No ofParams in Batch Statement.
          */
         private final int paramsPerBatch;
+        private int capacity;
 
         /**
          * SQL Builder for the query.
          * @param theParamsPerBatch
          */
+
         private Batch(final int theParamsPerBatch) {
             this.paramsPerBatch = theParamsPerBatch;
+            this.capacity = 2 * theParamsPerBatch;
         }
 
         /**
          * Adds JDBC Batch Builder.
          * @return batch
          */
-        public Batch addBatch() {
-            return this;
+        public Batch addBatch() throws SQLException {
+
+            if (SqlBuilder.this.paramMappers.size() == capacity) {
+                capacity = capacity + paramsPerBatch;
+                return this;
+            }
+            throw new SQLException("Parameters do not match with first set of parameters");
         }
 
         /**
