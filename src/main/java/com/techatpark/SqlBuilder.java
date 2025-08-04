@@ -314,14 +314,14 @@ public sealed class SqlBuilder implements Sql<Integer> {
         return result;
     }
     /**
-     * Get Genereted Keys for a Query.
+     * Get Generated Keys for a Query.
      * @param query
      * @param connection
      * @return result
      * @param <T>
      * @throws SQLException
      */
-    protected <T> T getGeneretedKeys(final Query<T> query,
+    protected <T> T getGeneratedKeys(final Query<T> query,
                              final Connection connection) throws SQLException {
         T result = null;
         try (PreparedStatement ps = getStatement(connection, sql,
@@ -336,14 +336,14 @@ public sealed class SqlBuilder implements Sql<Integer> {
         return result;
     }
     /**
-     * Get Genereted Keys as List for a Query.
+     * Get Generated Keys as List for a Query.
      * @param query
      * @param connection
      * @return result
      * @param <T>
      * @throws SQLException
      */
-    protected <T> List<T> getGeneretedKeysAsList(final Query<T> query,
+    protected <T> List<T> getGeneratedKeysAsList(final Query<T> query,
                          final Connection connection) throws SQLException {
         List<T> result = new ArrayList<>();
         try (PreparedStatement ps = getStatement(connection, sql,
@@ -372,7 +372,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the mapped object
          * @throws SQLException if an SQL error occurs during mapping
          */
-        T mapRow(ResultSet rs) throws SQLException;
+        T get(ResultSet rs) throws SQLException;
     }
 
     /**
@@ -392,7 +392,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          *
          * @param ps the {@link PreparedStatement}
          *                          to bind parameters to
-         * @param index iddex of the parameter.
+         * @param index index of the parameter.
          * @throws SQLException if a database access error occurs or if
          *                      parameter binding fails
          */
@@ -425,7 +425,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
 
         T mapRow(final ResultSet rs) throws SQLException {
-            return rowMapper.mapRow(rs);
+            return rowMapper.get(rs);
         }
     }
 
@@ -540,7 +540,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         @Override
         public T execute(final Connection connection) throws SQLException {
-            return getGeneretedKeys(this, connection);
+            return getGeneratedKeys(this, connection);
         }
     }
 
@@ -572,7 +572,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         @Override
         public List<T> execute(final Connection connection)
                 throws SQLException {
-            return getGeneretedKeysAsList(this, connection);
+            return getGeneratedKeysAsList(this, connection);
         }
     }
     /**
