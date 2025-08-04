@@ -30,6 +30,12 @@ class SqlBuilderTest extends BaseTest {
 
         Assertions.assertEquals(2, generetedId);
 
+        List<Long> generetedIds = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES ('Jurrasic Park', 'Nolan'), ('Batman', 'Nolan')")
+                .queryGeneratedKeysAsList(resultSet -> resultSet.getLong(1))
+                .execute(dataSource);
+
+        Assertions.assertEquals(3, generetedIds.get(0));
+        Assertions.assertEquals(4, generetedIds.get(1));
     }
     @Test
     void testPrepareSql() throws SQLException {
