@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,7 @@ class CodeReviewTests {
                                 ResultSet.class,
                                 DataSource.class,
                                 Connection.class,
+                                Statement.class,
                                 PreparedStatement.class,
                                 SQLException.class,
                                 Function.class,

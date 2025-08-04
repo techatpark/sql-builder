@@ -12,10 +12,25 @@ class SqlBuilderTest extends BaseTest {
 
     @BeforeEach
     void init() throws SQLException {
-        SqlBuilder.prepareSql("DELETE FROM movie")
+        SqlBuilder.prepareSql("TRUNCATE TABLE movie")
                 .execute(dataSource);
     }
 
+    @Test
+    void testSql() throws SQLException {
+        int updateRows =
+                SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES ('Dunkirk', 'Nolan')")
+                        .execute(dataSource);
+
+        Assertions.assertEquals(1, updateRows);
+
+        long generetedId = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
+                .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
+                .execute(dataSource);
+
+        Assertions.assertEquals(2, generetedId);
+
+    }
     @Test
     void testPrepareSql() throws SQLException {
         int updateRows =

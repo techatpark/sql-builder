@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -24,10 +25,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * The SQL query to be executed.
      */
     private final String sql;
-    /**
-     * A list of parameters for the query.
-     */
-    private final List<ParamMapper> paramMappers;
 
     /**
      * Builds Sql Builder from Sql.
@@ -40,13 +37,30 @@ public sealed class SqlBuilder implements Sql<Integer> {
     }
 
     /**
+     * Builds Sql Builder from Sql.
+     *
+     * @param theSql the SQL query to be prepared and executed
+     * @return sqlBuilder
+     */
+    public static SqlBuilder sql(final String theSql) {
+        return new SqlBuilder(theSql);
+    }
+
+    /**
      * Constructor that initializes the SqlBuilder with a given SQL query.
      *
      * @param theSql the SQL query to be prepared and executed
      */
     protected SqlBuilder(final String theSql) {
         this.sql = theSql;
-        this.paramMappers = new ArrayList<>();
+    }
+
+    /**
+     * Get the SQL Query.
+     * @return sql
+     */
+    protected String getSql() {
+        return sql;
     }
 
     /**
@@ -61,8 +75,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
     @Override
     public Integer execute(final Connection connection) throws SQLException {
         int updatedRows;
-        try (PreparedStatement ps = getStatement(connection, sql)) {
-            updatedRows = ps.executeUpdate();
+        try (Statement ps = getStatement(connection)) {
+            updatedRows = ps.executeUpdate(getSql());
         }
         return updatedRows;
     }
@@ -257,6 +271,18 @@ public sealed class SqlBuilder implements Sql<Integer> {
     }
 
     /**
+     * Get the Statement for Query.
+     * @param connection
+     * @return statement to be executed
+     * @throws SQLException
+     */
+    private Statement getStatement(final Connection connection)
+            throws SQLException {
+        Statement ps = connection.createStatement();
+        return ps;
+    }
+
+    /**
      * Checkes if Record Exists.
      * @param connection
      * @return exists
@@ -264,8 +290,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
      */
     protected boolean exists(final Connection connection) throws SQLException {
         boolean exists;
-        try (PreparedStatement ps = getStatement(connection, sql)) {
-            try (ResultSet rs = ps.executeQuery()) {
+        try (Statement ps = getStatement(connection)) {
+            try (ResultSet rs = ps.executeQuery(getSql())) {
                 exists = rs.next();
             }
         }
@@ -283,9 +309,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> T getResult(final Query<T> query,
                         final Connection connection) throws SQLException {
         T result = null;
-        try (PreparedStatement ps
-                     = getStatement(connection, sql)) {
-            try (ResultSet rs = ps.executeQuery()) {
+        try (Statement ps
+                     = getStatement(connection)) {
+            try (ResultSet rs = ps.executeQuery(getSql())) {
                 if (rs.next()) {
                     result = query.mapRow(rs);
                 }
@@ -304,8 +330,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> List<T> getResultAsList(final Query<T> query,
                         final Connection connection) throws SQLException {
         List<T> result = new ArrayList<>();
-        try (PreparedStatement ps = getStatement(connection, sql)) {
-            try (ResultSet rs = ps.executeQuery()) {
+        try (Statement ps = getStatement(connection)) {
+            try (ResultSet rs = ps.executeQuery(getSql())) {
                 while (rs.next()) {
                     result.add(query.mapRow(rs));
                 }
@@ -324,9 +350,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> T getGeneratedKeys(final Query<T> query,
                              final Connection connection) throws SQLException {
         T result = null;
-        try (PreparedStatement ps = getStatement(connection, sql,
-                java.sql.Statement.RETURN_GENERATED_KEYS)) {
-            ps.executeUpdate();
+        try (Statement ps = getStatement(connection)) {
+            ps.executeUpdate(getSql(),
+                    java.sql.Statement.RETURN_GENERATED_KEYS);
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     result = query.mapRow(rs);
@@ -346,9 +372,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> List<T> getGeneratedKeysAsList(final Query<T> query,
                          final Connection connection) throws SQLException {
         List<T> result = new ArrayList<>();
-        try (PreparedStatement ps = getStatement(connection, sql,
-                java.sql.Statement.RETURN_GENERATED_KEYS)) {
-            ps.executeUpdate();
+        try (Statement ps = getStatement(connection)) {
+            ps.executeUpdate(getSql(),
+                    java.sql.Statement.RETURN_GENERATED_KEYS);
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 while (rs.next()) {
                     result.add(query.mapRow(rs));
@@ -575,68 +601,13 @@ public sealed class SqlBuilder implements Sql<Integer> {
             return getGeneratedKeysAsList(this, connection);
         }
     }
-    /**
-     * Prepares the PreparedStatement by binding all the parameters
-     * to their respective
-     * positions in the SQL query.
-     *
-     * @param ps the PreparedStatement to bind parameters to
-     * @throws SQLException if a database access error occurs during parameter
-     * binding
-     */
-    private void prepare(final PreparedStatement ps)
-            throws SQLException {
-        prepareWithMappers(ps, this.paramMappers);
-    }
-
-    /**
-     * Prepare Statement with Parameters.
-     * @param ps
-     * @param pMappers
-     * @throws SQLException
-     */
-    protected void prepareWithMappers(final PreparedStatement ps,
-                                    final List<ParamMapper> pMappers)
-            throws SQLException {
-        for (int i = 0; i < pMappers.size(); i++) {
-            pMappers.get(i).set(ps, (i + 1));
-        }
-    }
-
-    /**
-     * Get the Statement for Query.
-     * @param connection
-     * @param theSql
-     * @return statement to be executed
-     * @throws SQLException
-     */
-    private PreparedStatement getStatement(final Connection connection,
-                                           final String theSql)
-            throws SQLException {
-        PreparedStatement ps = connection.prepareStatement(theSql);
-        prepare(ps);
-        return ps;
-    }
-
-    /**
-     * Get the Statement for Query.
-     * @param connection
-     * @param theSql
-     * @param resultSetType
-     * @return statement to be executed
-     * @throws SQLException
-     */
-    private PreparedStatement getStatement(final Connection connection,
-                                           final String theSql,
-                                           final int resultSetType)
-            throws SQLException {
-        PreparedStatement ps = connection
-                .prepareStatement(theSql, resultSetType);
-        prepare(ps);
-        return ps;
-    }
 
     public static final class PreparedSqlBuilder extends SqlBuilder {
+        /**
+         * A list of parameters for the query.
+         */
+        private final List<ParamMapper> paramMappers;
+
         /**
          * Constructor that initializes the SqlBuilder with a given SQL query.
          *
@@ -644,6 +615,25 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         private PreparedSqlBuilder(final String theSql) {
             super(theSql);
+            this.paramMappers = new ArrayList<>();
+        }
+
+        /**
+         * Executes an update (such as INSERT, UPDATE, DELETE) using
+         * the prepared SQL query and the bound parameters.
+         *
+         * @param connection the database connection used to execute the query
+         * @return the number of rows affected by the update
+         * @throws SQLException if a database access error occurs
+         */
+        @Override
+        public Integer execute(final Connection connection)
+                throws SQLException {
+            int updatedRows;
+            try (PreparedStatement ps = getStatement(connection, getSql())) {
+                updatedRows = ps.executeUpdate();
+            }
+            return updatedRows;
         }
 
         /**
@@ -825,8 +815,179 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return sqlbuilder
          */
         private PreparedSqlBuilder param(final ParamMapper paramMapper) {
-            super.paramMappers.add(paramMapper);
+            this.paramMappers.add(paramMapper);
             return this;
+        }
+
+        /**
+         * Prepares the PreparedStatement by binding all the parameters
+         * to their respective
+         * positions in the SQL query.
+         *
+         * @param ps the PreparedStatement to bind parameters to
+         * @throws SQLException if a database access error occurs
+         * during parameter
+         * binding
+         */
+        private void prepare(final PreparedStatement ps)
+                throws SQLException {
+            prepareWithMappers(ps, this.paramMappers);
+        }
+
+        /**
+         * Prepare Statement with Parameters.
+         * @param ps
+         * @param pMappers
+         * @throws SQLException
+         */
+        void prepareWithMappers(final PreparedStatement ps,
+                                          final List<ParamMapper> pMappers)
+                throws SQLException {
+            for (int i = 0; i < pMappers.size(); i++) {
+                pMappers.get(i).set(ps, (i + 1));
+            }
+        }
+
+        /**
+         * Get the Statement for Query.
+         * @param connection
+         * @param theSql
+         * @return statement to be executed
+         * @throws SQLException
+         */
+        private PreparedStatement getStatement(final Connection connection,
+                                                 final String theSql)
+                throws SQLException {
+            PreparedStatement ps = connection.prepareStatement(theSql);
+            prepare(ps);
+            return ps;
+        }
+
+        /**
+         * Get the Statement for Query.
+         * @param connection
+         * @param theSql
+         * @param resultSetType
+         * @return statement to be executed
+         * @throws SQLException
+         */
+        private PreparedStatement getStatement(final Connection connection,
+                                                 final String theSql,
+                                                 final int resultSetType)
+                throws SQLException {
+            PreparedStatement ps = connection
+                    .prepareStatement(theSql, resultSetType);
+            prepare(ps);
+            return ps;
+        }
+
+        /**
+         * Checkes if Record Exists.
+         * @param connection
+         * @return exists
+         * @throws SQLException
+         */
+        @Override
+        protected boolean exists(final Connection connection)
+                throws SQLException {
+            boolean exists;
+            try (PreparedStatement ps = getStatement(connection, getSql())) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    exists = rs.next();
+                }
+            }
+            return exists;
+        }
+
+        /**
+         * Get Result for a Query.
+         * @param query
+         * @param connection
+         * @return result
+         * @param <T>
+         * @throws SQLException
+         */
+        @Override
+        protected <T> T getResult(final Query<T> query,
+                                  final Connection connection)
+                throws SQLException {
+            T result = null;
+            try (PreparedStatement ps
+                         = getStatement(connection, getSql())) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        result = query.mapRow(rs);
+                    }
+                }
+            }
+            return result;
+        }
+        /**
+         * Get Result as a List for a Query.
+         * @param query
+         * @param connection
+         * @return result
+         * @param <T>
+         * @throws SQLException
+         */
+        protected <T> List<T> getResultAsList(final Query<T> query,
+                                              final Connection connection)
+                throws SQLException {
+            List<T> result = new ArrayList<>();
+            try (PreparedStatement ps = getStatement(connection, getSql())) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(query.mapRow(rs));
+                    }
+                }
+            }
+            return result;
+        }
+        /**
+         * Get Generated Keys for a Query.
+         * @param query
+         * @param connection
+         * @return result
+         * @param <T>
+         * @throws SQLException
+         */
+        protected <T> T getGeneratedKeys(final Query<T> query,
+                                         final Connection connection)
+                throws SQLException {
+            T result = null;
+            try (PreparedStatement ps = getStatement(connection, this.getSql(),
+                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        result = query.mapRow(rs);
+                    }
+                }
+            }
+            return result;
+        }
+        /**
+         * Get Generated Keys as List for a Query.
+         * @param query
+         * @param connection
+         * @return result
+         * @param <T>
+         * @throws SQLException
+         */
+        protected <T> List<T> getGeneratedKeysAsList(final Query<T> query,
+                                             final Connection connection)
+                throws SQLException {
+            List<T> result = new ArrayList<>();
+            try (PreparedStatement ps = getStatement(connection, this.getSql(),
+                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    while (rs.next()) {
+                        result.add(query.mapRow(rs));
+                    }
+                }
+            }
+            return result;
         }
 
         /**
@@ -857,7 +1018,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
 
             private Batch() {
                 this.paramsPerBatch = PreparedSqlBuilder
-                        .super.paramMappers.size();
+                        .this.paramMappers.size();
                 this.capacity = 2 * paramsPerBatch;
             }
 
@@ -866,7 +1027,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @return batch
              */
             public Batch addBatch() throws SQLException {
-                if (PreparedSqlBuilder.super.paramMappers.size() == capacity) {
+                if (PreparedSqlBuilder.this.paramMappers.size() == capacity) {
                     capacity = capacity + paramsPerBatch;
                     return this;
                 }
@@ -884,7 +1045,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 int[] updatedRows;
                 try (Connection connection = dataSource.getConnection();
                      PreparedStatement ps = connection
-                             .prepareStatement(PreparedSqlBuilder.super.sql)) {
+                             .prepareStatement(getSql())) {
                     prepare(ps);
 
                     updatedRows = ps.executeBatch();
@@ -895,12 +1056,12 @@ public sealed class SqlBuilder implements Sql<Integer> {
             private void prepare(final PreparedStatement ps)
                     throws SQLException {
 
-                int batchCount = (PreparedSqlBuilder.super.paramMappers.size()
+                int batchCount = (PreparedSqlBuilder.this.paramMappers.size()
                         / this.paramsPerBatch);
 
                 for (int i = 0; i < batchCount; i++) {
                     int from = i * this.paramsPerBatch;
-                    prepareWithMappers(ps, PreparedSqlBuilder.super
+                    prepareWithMappers(ps, PreparedSqlBuilder.this
                             .paramMappers.subList(from,
                                     from + this.paramsPerBatch));
                     ps.addBatch();
