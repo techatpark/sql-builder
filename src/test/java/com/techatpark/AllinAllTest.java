@@ -122,7 +122,6 @@ class AllinAllTest extends BaseTest {
 
     }
     @Test
-    @Disabled
     void testInvalidBatchFromSqlBuilder() {
         // If we give more parameter to SQL Builder initiated batch
         SQLException exception = assertThrows(SQLException.class, () -> {
