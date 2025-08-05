@@ -120,7 +120,7 @@ class AllinAllTest extends BaseTest {
     }
     @Test
     void testInvalidBatch() throws Exception {
-        assertThrows(SQLException.class, () -> {
+        SQLException exception = assertThrows(SQLException.class, () -> {
             // If we give less parameter
             sqlBuilder
                     .addBatch()
@@ -147,6 +147,7 @@ class AllinAllTest extends BaseTest {
                     .param(STR_VAL) // 1 More
                     .executeBatch(dataSource);
         });
+        System.out.println(exception.getMessage());
     }
 
     @Test
