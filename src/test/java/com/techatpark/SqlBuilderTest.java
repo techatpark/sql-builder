@@ -137,8 +137,15 @@ class SqlBuilderTest extends BaseTest {
         Assertions.assertTrue(
                 SqlBuilder.sql("SELECT id, title, directed_by from movie WHERE title = 'Interstellar'")
                         .queryForExists().execute(dataSource));
-        Assertions.assertEquals("Dunkrik",
-                movies.get(1).title());
+        Assertions.assertEquals("Nolan",
+                SqlBuilder.sql("SELECT directed_by from movie WHERE title = 'Interstellar'")
+                        .queryForString().execute(dataSource));
+        Assertions.assertTrue(
+                SqlBuilder.sql("SELECT title from movie WHERE directed_by = 'Cameroon'")
+                        .queryForList(rs -> rs.getString(1))
+                        .execute(dataSource)
+                        .containsAll(List.of("Avatar", "Titanic", "Terminator 2", "Jurasic Park")));
+
         Assertions.assertEquals("Jurasic Park",
                 movies.get(2).title());
         Assertions.assertEquals("Terminator 2",
