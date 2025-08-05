@@ -7,11 +7,22 @@
 - **Native Java:** Built using Java’s standard libraries it is **Lightweight:** and **Simple:** to use
 
 ## Goals
-1. **No Third-Party Dependencies:** The entire implementation relies on native Java libraries.
-2. **Simpler Fluent API:** Focused on readability and minimal configuration.
+1. **Simpler Fluent API:** Focused on readability and minimal configuration.
+2. **No Third-Party Dependencies:** The entire implementation relies on native Java libraries.
 
 ## Usage
-Here’s how you can use **SQL Builder** for common database operations.
+
+Add dependency to your maven project
+
+```xml
+<dependency>
+    <groupId>com.techatpark</groupId>
+    <artifactId>sql-builder</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+You can use `SqlBuilder.sql` for queries and `SqlBuilder.prepareSql` for queries with parameters.
 
 ### Queries
 
@@ -20,7 +31,7 @@ Here’s how you can use **SQL Builder** for common database operations.
 ```java
 // Insert multiple rows
 int updateRows =
-    SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES ('Dunkirk', 'Nolan')")
+    SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES ('Dunkirk', 'Nolan')")
         .execute(dataSource);
 ```
 
@@ -65,6 +76,17 @@ boolean exists = SqlBuilder.prepareSql("SELECT id FROM movie WHERE id = ?")
 ```
 
 ### Batch
+
+From SQL,
+
+```java
+int[] updatedRows = SqlBuilder
+                .sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
+                .addBatch("INSERT INTO movie(title, directed_by) VALUES ('Dunkrik', 'Nolan'),('Inception', 'Nolan')")
+                .executeBatch(dataSource);
+```
+
+From Prepared SQL,
 
 ```java
 int[] updatedRows = SqlBuilder
