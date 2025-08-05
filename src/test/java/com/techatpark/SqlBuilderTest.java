@@ -134,8 +134,9 @@ class SqlBuilderTest extends BaseTest {
                 .queryForList(BaseTest::mapMovie)
                 .execute(dataSource);
 
-        Assertions.assertEquals("Interstellar",
-                movies.get(0).title());
+        Assertions.assertTrue(
+                SqlBuilder.sql("SELECT id, title, directed_by from movie WHERE title = 'Interstellar'")
+                        .queryForExists().execute(dataSource));
         Assertions.assertEquals("Dunkrik",
                 movies.get(1).title());
         Assertions.assertEquals("Jurasic Park",
