@@ -101,6 +101,18 @@ class SqlBuilderTest extends BaseTest {
     @Test
     void testBatch() throws SQLException {
         int[] updatedRows = SqlBuilder
+                .sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
+                .addBatch("INSERT INTO movie(title, directed_by) VALUES ('Dunkrik', 'Nolan'),('Inception', 'Nolan')")
+                .executeBatch(dataSource);
+
+        Assertions.assertEquals(3L,
+                IntStream.of(updatedRows).sum());
+    }
+
+
+    @Test
+    void testPreparedBatch() throws SQLException {
+        int[] updatedRows = SqlBuilder
                 .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                     .param("Interstellar")
                     .param("Nolan")
@@ -110,7 +122,7 @@ class SqlBuilderTest extends BaseTest {
                 .executeBatch(dataSource);
 
         Assertions.assertEquals(2L,
-                IntStream.of(updatedRows).count());
+                IntStream.of(updatedRows).sum());
 
         updatedRows = SqlBuilder
                 .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
@@ -128,7 +140,7 @@ class SqlBuilderTest extends BaseTest {
                 .executeBatch(dataSource);
 
         Assertions.assertEquals(4,
-                IntStream.of(updatedRows).count());
+                IntStream.of(updatedRows).sum());
 
         List<Movie> movies = SqlBuilder.prepareSql("SELECT id, title, directed_by from movie")
                 .queryForList(BaseTest::mapMovie)

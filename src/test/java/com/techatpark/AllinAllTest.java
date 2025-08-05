@@ -62,7 +62,7 @@ class AllinAllTest extends BaseTest {
             .param(URL_STR)
             .paramNull();
 
-    private final SqlBuilder.PreparedSqlBuilder.Batch batch = sqlBuilder
+    private final SqlBuilder.PreparedSqlBuilder.PreparedBatch preparedBatch = sqlBuilder
             .addBatch()
             .param(STR_VAL, Types.VARCHAR)
             .param(INT_VAL)
@@ -113,7 +113,7 @@ class AllinAllTest extends BaseTest {
     @Test
     void testBatch() throws Exception {
 
-        batch.executeBatch(dataSource);
+        preparedBatch.executeBatch(dataSource);
 
         assertEquals(2, ALL_RESULS_QUERY
                 .queryForList(AllinAllTest::mapRow)
@@ -152,7 +152,7 @@ class AllinAllTest extends BaseTest {
 
     @Test
     void testInvalidBatchFromBatch() throws Exception {
-        SqlBuilder.PreparedSqlBuilder.Batch batchFromBatch = this.batch
+        SqlBuilder.PreparedSqlBuilder.PreparedBatch batchFromPreparedBatch = this.preparedBatch
                 .addBatch()
                 .param(STR_VAL)
                 .param(INT_VAL)
@@ -172,7 +172,7 @@ class AllinAllTest extends BaseTest {
                 .addBatch();
         // If we give less parameter to SQL Builder initiated batch
         SQLException exception = assertThrows(SQLException.class, () -> {
-            batchFromBatch
+            batchFromPreparedBatch
                     .param(STR_VAL)
                     .addBatch()
                     .executeBatch(dataSource);
