@@ -64,12 +64,12 @@ class AllinAllTest extends BaseTest {
 
     private final SqlBuilder.PreparedSqlBuilder.Batch batch = sqlBuilder
             .addBatch()
-            .param(STR_VAL)
+            .param(STR_VAL, Types.VARCHAR)
             .param(INT_VAL)
             .param(LONG_VAL)
             .param(DOUBLE_VAL)
             .param(FLOAT_VAL)
-            .param(BOOL_VAL)
+            .paramNull(Types.BOOLEAN, "BOOLEAN")
             .param(SHORT_VAL)
             .param(BYTE_VAL)
             .param(DATE_VAL)
