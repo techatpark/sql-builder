@@ -13,19 +13,29 @@
 ## Usage
 Here’s how you can use **SQL Builder** for common database operations.
 
-### **INSERT Operation**
+### Queries
+
+#### **INSERT Operation**
+
 ```java
 // Insert multiple rows
 int updateRows =
-    SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+    SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES ('Dunkirk', 'Nolan')")
+        .execute(dataSource);
+```
+
+With Parameters
+
+```java
+// Insert multiple rows
+int updateRows =
+    SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
         .param("Dunkirk")
-        .param("Nolan")
-        .param("Inception")
         .param("Nolan")
         .execute(dataSource);
 ```
 
-### **GET GENERATED KEYS**
+#### **GET GENERATED KEYS**
 ```java
 // Insert a row and fetch the generated key
 long generatedId = SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
@@ -33,10 +43,9 @@ long generatedId = SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) 
     .param("Nolan")
     .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
     .execute(dataSource);
-
 ```
 
-### **SELECT Operation**
+#### **SELECT Operation**
 ```java
 // Fetch a single record by ID
 Movie movie = SqlBuilder.prepareSql("SELECT id, title, directed_by FROM movie WHERE id = ?")
@@ -53,4 +62,17 @@ boolean exists = SqlBuilder.prepareSql("SELECT id FROM movie WHERE id = ?")
     .param(generatedId)
     .queryForExists()
     .execute(dataSource);
+```
+
+### Batch
+
+```java
+int[] updatedRows = SqlBuilder
+                .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
+                    .param("Interstellar")
+                    .param("Nolan")
+                .addBatch()
+                    .param("Dunkrik")
+                    .param("Nolan")
+                .executeBatch(dataSource);
 ```
