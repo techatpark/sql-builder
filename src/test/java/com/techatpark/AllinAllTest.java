@@ -1,6 +1,7 @@
 package com.techatpark;
 
 import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,6 +62,24 @@ class AllinAllTest extends BaseTest {
             .param(URL_STR)
             .paramNull();
 
+    private final SqlBuilder.PreparedSqlBuilder.Batch batch = sqlBuilder
+            .addBatch()
+            .param(STR_VAL)
+            .param(INT_VAL)
+            .param(LONG_VAL)
+            .param(DOUBLE_VAL)
+            .param(FLOAT_VAL)
+            .param(BOOL_VAL)
+            .param(SHORT_VAL)
+            .param(BYTE_VAL)
+            .param(DATE_VAL)
+            .param(TIME_VAL)
+            .param(TIMESTAMP_VAL)
+            .param(BIG_DECIMAL_VAL)
+            .param(BYTES_VAL)
+            .param(URL_STR)
+            .paramNull();
+
     private static AllTypesRecord mapRow(ResultSet rs) {
         try {
             return new AllTypesRecord(
@@ -87,30 +106,14 @@ class AllinAllTest extends BaseTest {
 
     @BeforeEach
     void init() throws SQLException {
-        SqlBuilder.prepareSql("DELETE FROM AllTypes")
+        SqlBuilder.prepareSql("TRUNCATE TABLE AllTypes")
                 .execute(dataSource);
     }
 
     @Test
     void testBatch() throws Exception {
-        sqlBuilder
-                .addBatch()
-                    .param(STR_VAL)
-                    .param(INT_VAL)
-                    .param(LONG_VAL)
-                    .param(DOUBLE_VAL)
-                    .param(FLOAT_VAL)
-                    .param(BOOL_VAL)
-                    .param(SHORT_VAL)
-                    .param(BYTE_VAL)
-                    .param(DATE_VAL)
-                    .param(TIME_VAL)
-                    .param(TIMESTAMP_VAL)
-                    .param(BIG_DECIMAL_VAL)
-                    .param(BYTES_VAL)
-                    .param(URL_STR)
-                    .paramNull()
-                .executeBatch(dataSource);
+
+        batch.executeBatch(dataSource);
 
         assertEquals(2, ALL_RESULS_QUERY
                 .queryForList(AllinAllTest::mapRow)
@@ -119,16 +122,57 @@ class AllinAllTest extends BaseTest {
 
     }
     @Test
-    void testInvalidBatch() throws Exception {
+    void testInvalidBatchFromSqlBuilder() throws Exception {
+        // If we give less parameter to SQL Builder initiated batch
         SQLException exception = assertThrows(SQLException.class, () -> {
-            // If we give less parameter
             sqlBuilder
                     .addBatch()
                     .param(STR_VAL)
                     .executeBatch(dataSource);
-            // if we give more parameters
-            sqlBuilder
-                    .addBatch()
+        });
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
+
+        // If we give more parameter to SQL Builder initiated batch
+        exception = assertThrows(SQLException.class, () -> {
+        sqlBuilder
+                .addBatch()
+                .param(STR_VAL)
+                .param(INT_VAL)
+                .param(LONG_VAL)
+                .param(DOUBLE_VAL)
+                .param(FLOAT_VAL)
+                .param(BOOL_VAL)
+                .param(SHORT_VAL)
+                .param(BYTE_VAL)
+                .param(DATE_VAL)
+                .param(TIME_VAL)
+                .param(TIMESTAMP_VAL)
+                .param(BIG_DECIMAL_VAL)
+                .param(BYTES_VAL)
+                .param(URL_STR)
+                .paramNull()
+                .param(STR_VAL) // 1 More
+                .executeBatch(dataSource);
+        });
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
+    }
+
+    @Test
+    void testInvalidBatchFromBatch() throws Exception {
+        // If we give less parameter to SQL Builder initiated batch
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            batch
+                    .param(STR_VAL)
+                    .executeBatch(dataSource);
+        });
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
+
+        // If we give more parameter to SQL Builder initiated batch
+        exception = assertThrows(SQLException.class, () -> {
+            batch
                     .param(STR_VAL)
                     .param(INT_VAL)
                     .param(LONG_VAL)
@@ -147,7 +191,8 @@ class AllinAllTest extends BaseTest {
                     .param(STR_VAL) // 1 More
                     .executeBatch(dataSource);
         });
-        System.out.println(exception.getMessage());
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
     }
 
     @Test
