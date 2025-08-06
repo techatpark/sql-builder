@@ -100,7 +100,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Byte> queryForByte() {
+    public Sql<Byte> queryForByte() {
         return new SingleRecordQuery<>(rs -> rs.getByte(1));
     }
 
@@ -110,7 +110,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<byte[]> queryForBytes() {
+    public Sql<byte[]> queryForBytes() {
         return new SingleRecordQuery<>(rs  -> rs.getBytes(1));
     }
 
@@ -120,7 +120,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Integer> queryForInt() {
+    public Sql<Integer> queryForInt() {
         return new SingleRecordQuery<>(RowMapper.INTEGER_MAPPER);
     }
 
@@ -130,7 +130,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Short> queryForShort() {
+    public Sql<Short> queryForShort() {
         return new SingleRecordQuery<>(rs -> rs.getShort(1));
     }
 
@@ -140,7 +140,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<String> queryForString() {
+    public Sql<String> queryForString() {
         return new SingleRecordQuery<>(STRING_MAPPER);
     }
 
@@ -150,7 +150,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public MultipleRecordQuery<String> queryForListOfString() {
+    public Sql<List<String>> queryForListOfString() {
         return new MultipleRecordQuery<>(STRING_MAPPER);
     }
 
@@ -161,10 +161,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public MultipleRecordQuery<Integer> queryForListOfInt() {
+    public Sql<List<Integer>> queryForListOfInt() {
         return new MultipleRecordQuery<>(INTEGER_MAPPER);
     }
-
 
     /**
      * Creates a new Query object that can be used to execute
@@ -172,7 +171,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<URL> queryForURL() {
+    public Sql<URL> queryForURL() {
         return new SingleRecordQuery<>(rs -> rs.getURL(1));
     }
 
@@ -182,7 +181,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Double> queryForDouble() {
+    public Sql<Double> queryForDouble() {
         return new SingleRecordQuery<>(rs -> rs.getDouble(1));
     }
 
@@ -192,7 +191,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Float> queryForFloat() {
+    public Sql<Float> queryForFloat() {
         return new SingleRecordQuery<>(rs -> rs.getFloat(1));
     }
 
@@ -202,7 +201,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<BigDecimal> queryForBigDecimal() {
+    public Sql<BigDecimal> queryForBigDecimal() {
         return new SingleRecordQuery<>(rs -> rs.getBigDecimal(1));
     }
 
@@ -212,7 +211,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Boolean> queryForBoolean() {
+    public Sql<Boolean> queryForBoolean() {
         return new SingleRecordQuery<>(rs -> rs.getBoolean(1));
     }
 
@@ -222,7 +221,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Long> queryForLong() {
+    public Sql<Long> queryForLong() {
         return new SingleRecordQuery<>(rs -> rs.getLong(1));
     }
 
@@ -232,7 +231,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<java.sql.Date> queryForDate() {
+    public Sql<java.sql.Date> queryForDate() {
         return new SingleRecordQuery<>(rs -> rs.getDate(1));
     }
 
@@ -242,7 +241,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<java.sql.Time> queryForTime() {
+    public Sql<java.sql.Time> queryForTime() {
         return new SingleRecordQuery<>(rs -> rs.getTime(1));
     }
 
@@ -252,7 +251,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<java.sql.Timestamp> queryForTimestamp() {
+    public Sql<java.sql.Timestamp> queryForTimestamp() {
         return new SingleRecordQuery<>(rs -> rs.getTimestamp(1));
     }
 
@@ -262,7 +261,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @return a new Query instance for execution
      */
-    public SingleRecordQuery<Object> queryForObject() {
+    public Sql<Object> queryForObject() {
         return new SingleRecordQuery<>(rs -> rs.getObject(1));
     }
 
@@ -276,7 +275,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> SqlBuilder.SingleRecordQuery<T> queryForOne(
+    public <T> Sql<T> queryForOne(
             final RowMapper<T> rowMapper) {
         return this.new SingleRecordQuery<>(rowMapper);
     }
@@ -291,13 +290,13 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> SqlBuilder.MultipleRecordQuery<T> queryForList(
+    public <T> Sql<List<T>> queryForList(
             final RowMapper<T> rowMapper) {
-        return this.new MultipleRecordQuery<>(rowMapper);
+        return new MultipleRecordQuery<>(rowMapper);
     }
 
     /**
-     * Checkes if Record Exists.
+     * Checks if Record Exists.
      * @param connection
      * @return exists
      * @throws SQLException
@@ -440,7 +439,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 throws SQLException {
             int[] updatedRows;
             try (Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement()) {
+                    Statement statement = connection.createStatement()) {
                 statement.addBatch(SqlBuilder.this.getSql());
                 for (String batchSql : this.sqls) {
                     statement.addBatch(batchSql);
