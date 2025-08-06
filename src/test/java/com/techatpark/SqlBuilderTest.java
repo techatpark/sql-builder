@@ -103,9 +103,10 @@ class SqlBuilderTest extends BaseTest {
         int[] updatedRows = SqlBuilder
                 .sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
                 .addBatch("INSERT INTO movie(title, directed_by) VALUES ('Dunkrik', 'Nolan'),('Inception', 'Nolan')")
+                .addBatch("INSERT INTO movie(title, directed_by) VALUES ('Batman', 'Nolan')")
                 .executeBatch(dataSource);
 
-        Assertions.assertEquals(3L,
+        Assertions.assertEquals(4,
                 IntStream.of(updatedRows).sum());
     }
 

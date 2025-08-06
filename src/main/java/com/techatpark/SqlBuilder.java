@@ -75,8 +75,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
     @Override
     public Integer execute(final Connection connection) throws SQLException {
         int updatedRows;
-        try (Statement ps = getStatement(connection)) {
-            updatedRows = ps.executeUpdate(getSql());
+        try (Statement stmt = connection.createStatement()) {
+            updatedRows = stmt.executeUpdate(getSql());
         }
         return updatedRows;
     }
@@ -271,18 +271,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
     }
 
     /**
-     * Get the Statement for Query.
-     * @param connection
-     * @return statement to be executed
-     * @throws SQLException
-     */
-    private Statement getStatement(final Connection connection)
-            throws SQLException {
-        Statement ps = connection.createStatement();
-        return ps;
-    }
-
-    /**
      * Checkes if Record Exists.
      * @param connection
      * @return exists
@@ -290,8 +278,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
      */
     protected boolean exists(final Connection connection) throws SQLException {
         boolean exists;
-        try (Statement ps = getStatement(connection)) {
-            try (ResultSet rs = ps.executeQuery(getSql())) {
+        try (Statement stmt = connection.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(getSql())) {
                 exists = rs.next();
             }
         }
@@ -309,9 +297,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> T getResult(final Query<T> query,
                         final Connection connection) throws SQLException {
         T result = null;
-        try (Statement ps
-                     = getStatement(connection)) {
-            try (ResultSet rs = ps.executeQuery(getSql())) {
+        try (Statement stmt = connection.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(getSql())) {
                 if (rs.next()) {
                     result = query.mapRow(rs);
                 }
@@ -330,8 +317,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> List<T> getResultAsList(final Query<T> query,
                         final Connection connection) throws SQLException {
         List<T> result = new ArrayList<>();
-        try (Statement ps = getStatement(connection)) {
-            try (ResultSet rs = ps.executeQuery(getSql())) {
+        try (Statement stmt = connection.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(getSql())) {
                 while (rs.next()) {
                     result.add(query.mapRow(rs));
                 }
@@ -350,10 +337,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> T getGeneratedKeys(final Query<T> query,
                              final Connection connection) throws SQLException {
         T result = null;
-        try (Statement ps = getStatement(connection)) {
-            ps.executeUpdate(getSql(),
-                    java.sql.Statement.RETURN_GENERATED_KEYS);
-            try (ResultSet rs = ps.getGeneratedKeys()) {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(getSql(), Statement.RETURN_GENERATED_KEYS);
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     result = query.mapRow(rs);
                 }
@@ -372,10 +358,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected <T> List<T> getGeneratedKeysAsList(final Query<T> query,
                          final Connection connection) throws SQLException {
         List<T> result = new ArrayList<>();
-        try (Statement ps = getStatement(connection)) {
-            ps.executeUpdate(getSql(),
-                    java.sql.Statement.RETURN_GENERATED_KEYS);
-            try (ResultSet rs = ps.getGeneratedKeys()) {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(getSql(), Statement.RETURN_GENERATED_KEYS);
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
                 while (rs.next()) {
                     result.add(query.mapRow(rs));
                 }
@@ -407,7 +392,16 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         public Batch(final String sqlQuery) {
             this.sqls = new ArrayList<>();
+            addBatch(sqlQuery);
+        }
+        /**
+         * add Batch.
+         * @param sqlQuery
+         * @return batch
+         */
+        public Batch addBatch(final String sqlQuery) {
             this.sqls.add(sqlQuery);
+            return this;
         }
 
         /**
@@ -419,9 +413,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
         public int[] executeBatch(final DataSource dataSource)
                 throws SQLException {
             int[] updatedRows;
-
-            try (Connection conn = dataSource.getConnection();
-            Statement statement = getStatement(conn)) {
+            try (Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement()) {
                 statement.addBatch(SqlBuilder.this.getSql());
                 for (String batchSql : this.sqls) {
                     statement.addBatch(batchSql);
@@ -431,7 +424,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
             return updatedRows;
         }
     }
-
 
     /**
      * RowMapper is an interface that defines how to map each row of a ResultSet
@@ -931,7 +923,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
 
         /**
-         * Checkes if Record Exists.
+         * Checks if Record Exists.
          * @param connection
          * @return exists
          * @throws SQLException
@@ -958,8 +950,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         @Override
         protected <T> T getResult(final Query<T> query,
-                                  final Connection connection)
-                throws SQLException {
+                          final Connection connection) throws SQLException {
             T result = null;
             try (PreparedStatement ps
                          = getStatement(connection, getSql())) {
@@ -980,8 +971,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @throws SQLException
          */
         protected <T> List<T> getResultAsList(final Query<T> query,
-                                              final Connection connection)
-                throws SQLException {
+                        final Connection connection) throws SQLException {
             List<T> result = new ArrayList<>();
             try (PreparedStatement ps = getStatement(connection, getSql())) {
                 try (ResultSet rs = ps.executeQuery()) {
@@ -1001,8 +991,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @throws SQLException
          */
         protected <T> T getGeneratedKeys(final Query<T> query,
-                                         final Connection connection)
-                throws SQLException {
+                     final Connection connection) throws SQLException {
             T result = null;
             try (PreparedStatement ps = getStatement(connection, this.getSql(),
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
@@ -1024,8 +1013,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @throws SQLException
          */
         protected <T> List<T> getGeneratedKeysAsList(final Query<T> query,
-                                             final Connection connection)
-                throws SQLException {
+                             final Connection connection) throws SQLException {
             List<T> result = new ArrayList<>();
             try (PreparedStatement ps = getStatement(connection, this.getSql(),
                     java.sql.Statement.RETURN_GENERATED_KEYS)) {
@@ -1044,7 +1032,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return batch
          */
         public PreparedBatch addBatch() {
-            return this.new PreparedBatch();
+            return new PreparedBatch();
         }
 
         /**
@@ -1313,6 +1301,5 @@ public sealed class SqlBuilder implements Sql<Integer> {
             }
         }
     }
-
 
 }
