@@ -140,6 +140,8 @@ class SqlBuilderTest extends BaseTest {
                     .param("Cameroon")
                 .executeBatch(dataSource);
 
+
+
         Assertions.assertEquals(4,
                 IntStream.of(updatedRows).sum());
 
@@ -158,6 +160,12 @@ class SqlBuilderTest extends BaseTest {
                         .queryForListOfString()
                         .execute(dataSource)
                         .containsAll(List.of("Avatar", "Titanic", "Terminator 2", "Jurasic Park")));
+        Assertions.assertTrue(
+                SqlBuilder.sql("SELECT id from movie WHERE directed_by = 'Cameroon'")
+                        .queryForListOfInt()
+                        .execute(dataSource)
+                        .containsAll(List.of(6,5,4,3)));
+
 
         Assertions.assertEquals("Jurasic Park",
                 movies.get(2).title());

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.techatpark.SqlBuilder.RowMapper.STRING_MAPPER;
+import static com.techatpark.SqlBuilder.RowMapper.INTEGER_MAPPER;
 
 /**
  * SqlBuilder is a utility class that simplifies the process of constructing
@@ -120,7 +121,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public SingleRecordQuery<Integer> queryForInt() {
-        return new SingleRecordQuery<>(rs -> rs.getInt(1));
+        return new SingleRecordQuery<>(RowMapper.INTEGER_MAPPER);
     }
 
     /**
@@ -152,6 +153,18 @@ public sealed class SqlBuilder implements Sql<Integer> {
     public MultipleRecordQuery<String> queryForListOfString() {
         return new MultipleRecordQuery<>(STRING_MAPPER);
     }
+
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to List of Integer.
+     *
+     * @return a new Query instance for execution
+     */
+    public MultipleRecordQuery<Integer> queryForListOfInt() {
+        return new MultipleRecordQuery<>(INTEGER_MAPPER);
+    }
+
 
     /**
      * Creates a new Query object that can be used to execute
@@ -450,6 +463,11 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * Mapper for String.
          */
         RowMapper<String> STRING_MAPPER = rs -> rs.getString(1);
+        /**
+         * Mapper for Integer.
+         */
+       RowMapper<Integer> INTEGER_MAPPER = rs -> rs.getInt(1);
+
 
         /**
          * Maps a single row of the result set to an object.
