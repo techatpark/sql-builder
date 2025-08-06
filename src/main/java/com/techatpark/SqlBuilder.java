@@ -467,7 +467,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
        RowMapper<Integer> INTEGER_MAPPER = rs -> rs.getInt(1);
 
-
         /**
          * Maps a single row of the result set to an object.
          *
@@ -510,7 +509,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *
      * @param <T> the type of object to map the result set to
      */
-    public static class Query<T> {
+    private static class Query<T> {
 
         /**
          * Mapper for Result set.
@@ -596,9 +595,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> SqlBuilder.SingleGeneratedKeysQuery<T> queryGeneratedKeys(
+    public <T> Sql<T> queryGeneratedKeys(
             final RowMapper<T> rowMapper) {
-        return this.new SingleGeneratedKeysQuery<>(rowMapper);
+        return new SingleGeneratedKeysQuery<>(rowMapper);
     }
 
     /**
@@ -611,9 +610,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> SqlBuilder.MultipleGeneratedKeysQuery<T>
+    public <T> Sql<List<T>>
             queryGeneratedKeysAsList(final RowMapper<T> rowMapper) {
-        return this.new MultipleGeneratedKeysQuery<>(rowMapper);
+        return new MultipleGeneratedKeysQuery<>(rowMapper);
     }
 
     /**
