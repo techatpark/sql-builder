@@ -155,7 +155,7 @@ class SqlBuilderTest extends BaseTest {
                         .queryForString().execute(dataSource));
         Assertions.assertTrue(
                 SqlBuilder.sql("SELECT title from movie WHERE directed_by = 'Cameroon'")
-                        .queryForList(rs -> rs.getString(1))
+                        .queryForListOfString()
                         .execute(dataSource)
                         .containsAll(List.of("Avatar", "Titanic", "Terminator 2", "Jurasic Park")));
 

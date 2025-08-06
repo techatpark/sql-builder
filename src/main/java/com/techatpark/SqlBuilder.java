@@ -13,6 +13,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.techatpark.SqlBuilder.RowMapper.STRING_MAPPER;
+
 /**
  * SqlBuilder is a utility class that simplifies the process of constructing
  * SQL queries with dynamic parameters and executing them. It helps developers
@@ -137,7 +140,17 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public SingleRecordQuery<String> queryForString() {
-        return new SingleRecordQuery<>(rs -> rs.getString(1));
+        return new SingleRecordQuery<>(STRING_MAPPER);
+    }
+
+    /**
+     * Creates a new Query object that can be used to execute
+     * a SELECT query and map the result set to a String.
+     *
+     * @return a new Query instance for execution
+     */
+    public MultipleRecordQuery<String> queryForListOfString() {
+        return new MultipleRecordQuery<>(STRING_MAPPER);
     }
 
     /**
@@ -432,6 +445,12 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @param <T> the type of object to map the result set to
      */
     public interface RowMapper<T> {
+
+        /**
+         * Mapper for String.
+         */
+        RowMapper<String> STRING_MAPPER = rs -> rs.getString(1);
+
         /**
          * Maps a single row of the result set to an object.
          *
