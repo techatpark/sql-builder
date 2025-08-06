@@ -103,9 +103,10 @@ class SqlBuilderTest extends BaseTest {
         int[] updatedRows = SqlBuilder
                 .sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
                 .addBatch("INSERT INTO movie(title, directed_by) VALUES ('Dunkrik', 'Nolan'),('Inception', 'Nolan')")
+                .addBatch("INSERT INTO movie(title, directed_by) VALUES ('Batman', 'Nolan')")
                 .executeBatch(dataSource);
 
-        Assertions.assertEquals(3L,
+        Assertions.assertEquals(4,
                 IntStream.of(updatedRows).sum());
     }
 
@@ -139,6 +140,8 @@ class SqlBuilderTest extends BaseTest {
                     .param("Cameroon")
                 .executeBatch(dataSource);
 
+
+
         Assertions.assertEquals(4,
                 IntStream.of(updatedRows).sum());
 
@@ -154,9 +157,15 @@ class SqlBuilderTest extends BaseTest {
                         .queryForString().execute(dataSource));
         Assertions.assertTrue(
                 SqlBuilder.sql("SELECT title from movie WHERE directed_by = 'Cameroon'")
-                        .queryForList(rs -> rs.getString(1))
+                        .queryForListOfString()
                         .execute(dataSource)
                         .containsAll(List.of("Avatar", "Titanic", "Terminator 2", "Jurasic Park")));
+        Assertions.assertTrue(
+                SqlBuilder.sql("SELECT id from movie WHERE directed_by = 'Cameroon'")
+                        .queryForListOfInt()
+                        .execute(dataSource)
+                        .containsAll(List.of(6,5,4,3)));
+
 
         Assertions.assertEquals("Jurasic Park",
                 movies.get(2).title());
