@@ -2,7 +2,6 @@ package com.techatpark;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
-import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchRule;
 import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
 import org.junit.jupiter.api.Test;
@@ -49,7 +48,6 @@ class CodeReviewTests {
                                 BigDecimal.class,
                                 Sql.class,
                                 SqlBuilder.class,
-                                Transaction.class,
                                 Boolean.class,
                                 Integer.class,
                                 Double.class,
