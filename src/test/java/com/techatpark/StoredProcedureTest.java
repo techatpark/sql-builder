@@ -33,7 +33,7 @@ class StoredProcedureTest extends BaseTest {
     }
 
     @Test
-    void testGetDirector_OUT() throws Exception {
+    void testAddMovie_OUT() throws Exception {
         try (Connection conn = dataSource.getConnection();
              CallableStatement stmt = conn.prepareCall("CALL insert_movie_out(?, ?, ?)")) {
             stmt.setString(1, "Inception");
@@ -46,6 +46,19 @@ class StoredProcedureTest extends BaseTest {
                     SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
                             .queryForString().execute(dataSource));
         }
+    }
+
+    @Test
+    void testAddMovie_Function() throws Exception {
+        long id = SqlBuilder
+                .prepareSql("SELECT insert_movie_fn(?, ?)")
+                    .param("Interstellar")
+                    .param("Christopher Nolan")
+                .queryForLong()
+                .execute(dataSource);
+        Assertions.assertEquals("Christopher Nolan",
+                SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
+                        .queryForString().execute(dataSource));
     }
 
     @Test

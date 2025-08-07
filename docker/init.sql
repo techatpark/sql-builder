@@ -59,6 +59,25 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS insert_movie_fn(TEXT, TEXT);
+
+CREATE FUNCTION insert_movie_fn(
+    p_title TEXT,
+    p_director TEXT
+)
+RETURNS BIGINT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    new_id BIGINT;
+BEGIN
+    INSERT INTO movie (title, directed_by)
+    VALUES (p_title, p_director)
+    RETURNING id INTO new_id;
+
+    RETURN new_id;
+END;
+$$;
 
 DROP PROCEDURE IF EXISTS update_title_inout;
 
