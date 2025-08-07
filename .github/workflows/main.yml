@@ -26,5 +26,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Build the Infrastructure
+      run: docker compose up -d
     - name: Quality Check
       run: mvn -B jacoco:prepare-agent install jacoco:report --file pom.xml
