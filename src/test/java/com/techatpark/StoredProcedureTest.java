@@ -50,15 +50,19 @@ class StoredProcedureTest extends BaseTest {
 
     @Test
     void testAddMovie_Function() throws Exception {
-        long id = SqlBuilder
-                .prepareSql("SELECT insert_movie_fn(?, ?)")
-                    .param("Interstellar")
-                    .param("Christopher Nolan")
-                .queryForLong()
-                .execute(dataSource);
-        Assertions.assertEquals("Christopher Nolan",
-                SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
-                        .queryForString().execute(dataSource));
+        try (Connection conn = dataSource.getConnection();
+             CallableStatement stmt = conn.prepareCall("{? = call insert_movie_fn(?, ?)}")) {
+            stmt.registerOutParameter(1, Types.BIGINT);
+            stmt.setString(2, "Inception");
+            stmt.setString(3, "Christopher Nolan");
+
+            stmt.execute();
+
+            long id = stmt.getLong(1);
+            Assertions.assertEquals("Christopher Nolan",
+                    SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
+                            .queryForString().execute(dataSource));
+        }
     }
 
     @Test
