@@ -3,7 +3,6 @@ package com.techatpark;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
-import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -12,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,7 +36,7 @@ class CodeReviewTests {
                 .resideInAnyPackage("com.techatpark")
                 .should()
                     .onlyAccessClassesThat()
-                        .belongToAnyOf(JdbcSQLFeatureNotSupportedException.class,
+                        .belongToAnyOf(SQLFeatureNotSupportedException.class,
                                 ResultSet.class,
                                 DataSource.class,
                                 Connection.class,

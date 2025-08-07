@@ -1,6 +1,5 @@
 package com.techatpark;
 
-import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -12,6 +11,7 @@ import java.net.URL;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -388,14 +388,14 @@ class AllinAllTest extends BaseTest {
                         .queryForListOfBigDecimal()
                         .execute(dataSource).get(0));
 
-        assertThrows(JdbcSQLFeatureNotSupportedException.class, () -> {
+        assertThrows(SQLFeatureNotSupportedException.class, () -> {
             assertEquals(new URL(URL_STR),
                     SqlBuilder.prepareSql("select urlVal from AllTypes")
                             .queryForURL()
                             .execute(dataSource));
         });
 
-        assertThrows(JdbcSQLFeatureNotSupportedException.class, () -> {
+        assertThrows(SQLFeatureNotSupportedException.class, () -> {
             assertEquals(new URL(URL_STR),
                     SqlBuilder.prepareSql("select urlVal from AllTypes")
                             .queryForListOfURL()

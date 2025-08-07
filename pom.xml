@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <url>http://maven.apache.org</url>
+  <url>https://techatpark.com</url>
 
   <properties>
     <java.version>17</java.version>
@@ -24,10 +24,8 @@
     <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
     <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
     <checkstyle.version>10.26.1</checkstyle.version>
-    <asm.version>9.4</asm.version>
 
-    <h2.version>2.3.232</h2.version>
-
+    <postgresql.version>42.7.7</postgresql.version>
   </properties>
 
   <dependencyManagement>
@@ -45,12 +43,11 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2.version}</version>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
       <scope>test</scope>
     </dependency>
-
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
