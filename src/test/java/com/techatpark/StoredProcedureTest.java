@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -22,8 +21,8 @@ class StoredProcedureTest extends BaseTest {
 
     @Test
     void testAddMovie_IN() throws Exception {
-        try (Connection conn = dataSource.getConnection()) {
-            CallableStatement stmt = conn.prepareCall("CALL insert_movie_in(?, ?)");
+        try (Connection conn = dataSource.getConnection();
+             CallableStatement stmt = conn.prepareCall("CALL insert_movie_in(?, ?)")) {
             stmt.setString(1, "Inception");
             stmt.setString(2, "Christopher Nolan");
             stmt.execute();
@@ -35,11 +34,8 @@ class StoredProcedureTest extends BaseTest {
 
     @Test
     void testGetDirector_OUT() throws Exception {
-        try (Connection conn = dataSource.getConnection()) {
-            // Insert a movie
-            conn.createStatement().executeUpdate("INSERT INTO movie(title, directed_by) VALUES ('Tenet', 'Nolan')");
-
-            CallableStatement stmt = conn.prepareCall("CALL insert_movie_out(?, ?, ?)");
+        try (Connection conn = dataSource.getConnection();
+             CallableStatement stmt = conn.prepareCall("CALL insert_movie_out(?, ?, ?)")) {
             stmt.setString(1, "Inception");
             stmt.setString(2, "Christopher Nolan");
             stmt.registerOutParameter(3, Types.BIGINT);
@@ -57,8 +53,8 @@ class StoredProcedureTest extends BaseTest {
         long generetedId = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
                 .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
                 .execute(dataSource);
-        try (Connection conn = dataSource.getConnection()) {
-            CallableStatement stmt = conn.prepareCall("CALL update_title_inout(?, ?)");
+        try (Connection conn = dataSource.getConnection();
+             CallableStatement stmt = conn.prepareCall("CALL update_title_inout(?, ?)")) {
             stmt.setLong(1, generetedId);
             stmt.registerOutParameter(1, Types.BIGINT);
             stmt.setString(2, "Updated Title");
