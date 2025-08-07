@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -80,6 +81,31 @@ class StoredProcedureTest extends BaseTest {
 
             String newTitle = stmt.getString(2);
             assertEquals("Updated Title", newTitle);
+        }
+    }
+
+    @Test
+    void testAddMovie_Result() throws Exception {
+        long generetedId = SqlBuilder.sql("INSERT INTO movie(title, directed_by) VALUES ('Interstellar', 'Nolan')")
+                .queryGeneratedKeys(resultSet -> resultSet.getLong(1))
+                .execute(dataSource);
+        try (Connection conn = dataSource.getConnection()) {
+            conn.setAutoCommit(false); // 🔴 Important: Keeps the transaction open
+            CallableStatement stmt = conn.prepareCall("{? = call get_movie_by_id(?)}");
+            stmt.registerOutParameter(1, Types.OTHER); // For REFCURSOR
+            stmt.setLong(2, generetedId); // p_id = 1
+
+            stmt.execute();
+
+            ResultSet rs = (ResultSet) stmt.getObject(1);
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                System.out.printf("Movie: %d, %s, %s%n", id, rs.getString("title"), rs.getString("directed_by"));
+            }
+
+            conn.commit();
+            conn.setAutoCommit(true);
+
         }
     }
 }
