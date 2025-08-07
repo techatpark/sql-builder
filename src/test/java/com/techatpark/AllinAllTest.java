@@ -1,6 +1,5 @@
 package com.techatpark;
 
-import org.h2.jdbc.JdbcSQLFeatureNotSupportedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -12,6 +11,7 @@ import java.net.URL;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -254,65 +254,151 @@ class AllinAllTest extends BaseTest {
 
         assertEquals(STR_VAL,
                 SqlBuilder.prepareSql("select str from AllTypes")
+                        .queryForListOfString()
+                        .execute(dataSource).get(0));
+
+        assertEquals(STR_VAL,
+                SqlBuilder.prepareSql("select str from AllTypes")
                         .queryForObject()
                         .execute(dataSource));
+
+        assertEquals(STR_VAL,
+                SqlBuilder.prepareSql("select str from AllTypes")
+                        .queryForListOfObject()
+                        .execute(dataSource).get(0));
 
         assertEquals(INT_VAL,
                         SqlBuilder.prepareSql("select intVal from AllTypes")
                                 .queryForInt()
                                 .execute(dataSource));
 
+        assertEquals(INT_VAL,
+                SqlBuilder.prepareSql("select intVal from AllTypes")
+                        .queryForListOfInt()
+                        .execute(dataSource).get(0));
+
          assertEquals(LONG_VAL,
                  SqlBuilder.prepareSql("select longVal from AllTypes")
                          .queryForLong()
                          .execute(dataSource));
 
+        assertEquals(LONG_VAL,
+                SqlBuilder.prepareSql("select longVal from AllTypes")
+                        .queryForListOfLong()
+                        .execute(dataSource).get(0));
+
          assertEquals(DOUBLE_VAL,
                  SqlBuilder.prepareSql("select doubleVal from AllTypes")
                          .queryForDouble()
                          .execute(dataSource));
+
+        assertEquals(DOUBLE_VAL,
+                SqlBuilder.prepareSql("select doubleVal from AllTypes")
+                        .queryForListOfDouble()
+                        .execute(dataSource).get(0));
+
          assertEquals(FLOAT_VAL,
                  SqlBuilder.prepareSql("select floatVal from AllTypes")
                          .queryForFloat()
                          .execute(dataSource));
+
+        assertEquals(FLOAT_VAL,
+                SqlBuilder.prepareSql("select floatVal from AllTypes")
+                        .queryForListOfFloat()
+                        .execute(dataSource).get(0));
+
          assertEquals(BOOL_VAL,
                  SqlBuilder.prepareSql("select boolVal from AllTypes")
                          .queryForBoolean()
                          .execute(dataSource));
+
+        assertEquals(BOOL_VAL,
+                SqlBuilder.prepareSql("select boolVal from AllTypes")
+                        .queryForListOfBoolean()
+                        .execute(dataSource).get(0));
+
          assertEquals(SHORT_VAL,
                  SqlBuilder.prepareSql("select shortVal from AllTypes")
                          .queryForShort()
                          .execute(dataSource));
+
+        assertEquals(SHORT_VAL,
+                SqlBuilder.prepareSql("select shortVal from AllTypes")
+                        .queryForListOfShort()
+                        .execute(dataSource).get(0));
+
          assertEquals(BYTE_VAL,
                  SqlBuilder.prepareSql("select byteVal from AllTypes")
                          .queryForByte()
                          .execute(dataSource));
+
+        assertEquals(BYTE_VAL,
+                SqlBuilder.prepareSql("select byteVal from AllTypes")
+                        .queryForListOfByte()
+                        .execute(dataSource).get(0));
+
         assertArrayEquals(BYTES_VAL,
                 SqlBuilder.prepareSql("select bytesVal from AllTypes")
                         .queryForBytes()
                         .execute(dataSource));
+
+        assertArrayEquals(BYTES_VAL,
+                SqlBuilder.prepareSql("select bytesVal from AllTypes")
+                        .queryForListOfBytes()
+                        .execute(dataSource).get(0));
+
          assertEquals(DATE_VAL,
                  SqlBuilder.prepareSql("select dateVal from AllTypes")
                          .queryForDate()
                          .execute(dataSource));
+
+        assertEquals(DATE_VAL,
+                SqlBuilder.prepareSql("select dateVal from AllTypes")
+                        .queryForListOfDate()
+                        .execute(dataSource).get(0));
+
          assertEquals(TIME_VAL,
                  SqlBuilder.prepareSql("select timeVal from AllTypes")
                          .queryForTime()
                          .execute(dataSource));
+
+        assertEquals(TIME_VAL,
+                SqlBuilder.prepareSql("select timeVal from AllTypes")
+                        .queryForListOfTime()
+                        .execute(dataSource).get(0));
+
          assertEquals(TIMESTAMP_VAL,
                  SqlBuilder.prepareSql("select timestampVal from AllTypes")
                          .queryForTimestamp()
                          .execute(dataSource));
+
+        assertEquals(TIMESTAMP_VAL,
+                SqlBuilder.prepareSql("select timestampVal from AllTypes")
+                        .queryForListOfTimestamp()
+                        .execute(dataSource).get(0));
+
          assertEquals(BIG_DECIMAL_VAL,
                  SqlBuilder.prepareSql("select bigDecimalVal from AllTypes")
                          .queryForBigDecimal()
                          .execute(dataSource));
 
-        assertThrows(JdbcSQLFeatureNotSupportedException.class, () -> {
+        assertEquals(BIG_DECIMAL_VAL,
+                SqlBuilder.prepareSql("select bigDecimalVal from AllTypes")
+                        .queryForListOfBigDecimal()
+                        .execute(dataSource).get(0));
+
+        assertThrows(SQLFeatureNotSupportedException.class, () -> {
             assertEquals(new URL(URL_STR),
                     SqlBuilder.prepareSql("select urlVal from AllTypes")
                             .queryForURL()
                             .execute(dataSource));
+        });
+
+        assertThrows(SQLFeatureNotSupportedException.class, () -> {
+            assertEquals(new URL(URL_STR),
+                    SqlBuilder.prepareSql("select urlVal from AllTypes")
+                            .queryForListOfURL()
+                            .execute(dataSource).get(0));
         });
     }
 

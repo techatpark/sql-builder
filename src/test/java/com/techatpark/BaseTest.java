@@ -1,43 +1,28 @@
 package com.techatpark;
 
-import org.h2.jdbcx.JdbcDataSource;
-import org.h2.tools.RunScript;
 import org.junit.jupiter.api.BeforeEach;
+import org.postgresql.ds.PGSimpleDataSource;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 
 /**
- * Basic Setup for Test cases.
+ * Basic Setup for Test cases using PostgreSQL.
  */
 class BaseTest {
-    protected final JdbcDataSource dataSource;
+
+    protected final PGSimpleDataSource dataSource;
 
     BaseTest() {
-        try {
-            // Setup
-            dataSource = new JdbcDataSource();
-            dataSource.setURL("jdbc:h2:file:./target/sampledb");
-            dataSource.setUser("sa");
-            dataSource.setPassword("");
-
-            RunScript.execute(dataSource.getConnection(),
-                    new FileReader(Objects.requireNonNull(getClass().getClassLoader()
-                            .getResource("init.sql")).getFile()));
-
-        } catch (SQLException | FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        dataSource = new PGSimpleDataSource();
+        dataSource.setURL("jdbc:postgresql://localhost:5432/sampledb");
+        dataSource.setUser("sampledb");
+        dataSource.setPassword("sampledb");
     }
 
     @BeforeEach
     void beforeEach() throws SQLException {
-        SqlBuilder.prepareSql("""
-                TRUNCATE TABLE movie
-                """)
+        SqlBuilder.prepareSql("TRUNCATE TABLE movie RESTART IDENTITY CASCADE")
                 .execute(dataSource);
     }
 
@@ -47,5 +32,4 @@ class BaseTest {
                 rs.getString(2),
                 rs.getString(3));
     }
-
 }
