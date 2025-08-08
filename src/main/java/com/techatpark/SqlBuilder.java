@@ -2036,18 +2036,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
             });
             return this;
         }
-        /**
-         * Adds an Object parameter to the SQL query with targetSqlType.
-         *
-         * @param value the Object value to be added
-         * @param targetSqlType the targeted SqlType.
-         * @return the current SqlBuilder instance, for method chaining
-         */
-        public CallableSqlBuilder outParam(final int type, final Object value,
-                                           final int targetSqlType) {
-            this.preparedSqlBuilder.param(value, targetSqlType);
-            return this;
-        }
+
         /**
          * Query for Out Parameters.
          * @param mapper
