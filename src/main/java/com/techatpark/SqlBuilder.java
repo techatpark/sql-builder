@@ -1274,7 +1274,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 this.preparedSqlBuilder = new PreparedSqlBuilder(
                         PreparedSqlBuilder.this.getSql());
             }
-            
 
             /**
              * Adds JDBC Batch Builder.
