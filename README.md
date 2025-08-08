@@ -10,8 +10,9 @@
 
 ## Usage
 
-Add dependency to your maven project
+Add dependency to your project
 
+### Maven
 ```xml
 <dependency>
     <groupId>com.techatpark</groupId>
@@ -19,8 +20,12 @@ Add dependency to your maven project
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
+### Gradle
+```groovy
+implementation 'com.techatpark:sql-builder:1.0-SNAPSHOT'
+```
 
-Thats all, You can now build and execute [Queries](#queries) , [Batch](#batch) and [Stored Procedures](#stored-procedures)
+ Thats all, You can now build and execute [Queries](#queries) , [Batch](#batch) and [Stored Procedures](#stored-procedures)
 
 ### Queries
 
@@ -67,6 +72,7 @@ Movie movie = SqlBuilder
                 .queryForOne(this::mapRow)
                 .execute(dataSource);
 
+// Fetch list of records
 List<Movie> movies = SqlBuilder
                 .prepareSql("SELECT id, title, directed_by from movie")
                     .queryForList(this::mapRow)
@@ -109,29 +115,32 @@ int[] updatedRows = SqlBuilder
 with IN Parameters,
 
 ```java
-SqlBuilder.prepareCall("CALL insert_movie_in(?, ?)")
-                .param("Inception", Types.VARCHAR)
-                .paramNull(Types.VARCHAR, "VARCHAR")
-                .execute(dataSource);
+SqlBuilder
+        .prepareCall("CALL insert_movie_in(?, ?)")
+            .param("Inception", Types.VARCHAR)
+            .paramNull(Types.VARCHAR, "VARCHAR")
+        .execute(dataSource);
 ```
 
 with OUT Parameters,
 
 ```java
-long id = SqlBuilder.prepareCall("CALL insert_movie_out(?, ?, ?)")
-                .param("Inception")
-                .param("Christopher Nolan")
-                .outParam(Types.BIGINT)
-                .queryOutParams(statement -> statement.getLong(3))
-                .execute(dataSource);
+long id = SqlBuilder
+        .prepareCall("{? = call insert_movie_fn(?, ?)}")
+            .outParam(Types.BIGINT)
+            .param("Inception")
+            .param("Christopher Nolan")
+        .queryOutParams(statement -> statement.getLong(1))
+        .execute(dataSource);
 ```
 
 with INOUT Parameters,
 
 ```java
-String newTitle = SqlBuilder.prepareCall("CALL update_title_inout(?, ?)")
-                .outParam(Types.BIGINT, id)
-                .outParam(Types.VARCHAR, "Updated Title")
-                .queryOutParams(statement -> statement.getString(2))
-                .execute(dataSource);
+String newTitle = SqlBuilder
+        .prepareCall("CALL update_title_inout(?, ?)")
+            .outParam(Types.BIGINT, id)
+            .outParam(Types.VARCHAR, "Updated Title")
+        .queryOutParams(statement -> statement.getString(2))
+        .execute(dataSource);
 ```
