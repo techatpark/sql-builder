@@ -63,7 +63,7 @@ class SqlBuilderTest extends BaseTest {
 
         final String sql = "SELECT id, title, directed_by from movie where id = ?";
 
-        Assertions.assertTrue(SqlBuilder.prepareSql(sql)
+        Assertions.assertTrue(SqlBuilder.prepareSql("SELECT 1 from movie where id = ?")
                 .param(generetedId)
                 .queryForExists()
                 .execute(dataSource));

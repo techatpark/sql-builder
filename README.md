@@ -80,7 +80,7 @@ List<Movie> movies = SqlBuilder
 Check if the record exists
 ```java
 boolean exists = SqlBuilder
-        .prepareSql("SELECT id FROM movie WHERE id = ?")
+        .prepareSql("SELECT 1 FROM movie WHERE id = ?")
             .param(generatedId)
             .queryForExists()
         .execute(dataSource);
