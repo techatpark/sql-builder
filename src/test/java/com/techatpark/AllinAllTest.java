@@ -456,6 +456,29 @@ class AllinAllTest extends BaseTest {
         verifyData();
     }
 
+    @Test
+    void testStoredProcedure_INOUT() throws Exception {
+        SqlBuilder.prepareCall("CALL insert_alltypes_out(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                .outParam(Types.VARCHAR, STR_VAL)
+                .outParam(Types.INTEGER, INT_VAL)
+                .outParam(Types.BIGINT, LONG_VAL)
+                .outParam(Types.DOUBLE, DOUBLE_VAL)
+                .outParam(Types.REAL, FLOAT_VAL)
+                .outParam(Types.BOOLEAN, BOOL_VAL)
+                .outParam(Types.SMALLINT, SHORT_VAL)
+                .outParam(Types.SMALLINT, BYTE_VAL)
+                .outParam(Types.DATE, DATE_VAL)
+                .outParam(Types.TIME, TIME_VAL)
+                .outParam(Types.TIMESTAMP, TIMESTAMP_VAL)
+                .outParam(Types.DECIMAL, BIG_DECIMAL_VAL)
+                .outParam(Types.BINARY, BYTES_VAL) // or Types.VARBINARY depending on your JDBC driver
+                .outParam(Types.VARCHAR, URL_STR)
+                .outParam(Types.VARCHAR, (String) null) // NULL input// OUT: p_id
+                .execute(dataSource);
+
+        verifyData();
+    }
+
     // Define Java record for table mapping
     record AllTypesRecord(String str, int intVal, long longVal, double doubleVal, float floatVal, boolean boolVal,
                           short shortVal, byte byteVal, Date dateVal, Time timeVal, Timestamp timestampVal,

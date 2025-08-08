@@ -63,6 +63,41 @@ BEGIN
 END;
 $$;
 
+DROP PROCEDURE IF EXISTS insert_alltypes_out;
+
+CREATE PROCEDURE insert_alltypes_out(
+    INOUT p_str VARCHAR,
+    INOUT p_intval INTEGER,
+    INOUT p_longval BIGINT,
+    INOUT p_doubleval DOUBLE PRECISION,
+    INOUT p_floatval REAL,
+    INOUT p_boolval BOOLEAN,
+    INOUT p_shortval SMALLINT,
+    INOUT p_byteval SMALLINT,
+    INOUT p_dateval DATE,
+    INOUT p_timeval TIME,
+    INOUT p_timestampval TIMESTAMP,
+    INOUT p_bigdecimalval DECIMAL(15, 2),
+    INOUT p_bytesval BYTEA,
+    INOUT p_urlval VARCHAR,
+    INOUT p_nullval VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO alltypes (
+        str, intval, longval, doubleval, floatval, boolval,
+        shortval, byteval, dateval, timeval, timestampval, bigdecimalval,
+        bytesval, urlval, nullval
+    )
+    VALUES (
+        p_str, p_intval, p_longval, p_doubleval, p_floatval, p_boolval,
+        p_shortval, p_byteval, p_dateval, p_timeval, p_timestampval, p_bigdecimalval,
+        p_bytesval, p_urlval, p_nullval
+    );
+END;
+$$;
+
 
 DROP PROCEDURE IF EXISTS insert_movie_in;
 
