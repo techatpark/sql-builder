@@ -1599,8 +1599,37 @@ public sealed class SqlBuilder implements Sql<Integer> {
                                                          final String theSql)
                 throws SQLException {
             CallableStatement ps = connection.prepareCall(theSql);
-            this.preparedSqlBuilder.prepare(ps);
+            prepare(ps);
             return ps;
+        }
+
+        /**
+         * Prepares the PreparedStatement by binding all the parameters
+         * to their respective
+         * positions in the SQL query.
+         *
+         * @param ps the PreparedStatement to bind parameters to
+         * @throws SQLException if a database access error occurs
+         * during parameter
+         * binding
+         */
+        private void prepare(final PreparedStatement ps)
+                throws SQLException {
+            prepareWithMappers(ps, this.preparedSqlBuilder.paramMappers);
+        }
+
+        /**
+         * Prepare Statement with Parameters.
+         * @param ps
+         * @param pMappers
+         * @throws SQLException
+         */
+        void prepareWithMappers(final PreparedStatement ps,
+                    final List<PreparedSqlBuilder.ParamMapper> pMappers)
+                throws SQLException {
+            for (int i = 0; i < pMappers.size(); i++) {
+                pMappers.get(i).set(ps, (i + 1));
+            }
         }
 
         /**
@@ -1786,6 +1815,52 @@ public sealed class SqlBuilder implements Sql<Integer> {
                                         final int targetSqlType) {
             this.preparedSqlBuilder.param(value, targetSqlType);
             return this;
+        }
+
+        /**
+         * Set Out Parameter.
+         * @param type
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder outParam(final int type) {
+            this.preparedSqlBuilder.param((ps, index) -> {
+                ((CallableStatement) ps).registerOutParameter(index, type);
+            });
+            return this;
+        }
+
+        /**
+         * Query for Out Parameters.
+         * @param mapper
+         * @return sql
+         * @param <T>
+         */
+        public <T> Sql<T> queryOutParams(final StatementMapper<T> mapper) {
+            return connection -> {
+                T result;
+                try (CallableStatement ps = getStatement(connection,
+                        this.preparedSqlBuilder.getSql())) {
+                    ps.execute();
+                    result = mapper.get(ps);
+                }
+                return result;
+            };
+        }
+
+        /**
+         * StatementMapper is an interface that defines how to map statement
+         * to a Java object.
+         *
+         * @param <T> the type of object to map the result set to
+         */
+        @FunctionalInterface
+        public interface StatementMapper<T> {
+            /**
+             * Gets Value from Statement.
+             * @param statement
+             * @return result
+             */
+            T get(CallableStatement statement) throws SQLException;
         }
     }
 }
