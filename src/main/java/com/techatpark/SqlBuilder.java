@@ -1836,10 +1836,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Integer value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1851,10 +1851,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Short value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1867,10 +1867,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final String value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1883,10 +1883,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Double value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1900,26 +1900,24 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Boolean value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
-         * tand is used o bind values to placeholders in the SQL query.
+         * and is used o bind values to placeholders in the SQL query.
          *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Long value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1932,10 +1930,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Date value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1948,10 +1945,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Float value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1964,10 +1961,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final byte[] value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1980,10 +1977,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final BigDecimal value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -1996,10 +1993,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Time value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -2012,10 +2009,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Timestamp value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
@@ -2028,10 +2025,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Object value) {
-            PreparedSqlBuilder placeHolder = new PreparedSqlBuilder(this.preparedSqlBuilder.getSql());
-            placeHolder.param(value);
+            
             this.preparedSqlBuilder.param((ps, index) -> {
-                placeHolder.paramMappers.get(0).set(ps, index);
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+        .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
             return this;
