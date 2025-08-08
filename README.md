@@ -1,12 +1,12 @@
 # SQL Builder
 
-> **SQL Builder** is a lightweight alternative for **[Spring JDBC Client](https://www.baeldung.com/spring-6-jdbcclient-api)** and **[MyBatis](https://mybatis.org/mybatis-3/)** designed to provide the same essential functionality as these tools but with a focus on simplicity, readability, and native Java. With SQL Builder, you can streamline your database operations without being tied down by unnecessary complexity.
+> **SQL Builder** is a lightweight alternative for **[Spring JDBC Client](https://www.baeldung.com/spring-6-jdbcclient-api)** and **[MyBatis](https://mybatis.org/mybatis-3/)** designed to provide the same essential functionality as these tools but with a focus on simplicity and readability. With SQL Builder, you can streamline your database operations without being tied down by unnecessary complexity.
 
 ## Why Use SQL Builder?
 
 - **Simpler Fluent API:** Focused on readability and minimal configuration.
 - **Framework Independent:** It can be used in any Java framework ( Quarkus, Spring Boot etc )
-- **Lightweight:** and **Simple:** to use with no third party dependencies
+- **Lightweight:** with no third party dependencies
 
 ## Usage
 
@@ -25,16 +25,15 @@ Add dependency to your project
 implementation 'com.techatpark:sql-builder:1.0-SNAPSHOT'
 ```
 
- Thats all, You can now build and execute [Queries](#queries) , [Batch](#batch) and [Stored Procedures](#stored-procedures)
+Thats all, You can now build and execute [Queries](#queries) , [Batch](#batch) and [Stored Procedures](#stored-procedures)
 
 ### Queries
 
 For SQL Queries, You can use `SqlBuilder.sql` and `SqlBuilder.prepareSql` (for queries with parameters)
 
-#### INSERT
+#### INSERT / UPDATE / DELETE
 
 ```java
-// Insert multiple rows
 int updateRows = SqlBuilder
                 .sql("INSERT INTO movie(title, directed_by) VALUES ('Dunkirk', 'Nolan')")
                 .execute(dataSource);
@@ -43,7 +42,6 @@ int updateRows = SqlBuilder
 With Parameters
 
 ```java
-// Insert multiple rows
 int updateRows = SqlBuilder
                 .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                     .param("Dunkirk")
@@ -51,9 +49,8 @@ int updateRows = SqlBuilder
                 .execute(dataSource);
 ```
 
-#### GENERATED KEYS
+To fetch generated key(s)
 ```java
-// Insert a row and fetch the generated key
 long generatedId = SqlBuilder
                 .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?)")
                     .param("Interstellar")
@@ -63,22 +60,25 @@ long generatedId = SqlBuilder
 ```
 
 #### SELECT
+Fetch a single record,
 
 ```java
-// Fetch a single record by ID
 Movie movie = SqlBuilder
                 .prepareSql("SELECT id, title, directed_by FROM movie WHERE id = ?")
                     .param(generatedId)
                 .queryForOne(this::mapRow)
                 .execute(dataSource);
-
-// Fetch list of records
+```
+Fetch list of records,
+```java
 List<Movie> movies = SqlBuilder
                 .prepareSql("SELECT id, title, directed_by from movie")
                     .queryForList(this::mapRow)
                 .execute(dataSource);
+```
 
-// Check if the record exists
+Check if the record exists
+```java
 boolean exists = SqlBuilder
         .prepareSql("SELECT id FROM movie WHERE id = ?")
             .param(generatedId)
