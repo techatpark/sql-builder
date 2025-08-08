@@ -20,7 +20,7 @@ Add dependency to your maven project
 </dependency>
 ```
 
-Thats all, You can now build and execute [Queries](#queries) and [Batch](#batch)
+Thats all, You can now build and execute [Queries](#queries) , [Batch](#batch) and [Stored Procedures](#stored-procedures)
 
 ### Queries
 
@@ -102,4 +102,36 @@ int[] updatedRows = SqlBuilder
                     .param("Dunkrik")
                     .param("Nolan")
                 .executeBatch(dataSource);
+```
+
+### Stored Procedures
+
+with IN Parameters,
+
+```java
+SqlBuilder.prepareCall("CALL insert_movie_in(?, ?)")
+                .param("Inception", Types.VARCHAR)
+                .paramNull(Types.VARCHAR, "VARCHAR")
+                .execute(dataSource);
+```
+
+with OUT Parameters,
+
+```java
+long id = SqlBuilder.prepareCall("CALL insert_movie_out(?, ?, ?)")
+                .param("Inception")
+                .param("Christopher Nolan")
+                .outParam(Types.BIGINT)
+                .queryOutParams(statement -> statement.getLong(3))
+                .execute(dataSource);
+```
+
+with INOUT Parameters,
+
+```java
+String newTitle = SqlBuilder.prepareCall("CALL update_title_inout(?, ?)")
+                .outParam(Types.BIGINT, id)
+                .outParam(Types.VARCHAR, "Updated Title")
+                .queryOutParams(statement -> statement.getString(2))
+                .execute(dataSource);
 ```
