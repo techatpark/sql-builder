@@ -3,6 +3,7 @@ package com.techatpark;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -1580,12 +1581,26 @@ public sealed class SqlBuilder implements Sql<Integer> {
         public Boolean execute(final Connection connection)
                 throws SQLException {
             boolean success;
-            try (PreparedStatement ps = this.preparedSqlBuilder
-                    .getStatement(connection,
+            try (CallableStatement ps = getStatement(connection,
                             this.preparedSqlBuilder.getSql())) {
                 success = ps.execute();
             }
             return success;
+        }
+
+        /**
+         * Get the Statement for Query.
+         * @param connection
+         * @param theSql
+         * @return statement to be executed
+         * @throws SQLException
+         */
+        private CallableStatement getStatement(final Connection connection,
+                                                         final String theSql)
+                throws SQLException {
+            CallableStatement ps = connection.prepareCall(theSql);
+            this.preparedSqlBuilder.prepare(ps);
+            return ps;
         }
 
         /**

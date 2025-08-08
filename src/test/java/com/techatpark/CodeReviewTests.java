@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,6 +42,7 @@ class CodeReviewTests {
                                 DataSource.class,
                                 Connection.class,
                                 Statement.class,
+                                CallableStatement.class,
                                 PreparedStatement.class,
                                 SQLException.class,
                                 Function.class,
