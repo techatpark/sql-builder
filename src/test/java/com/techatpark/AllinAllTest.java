@@ -253,27 +253,7 @@ class AllinAllTest extends BaseTest {
 
         sqlBuilder.execute(dataSource);
 
-        AllTypesRecord record = ALL_RESULS_QUERY
-                .queryForOne(AllinAllTest::mapRow)
-                .execute(dataSource);
-
-        assertAll("Verify Data",
-                () -> assertEquals(STR_VAL, record.str()),
-                () -> assertEquals(INT_VAL, record.intVal()),
-                () -> assertEquals(LONG_VAL, record.longVal()),
-                () -> assertEquals(DOUBLE_VAL, record.doubleVal()),
-                () -> assertEquals(FLOAT_VAL, record.floatVal()),
-                () -> assertEquals(BOOL_VAL, record.boolVal()),
-                () -> assertEquals(SHORT_VAL, record.shortVal()),
-                () -> assertEquals(BYTE_VAL, record.byteVal()),
-                () -> assertEquals(DATE_VAL, record.dateVal()),
-                () -> assertEquals(TIME_VAL, record.timeVal()),
-                () -> assertEquals(TIMESTAMP_VAL, record.timestampVal()),
-                () -> assertEquals(BIG_DECIMAL_VAL, record.bigDecimalVal()),
-                () -> assertArrayEquals(BYTES_VAL, record.bytesVal()),
-                () -> assertEquals(new URL(URL_STR), record.urlVal()),
-                () -> assertNull(record.nullVal())
-        );
+        verifyData();
 
         assertEquals(STR_VAL,
                 SqlBuilder.prepareSql("select str from AllTypes")
@@ -428,6 +408,52 @@ class AllinAllTest extends BaseTest {
                             .queryForListOfURL()
                             .execute(dataSource).get(0));
         });
+    }
+
+    private void verifyData() throws SQLException {
+        AllTypesRecord record = ALL_RESULS_QUERY
+                .queryForOne(AllinAllTest::mapRow)
+                .execute(dataSource);
+
+        assertAll("Verify Data",
+                () -> assertEquals(STR_VAL, record.str()),
+                () -> assertEquals(INT_VAL, record.intVal()),
+                () -> assertEquals(LONG_VAL, record.longVal()),
+                () -> assertEquals(DOUBLE_VAL, record.doubleVal()),
+                () -> assertEquals(FLOAT_VAL, record.floatVal()),
+                () -> assertEquals(BOOL_VAL, record.boolVal()),
+                () -> assertEquals(SHORT_VAL, record.shortVal()),
+                () -> assertEquals(BYTE_VAL, record.byteVal()),
+                () -> assertEquals(DATE_VAL, record.dateVal()),
+                () -> assertEquals(TIME_VAL, record.timeVal()),
+                () -> assertEquals(TIMESTAMP_VAL, record.timestampVal()),
+                () -> assertEquals(BIG_DECIMAL_VAL, record.bigDecimalVal()),
+                () -> assertArrayEquals(BYTES_VAL, record.bytesVal()),
+                () -> assertEquals(new URL(URL_STR), record.urlVal()),
+                () -> assertNull(record.nullVal())
+        );
+    }
+
+    @Test
+    void testStoredProcedure_IN() throws Exception {
+        SqlBuilder.prepareCall("CALL insert_alltypes_in(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                .param(STR_VAL)
+                .param(INT_VAL)
+                .param(LONG_VAL)
+                .param(DOUBLE_VAL)
+                .param(FLOAT_VAL)
+                .param(BOOL_VAL)
+                .param(SHORT_VAL)
+                .param(BYTE_VAL)
+                .param(DATE_VAL)
+                .param(TIME_VAL)
+                .param(TIMESTAMP_VAL)
+                .param(BIG_DECIMAL_VAL)
+                .param(BYTES_VAL)
+                .param(URL_STR)
+                .paramNull()
+                .execute(dataSource);
+        verifyData();
     }
 
     // Define Java record for table mapping
