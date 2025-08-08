@@ -677,31 +677,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
     }
 
     /**
-     * Functional interface representing a parameter mapper
-     * that binds parameters
-     * to a {@link PreparedStatement}. Implementations of this interface are
-     * responsible for mapping a specific parameter
-     * to the appropriate placeholder
-     * in the SQL query.
-     */
-    public interface ParamMapper {
-
-        /**
-         * Binds the provided parameters to the placeholders in the given
-         * {@link PreparedStatement}. This method is called to map and set
-         * parameter values for the SQL query.
-         *
-         * @param ps the {@link PreparedStatement}
-         *                          to bind parameters to
-         * @param index index of the parameter.
-         * @throws SQLException if a database access error occurs or if
-         *                      parameter binding fails
-         */
-        void set(PreparedStatement ps,
-                 int index) throws SQLException;
-    }
-
-    /**
      * The Query class encapsulates the logic for executing
      * SELECT queries and mapping
      * the results to Java objects using a RowMapper.
@@ -1299,18 +1274,24 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 this.preparedSqlBuilder = new PreparedSqlBuilder(
                         PreparedSqlBuilder.this.getSql());
             }
+            
 
             /**
              * Adds JDBC Batch Builder.
              * @return batch
              */
             public PreparedBatch addBatch() throws SQLException {
-                if (this.preparedSqlBuilder.paramMappers.size() == capacity) {
-                    capacity = capacity + paramsPerBatch;
-                    return this;
+                validate();
+                capacity = capacity + paramsPerBatch;
+                return this;
+            }
+
+            private void validate() throws SQLException {
+                if (this.preparedSqlBuilder.paramMappers.size() != capacity) {
+                    throw new SQLException(
+                            "Parameters do not match "
+                                    + "with first set of parameters");
                 }
-                throw new SQLException(
-                        "Parameters do not match with first set of parameters");
             }
 
             /**
@@ -1320,6 +1301,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
              */
             public int[] executeBatch(final DataSource dataSource)
                     throws SQLException {
+                validate();
                 int[] updatedRows;
                 try (Connection connection = dataSource.getConnection();
                      PreparedStatement ps = connection
@@ -1534,6 +1516,31 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 return this;
             }
         }
+        /**
+         * Functional interface representing a parameter mapper
+         * that binds parameters
+         * to a {@link PreparedStatement}. Implementations of this interface are
+         * responsible for mapping a specific parameter
+         * to the appropriate placeholder
+         * in the SQL query.
+         */
+        public interface ParamMapper {
+
+            /**
+             * Binds the provided parameters to the placeholders in the given
+             * {@link PreparedStatement}. This method is called to map and set
+             * parameter values for the SQL query.
+             *
+             * @param ps the {@link PreparedStatement}
+             *                          to bind parameters to
+             * @param index index of the parameter.
+             * @throws SQLException if a database access error occurs or if
+             *                      parameter binding fails
+             */
+            void set(PreparedStatement ps,
+                     int index) throws SQLException;
+        }
+
     }
 
 }

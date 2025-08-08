@@ -122,7 +122,6 @@ class AllinAllTest extends BaseTest {
 
     }
     @Test
-    @Disabled
     void testInvalidBatchFromSqlBuilder() {
         // If we give more parameter to SQL Builder initiated batch
         SQLException exception = assertThrows(SQLException.class, () -> {
@@ -151,7 +150,7 @@ class AllinAllTest extends BaseTest {
     }
 
     @Test
-    void testInvalidBatchFromBatch() throws Exception {
+    void testInvalidExecuteBatchFromBatch() throws Exception {
         SqlBuilder.PreparedSqlBuilder.PreparedBatch batchFromPreparedBatch = this.preparedBatch
                 .addBatch()
                 .param(STR_VAL)
@@ -180,6 +179,34 @@ class AllinAllTest extends BaseTest {
 
         Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
 
+    }
+
+    @Test
+    void testInvalidAddBatchFromBatch() {
+        // If we give more parameter to SQL Builder initiated batch
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            sqlBuilder
+                    .addBatch()
+                    .param(STR_VAL)
+                    .param(INT_VAL)
+                    .param(LONG_VAL)
+                    .param(DOUBLE_VAL)
+                    .param(FLOAT_VAL)
+                    .param(BOOL_VAL)
+                    .param(SHORT_VAL)
+                    .param(BYTE_VAL)
+                    .param(DATE_VAL)
+                    .param(TIME_VAL)
+                    .param(TIMESTAMP_VAL)
+                    .param(BIG_DECIMAL_VAL)
+                    .param(BYTES_VAL)
+                    .param(URL_STR)
+                    .paramNull()
+                    .param(STR_VAL) // 1 More
+                    .addBatch();
+        });
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
     }
 
     @Test
