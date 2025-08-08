@@ -50,8 +50,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @param theSql the SQL query to be prepared and executed
      * @return sqlBuilder
      */
-    public static PreparedSqlBuilder prepareCall(final String theSql) {
-        return new PreparedSqlBuilder(theSql);
+    public static CallableSqlBuilder prepareCall(final String theSql) {
+        return new CallableSqlBuilder(theSql);
     }
 
     /**
@@ -1554,4 +1554,223 @@ public sealed class SqlBuilder implements Sql<Integer> {
 
     }
 
+    public static final class CallableSqlBuilder implements Sql<Boolean> {
+        /**
+         * The SQL query to be executed.
+         */
+        private final PreparedSqlBuilder preparedSqlBuilder;
+
+        /**
+         * Creates Callable Sql Builder.
+         * @param theSql
+         */
+        public CallableSqlBuilder(final String theSql) {
+            this.preparedSqlBuilder = new PreparedSqlBuilder(theSql);
+        }
+
+        /**
+         * Executes the SQL operation using the provided JDBC connection.
+         *
+         * @param connection the JDBC connection to use for executing
+         *                   the operation
+         * @return the result of the SQL operation
+         * @throws SQLException if an SQL error occurs during the execution
+         */
+        @Override
+        public Boolean execute(final Connection connection)
+                throws SQLException {
+            boolean success;
+            try (PreparedStatement ps = this.preparedSqlBuilder
+                    .getStatement(connection,
+                            this.preparedSqlBuilder.getSql())) {
+                success = ps.execute();
+            }
+            return success;
+        }
+
+        /**
+         * Adds a parameter with a null.
+         *
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder paramNull() {
+            this.preparedSqlBuilder.paramNull();
+            return this;
+        }
+
+        /**
+         * Adds a parameter with a specific SQL type and type name as `NULL`
+         * to the SQL query.
+         * This method is used when the SQL parameter should be set to
+         * `NULL`for types
+         * that require a type name in addition to the SQL type, such as SQL
+         * `STRUCT` or `ARRAY`.
+         *
+         * @param sqlType  the SQL type of the parameter,
+         *                 as defined in {@link java.sql.Types}
+         * @param typeName the type name of the parameter,
+ *                 used for SQL types that require specific type information
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder paramNull(final int sqlType,
+                                            final String typeName) {
+            this.preparedSqlBuilder.paramNull(sqlType, typeName);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Integer value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a Short parameter to the SQL query.
+         *
+         * @param value the Short value to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Short value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final String value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining and
+         * is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Double value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Boolean value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * tand is used o bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Long value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Date value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Float value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final byte[] value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final BigDecimal value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Time value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Timestamp value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds a parameter to the SQL query. The method allows chaining
+         * and is used to bind values to placeholders in the SQL query.
+         *
+         * @param value the value of the parameter to be added
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Object value) {
+            this.preparedSqlBuilder.param(value);
+            return this;
+        }
+        /**
+         * Adds an Object parameter to the SQL query with targetSqlType.
+         *
+         * @param value the Object value to be added
+         * @param targetSqlType the targeted SqlType.
+         * @return the current SqlBuilder instance, for method chaining
+         */
+        public CallableSqlBuilder param(final Object value,
+                                        final int targetSqlType) {
+            this.preparedSqlBuilder.param(value, targetSqlType);
+            return this;
+        }
+    }
 }
