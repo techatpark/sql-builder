@@ -1274,14 +1274,24 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 this.preparedSqlBuilder = new PreparedSqlBuilder(
                         PreparedSqlBuilder.this.getSql());
             }
+            
 
             /**
              * Adds JDBC Batch Builder.
              * @return batch
              */
-            public PreparedBatch addBatch() {
+            public PreparedBatch addBatch() throws SQLException {
+                validate();
                 capacity = capacity + paramsPerBatch;
                 return this;
+            }
+
+            private void validate() throws SQLException {
+                if (this.preparedSqlBuilder.paramMappers.size() != capacity) {
+                    throw new SQLException(
+                            "Parameters do not match "
+                                    + "with first set of parameters");
+                }
             }
 
             /**
@@ -1291,11 +1301,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
              */
             public int[] executeBatch(final DataSource dataSource)
                     throws SQLException {
-                if (this.preparedSqlBuilder.paramMappers.size() != capacity) {
-                    throw new SQLException(
-                            "Parameters do not match "
-                                   + "with first set of parameters");
-                }
+                validate();
                 int[] updatedRows;
                 try (Connection connection = dataSource.getConnection();
                      PreparedStatement ps = connection
