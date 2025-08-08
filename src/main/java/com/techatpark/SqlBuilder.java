@@ -1288,7 +1288,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
             }
             /**
              * Adds a parameter with a null.
-             *
              * @return the current SqlBuilder instance, for method chaining
              */
             public PreparedBatch paramNull() {
@@ -1303,7 +1302,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * `NULL`for types
              * that require a type name in addition to the SQL type, such as SQL
              * `STRUCT` or `ARRAY`.
-             *
              * @param sqlType  the SQL type of the parameter,
      *                 as defined in {@link java.sql.Types}
              * @param typeName the type name of the parameter,
@@ -1503,9 +1501,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
 
         /**
          * Prepares the PreparedStatement by binding all the parameters
-         * to their respective
-         * positions in the SQL query.
-         *
+         * to their respective positions in the SQL query.
          * @param ps the PreparedStatement to bind parameters to
          * @throws SQLException if a database access error occurs
          * during parameter
@@ -1532,7 +1528,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
 
         /**
          * Adds a parameter with a null.
-         *
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder paramNull() {
@@ -1547,7 +1542,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * `NULL`for types
          * that require a type name in addition to the SQL type, such as SQL
          * `STRUCT` or `ARRAY`.
-         *
          * @param sqlType  the SQL type of the parameter,
          *                 as defined in {@link java.sql.Types}
          * @param typeName the type name of the parameter,
@@ -1562,7 +1556,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1572,7 +1565,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
         /**
          * Adds a Short parameter to the SQL query.
-         *
          * @param value the Short value to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1583,7 +1575,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1594,7 +1585,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining and
          * is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1606,7 +1596,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1616,8 +1605,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
-         * tand is used o bind values to placeholders in the SQL query.
-         *
+         * and is used o bind values to placeholders in the SQL query.
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1628,7 +1616,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1639,7 +1626,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1650,7 +1636,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1661,7 +1646,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1672,7 +1656,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
-         *
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
@@ -1749,7 +1732,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Short value) {
-
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
         .param(value).paramMappers.get(0).set(ps, index);
@@ -1765,7 +1747,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final String value) {
-
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
         .param(value).paramMappers.get(0).set(ps, index);
@@ -1781,7 +1762,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Double value) {
-
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
         .param(value).paramMappers.get(0).set(ps, index);
@@ -1844,7 +1824,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Float value) {
-
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
         .param(value).paramMappers.get(0).set(ps, index);
@@ -1860,7 +1839,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final byte[] value) {
-
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
         .param(value).paramMappers.get(0).set(ps, index);
@@ -1924,7 +1902,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Object value) {
-
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
         .param(value).paramMappers.get(0).set(ps, index);

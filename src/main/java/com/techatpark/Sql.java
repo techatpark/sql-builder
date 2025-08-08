@@ -13,7 +13,6 @@ import java.sql.SQLException;
 public interface Sql<R> {
     /**
      * Executes the SQL operation using the provided JDBC connection.
-     *
      * @param connection the JDBC connection to use for executing the operation
      * @return the result of the SQL operation
      * @throws SQLException if an SQL error occurs during the execution
@@ -22,7 +21,6 @@ public interface Sql<R> {
 
     /**
      * Executes the SQL operation using the provided JDBC dataSource.
-     *
      * @param dataSource the JDBC dataSource to use for executing the operation
      * @return the result of the SQL operation
      * @throws SQLException if an SQL error occurs during the execution
