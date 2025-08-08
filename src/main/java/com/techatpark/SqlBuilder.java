@@ -45,7 +45,17 @@ public sealed class SqlBuilder implements Sql<Integer> {
     private final String sql;
 
     /**
-     * Builds Sql Builder from Sql.
+     * Builds Callable Sql Builder from Sql.
+     *
+     * @param theSql the SQL query to be prepared and executed
+     * @return sqlBuilder
+     */
+    public static PreparedSqlBuilder prepareCall(final String theSql) {
+        return new PreparedSqlBuilder(theSql);
+    }
+
+    /**
+     * Builds Prerpared Sql Builder from Sql.
      *
      * @param theSql the SQL query to be prepared and executed
      * @return sqlBuilder
@@ -72,6 +82,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
     protected SqlBuilder(final String theSql) {
         this.sql = theSql;
     }
+
+
 
     /**
      * Get the SQL Query.

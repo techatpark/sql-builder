@@ -22,12 +22,10 @@ class StoredProcedureTest extends BaseTest {
 
     @Test
     void testAddMovie_IN() throws Exception {
-        try (Connection conn = dataSource.getConnection();
-             CallableStatement stmt = conn.prepareCall("CALL insert_movie_in(?, ?)")) {
-            stmt.setString(1, "Inception");
-            stmt.setString(2, "Christopher Nolan");
-            stmt.execute();
-        }
+        SqlBuilder.prepareCall("CALL insert_movie_in(?, ?)")
+                .param("Inception")
+                .param("Christopher Nolan")
+                .execute(dataSource);
         Assertions.assertEquals("Christopher Nolan",
                 SqlBuilder.sql("SELECT directed_by from movie WHERE title = 'Inception'")
                         .queryForString().execute(dataSource));
