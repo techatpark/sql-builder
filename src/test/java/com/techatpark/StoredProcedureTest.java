@@ -23,10 +23,10 @@ class StoredProcedureTest extends BaseTest {
     @Test
     void testAddMovie_IN() throws Exception {
         SqlBuilder.prepareCall("CALL insert_movie_in(?, ?)")
-                .param("Inception")
-                .param("Christopher Nolan")
+                .param("Inception", Types.VARCHAR)
+                .paramNull(Types.VARCHAR, "VARCHAR")
                 .execute(dataSource);
-        Assertions.assertEquals("Christopher Nolan",
+        Assertions.assertNull(
                 SqlBuilder.sql("SELECT directed_by from movie WHERE title = 'Inception'")
                         .queryForString().execute(dataSource));
     }
