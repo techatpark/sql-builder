@@ -98,3 +98,18 @@ BEGIN
     WHERE id = p_id;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION get_movie_by_id(p_id BIGINT)
+RETURNS REFCURSOR AS $$
+DECLARE
+    ref refcursor;
+BEGIN
+    OPEN ref FOR
+    SELECT id, title, directed_by
+    FROM movie
+    WHERE id = p_id;
+
+    RETURN ref;
+END;
+$$ LANGUAGE plpgsql;
+
