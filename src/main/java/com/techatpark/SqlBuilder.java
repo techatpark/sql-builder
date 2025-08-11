@@ -1560,8 +1560,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Integer value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a Short parameter to the SQL query.
@@ -1569,8 +1568,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Short value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1579,8 +1577,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final String value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining and
@@ -1589,8 +1586,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Double value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
 
         /**
@@ -1600,8 +1596,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Boolean value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1610,8 +1605,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Long value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1620,8 +1614,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Date value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1630,8 +1623,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Float value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1640,8 +1632,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final byte[] value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1650,8 +1641,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final BigDecimal value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1660,8 +1650,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Time value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1671,8 +1660,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Timestamp value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1682,8 +1670,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder param(final Object value) {
-            this.preparedSqlBuilder.param(value);
-            return this;
+            return inParam(value);
         }
         /**
          * Adds an Object parameter to the SQL query with targetSqlType.
@@ -1724,6 +1711,17 @@ public sealed class SqlBuilder implements Sql<Integer> {
                         .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
+            return this;
+        }
+
+        /**
+         * Adds IN Parameter.
+         * @param value
+         * @return the current SqlBuilder instance, for method chaining
+         * @param <T>
+         */
+        private <T> CallableSqlBuilder inParam(final T value) {
+            this.preparedSqlBuilder.param(value);
             return this;
         }
 
