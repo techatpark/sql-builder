@@ -907,9 +907,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         private PreparedStatement getStatement(final Connection connection,
                                                  final String theSql)
                 throws SQLException {
-            PreparedStatement ps = connection.prepareStatement(theSql);
-            prepare(ps);
-            return ps;
+            return prepare(connection.prepareStatement(theSql));
         }
 
         /**
@@ -923,10 +921,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
                                                  final String theSql,
                                                  final int resultSetType)
                 throws SQLException {
-            PreparedStatement ps = connection
-                    .prepareStatement(theSql, resultSetType);
-            prepare(ps);
-            return ps;
+            return prepare(connection.prepareStatement(theSql, resultSetType));
         }
 
         /**
