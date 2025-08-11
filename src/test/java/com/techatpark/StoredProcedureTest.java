@@ -32,6 +32,17 @@ class StoredProcedureTest extends BaseTest {
     }
 
     @Test
+    void testAddMovie_INAsBatch() throws Exception {
+        SqlBuilder.prepareCall("CALL insert_movie_in(?, ?)")
+                .param("Inception", Types.VARCHAR)
+                .paramNull(Types.VARCHAR, "VARCHAR")
+                .execute(dataSource);
+        Assertions.assertNull(
+                SqlBuilder.sql("SELECT directed_by from movie WHERE title = 'Inception'")
+                        .queryForString().execute(dataSource));
+    }
+
+    @Test
     void testAddMovie_OUT() throws Exception {
         long id = SqlBuilder.prepareCall("CALL insert_movie_out(?, ?, ?)")
                 .param("Inception")
@@ -42,19 +53,6 @@ class StoredProcedureTest extends BaseTest {
             Assertions.assertEquals("Christopher Nolan",
                     SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
                             .queryForString().execute(dataSource));
-    }
-
-    @Test
-    void testAddMovie_Function() throws Exception {
-        long id = SqlBuilder.prepareCall("{? = call insert_movie_fn(?, ?)}")
-                .outParam(Types.BIGINT)
-                .param("Inception")
-                .param("Christopher Nolan")
-                .queryOutParams(statement -> statement.getLong(1))
-                .execute(dataSource);
-        Assertions.assertEquals("Christopher Nolan",
-                SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
-                        .queryForString().execute(dataSource));
     }
 
     @Test
@@ -71,6 +69,19 @@ class StoredProcedureTest extends BaseTest {
 
         assertEquals("Updated Title", newTitle);
 
+    }
+
+    @Test
+    void testAddMovie_Function() throws Exception {
+        long id = SqlBuilder.prepareCall("{? = call insert_movie_fn(?, ?)}")
+                .outParam(Types.BIGINT)
+                .param("Inception")
+                .param("Christopher Nolan")
+                .queryOutParams(statement -> statement.getLong(1))
+                .execute(dataSource);
+        Assertions.assertEquals("Christopher Nolan",
+                SqlBuilder.sql("SELECT directed_by from movie WHERE id = " + id)
+                        .queryForString().execute(dataSource));
     }
 
     @Test
