@@ -1316,11 +1316,11 @@ public sealed class SqlBuilder implements Sql<Integer> {
             /**
              * Adds a parameter to the SQL query. The method allows chaining
              * and is used to bind values to placeholders in the SQL query.
-             *
+             * @param <T>
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public PreparedBatch param(final Integer value) {
+            public <T> PreparedBatch preparedParam(final T value) {
                 this.preparedSqlBuilder.param(value);
                 return this;
             }
@@ -1331,8 +1331,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @return the current SqlBuilder instance, for method chaining
              */
             public PreparedBatch param(final Short value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * Adds a parameter to the SQL query. The method allows chaining
@@ -1342,79 +1341,68 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @return the current SqlBuilder instance, for method chaining
              */
             public PreparedBatch param(final String value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Double value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
 
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Boolean value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Long value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Date value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Float value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final byte[] value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final BigDecimal value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Time value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Timestamp value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * {@inheritDoc}
              */
             public PreparedBatch param(final Object value) {
-                this.preparedSqlBuilder.param(value);
-                return this;
+                return preparedParam(value);
             }
             /**
              * Adds an Object parameter to the SQL query with targetSqlType.
