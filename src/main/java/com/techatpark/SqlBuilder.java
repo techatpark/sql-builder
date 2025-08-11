@@ -1737,6 +1737,235 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
 
         /**
+         *
+         * @return callableBatch
+         */
+        public CallableBatch addBatch() {
+            return new CallableBatch();
+        }
+
+        /**
+         * JDBC Batch Builder.
+         */
+        public final class CallableBatch {
+
+            /**
+             * No ofParams in Batch Statement.
+             */
+            private final int paramsPerBatch;
+            /**
+             * No ofParams in Batch Statement.
+             */
+            private int capacity;
+
+            /**
+             * SQL Builder to Hold Batch }Parameters.
+             */
+            private final PreparedSqlBuilder preparedSqlBuilder;
+
+            /**
+             * SQL Builder for the query.
+             */
+
+            private CallableBatch() {
+                this.paramsPerBatch = CallableSqlBuilder
+                        .this.preparedSqlBuilder.paramMappers.size();
+                this.capacity = paramsPerBatch;
+                this.preparedSqlBuilder = new PreparedSqlBuilder(
+                        CallableSqlBuilder.this.preparedSqlBuilder.getSql());
+            }
+
+            /**
+             * Adds JDBC Batch Builder.
+             * @return batch
+             */
+            public CallableBatch addBatch() throws SQLException {
+                validate();
+                capacity = capacity + paramsPerBatch;
+                return this;
+            }
+
+            private void validate() throws SQLException {
+                if (this.preparedSqlBuilder.paramMappers.size() != capacity) {
+                    throw new SQLException(
+                            "Parameters do not match "
+                                    + "with first set of parameters");
+                }
+            }
+
+            /**
+             * executes the Batch.
+             * @param dataSource
+             * @return an array of update counts
+             */
+            public int[] executeBatch(final DataSource dataSource)
+                    throws SQLException {
+                validate();
+                int[] updatedRows;
+                try (Connection connection = dataSource.getConnection();
+                     PreparedStatement ps = connection
+                             .prepareStatement(preparedSqlBuilder.getSql())) {
+                    prepare(ps);
+
+                    updatedRows = ps.executeBatch();
+                }
+                return updatedRows;
+            }
+
+            private void prepare(final PreparedStatement ps)
+                    throws SQLException {
+
+                int batchCount = (this.preparedSqlBuilder.paramMappers.size()
+                        / this.paramsPerBatch);
+
+                prepareWithMappers(ps, CallableSqlBuilder.this
+                        .preparedSqlBuilder.paramMappers);
+                ps.addBatch();
+
+                for (int i = 0; i < batchCount; i++) {
+                    int from = i * this.paramsPerBatch;
+                    prepareWithMappers(ps, this.preparedSqlBuilder
+                            .paramMappers.subList(from,
+                                    from + this.paramsPerBatch));
+                    ps.addBatch();
+                }
+            }
+
+            /**
+             *
+             * @return callableBatch
+             */
+            public CallableBatch paramNull() {
+                this.preparedSqlBuilder.paramNull();
+                return this;
+            }
+
+            /**
+             * Adds a parameter with a specific SQL type and type name as `NULL`
+             * to the SQL query.
+             * This method is used when the SQL parameter should be set to
+             * `NULL`for types
+             * that require a type name in addition to the SQL type, such as SQL
+             * `STRUCT` or `ARRAY`.
+             * @param sqlType  the SQL type of the parameter,
+             *                 as defined in {@link java.sql.Types}
+             * @param typeName the type name of the parameter,
+             *                 used for SQL types that require
+             *                 specific type information
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableBatch paramNull(final int sqlType,
+                                           final String typeName) {
+                this.preparedSqlBuilder.paramNull(sqlType, typeName);
+                return this;
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             * @param <T>
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public <T> CallableBatch callableParam(final T value) {
+                this.preparedSqlBuilder.param(value);
+                return this;
+            }
+            /**
+             * Adds a Short parameter to the SQL query.
+             *
+             * @param value the Short value to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableBatch param(final Short value) {
+                return callableParam(value);
+            }
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableBatch param(final String value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Double value) {
+                return callableParam(value);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Boolean value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Long value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Date value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Float value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final byte[] value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final BigDecimal value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Time value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Timestamp value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Object value) {
+                return callableParam(value);
+            }
+            /**
+             * Adds an Object parameter to the SQL query with targetSqlType.
+             *
+             * @param value the Object value to be added
+             * @param targetSqlType the targeted SqlType.
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableBatch param(final Object value,
+                                       final int targetSqlType) {
+                this.preparedSqlBuilder.param(value, targetSqlType);
+                return this;
+            }
+        }
+
+
+        /**
          * StatementMapper is an interface that defines how to map statement
          * to a Java object.
          *

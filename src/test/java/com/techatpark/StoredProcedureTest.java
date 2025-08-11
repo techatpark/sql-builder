@@ -36,9 +36,23 @@ class StoredProcedureTest extends BaseTest {
         SqlBuilder.prepareCall("CALL insert_movie_in(?, ?)")
                 .param("Inception", Types.VARCHAR)
                 .paramNull(Types.VARCHAR, "VARCHAR")
-                .execute(dataSource);
+                .addBatch()
+                .param("Dunkrik")
+                .param("Nolan")
+                .addBatch()
+                .param("Avatar")
+                .param("Cameroon")
+                .executeBatch(dataSource);
         Assertions.assertNull(
                 SqlBuilder.sql("SELECT directed_by from movie WHERE title = 'Inception'")
+                        .queryForString().execute(dataSource));
+
+        Assertions.assertEquals("Nolan",
+                SqlBuilder.sql("SELECT directed_by from movie WHERE title = 'Dunkrik'")
+                        .queryForString().execute(dataSource));
+
+        Assertions.assertEquals("Avatar",
+                SqlBuilder.sql("SELECT title from movie WHERE directed_by = 'Cameroon'")
                         .queryForString().execute(dataSource));
     }
 

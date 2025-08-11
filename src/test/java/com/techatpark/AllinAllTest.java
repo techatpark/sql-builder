@@ -80,6 +80,46 @@ class AllinAllTest extends BaseTest {
             .param(URL_STR)
             .paramNull();
 
+    private final SqlBuilder.CallableSqlBuilder callSqlBuilder = SqlBuilder.prepareCall("""
+                INSERT INTO AllTypes
+                (str, intVal, longVal, doubleVal, floatVal, boolVal, shortVal, byteVal, 
+                dateVal, timeVal, timestampVal, bigDecimalVal, bytesVal, urlVal, nullVal)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """)
+            .param(STR_VAL)
+            .param(INT_VAL)
+            .param(LONG_VAL)
+            .param(DOUBLE_VAL)
+            .param(FLOAT_VAL)
+            .param(BOOL_VAL)
+            .param(SHORT_VAL)
+            .param(BYTE_VAL)
+            .param(DATE_VAL)
+            .param(TIME_VAL)
+            .param(TIMESTAMP_VAL)
+            .param(BIG_DECIMAL_VAL)
+            .param(BYTES_VAL)
+            .param(URL_STR)
+            .paramNull();
+
+    private final SqlBuilder.CallableSqlBuilder.CallableBatch callableBatch = callSqlBuilder
+            .addBatch()
+            .param(STR_VAL, Types.VARCHAR)
+            .param(INT_VAL)
+            .param(LONG_VAL)
+            .param(DOUBLE_VAL)
+            .param(FLOAT_VAL)
+            .paramNull(Types.BOOLEAN, "BOOLEAN")
+            .param(SHORT_VAL)
+            .param(BYTE_VAL)
+            .param(DATE_VAL)
+            .param(TIME_VAL)
+            .param(TIMESTAMP_VAL)
+            .param(BIG_DECIMAL_VAL)
+            .param(BYTES_VAL)
+            .param(URL_STR)
+            .paramNull();
+
     private static AllTypesRecord mapRow(ResultSet rs) {
         try {
             return new AllTypesRecord(
@@ -208,6 +248,66 @@ class AllinAllTest extends BaseTest {
 
         Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
     }
+
+    @Test
+    void testInvalidExecuteBatchFromCallableBatch() throws Exception {
+        SqlBuilder.CallableSqlBuilder.CallableBatch batchFromCallableBatch = this.callableBatch
+                .addBatch()
+                .param(STR_VAL)
+                .param(INT_VAL)
+                .param(LONG_VAL)
+                .param(DOUBLE_VAL)
+                .param(FLOAT_VAL)
+                .param(BOOL_VAL)
+                .param(SHORT_VAL)
+                .param(BYTE_VAL)
+                .param(DATE_VAL)
+                .param(TIME_VAL)
+                .param(TIMESTAMP_VAL)
+                .param(BIG_DECIMAL_VAL)
+                .param(BYTES_VAL)
+                .param(URL_STR)
+                .paramNull()
+                .addBatch();
+        // If we give less parameter to SQL Builder initiated batch
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            batchFromCallableBatch
+                    .param(STR_VAL)
+                    .addBatch()
+                    .executeBatch(dataSource);
+        });
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
+    }
+
+    @Test
+    void testInvalidAddBatchFromCallableBatch() {
+        // If we give more parameter to SQL Builder initiated batch
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            callSqlBuilder
+                    .addBatch()
+                    .param(STR_VAL)
+                    .param(INT_VAL)
+                    .param(LONG_VAL)
+                    .param(DOUBLE_VAL)
+                    .param(FLOAT_VAL)
+                    .param(BOOL_VAL)
+                    .param(SHORT_VAL)
+                    .param(BYTE_VAL)
+                    .param(DATE_VAL)
+                    .param(TIME_VAL)
+                    .param(TIMESTAMP_VAL)
+                    .param(BIG_DECIMAL_VAL)
+                    .param(BYTES_VAL)
+                    .param(URL_STR)
+                    .paramNull()
+                    .param(STR_VAL) // 1 More
+                    .addBatch();
+        });
+
+        Assertions.assertTrue(exception.getMessage().startsWith("Parameters "));
+    }
+
 
     @Test
     void testEmptyResult() throws Exception {
