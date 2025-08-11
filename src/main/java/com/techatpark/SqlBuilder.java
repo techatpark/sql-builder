@@ -564,18 +564,19 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * Get Generated Keys as List for a Query.
      * {@inheritDoc}
      */
-    protected <T> List<T> getGeneratedKeysAsList(final RowMapper<T> query,
-                         final Connection connection) throws SQLException {
-        List<T> result = new ArrayList<>();
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(getSql(), Statement.RETURN_GENERATED_KEYS);
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                while (rs.next()) {
-                    result.add(query.get(rs));
+    protected <T> Sql<List<T>> getGeneratedKeysAsList(final RowMapper<T> query) {
+        return connection -> {
+            List<T> result = new ArrayList<>();
+            try (Statement stmt = connection.createStatement()) {
+                stmt.executeUpdate(getSql(), Statement.RETURN_GENERATED_KEYS);
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    while (rs.next()) {
+                        result.add(query.get(rs));
+                    }
                 }
             }
-        }
-        return result;
+            return result;
+        };
     }
     /**
      * add Batch.
@@ -680,7 +681,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      */
     public <T> Sql<List<T>>
             queryGeneratedKeysAsList(final RowMapper<T> rowMapper) {
-        return connection -> getGeneratedKeysAsList(rowMapper, connection);
+        return getGeneratedKeysAsList(rowMapper);
     }
 
     public static final class PreparedSqlBuilder extends SqlBuilder {
@@ -1042,19 +1043,20 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * {@inheritDoc}
          */
         @Override
-        protected <T> List<T> getGeneratedKeysAsList(final RowMapper<T> query,
-                             final Connection connection) throws SQLException {
-            List<T> result = new ArrayList<>();
-            try (PreparedStatement ps = getStatement(connection, this.getSql(),
-                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    while (rs.next()) {
-                        result.add(query.get(rs));
+        protected <T> Sql<List<T>> getGeneratedKeysAsList(final RowMapper<T> query) {
+            return connection -> {
+                List<T> result = new ArrayList<>();
+                try (PreparedStatement ps = getStatement(connection, this.getSql(),
+                        java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    ps.executeUpdate();
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        while (rs.next()) {
+                            result.add(query.get(rs));
+                        }
                     }
                 }
-            }
-            return result;
+                return result;
+            };
         }
 
         /**
