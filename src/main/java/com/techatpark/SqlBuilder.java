@@ -866,22 +866,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
 
         /**
-         * Prepares the PreparedStatement by binding all the parameters
-         * to their respective
-         * positions in the SQL query.
-         *
-         * @param ps the PreparedStatement to bind parameters to
-         * @throws SQLException if a database access error occurs
-         * during parameter
-         * binding
-         * @return prepare
-         */
-        private PreparedStatement prepare(final PreparedStatement ps)
-                throws SQLException {
-            return prepare(ps, this.paramMappers);
-        }
-
-        /**
          * Prepare Statement with Parameters.
          * @param ps
          * @param pMappers
@@ -907,7 +891,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
         private PreparedStatement getStatement(final Connection connection,
                                                  final String theSql)
                 throws SQLException {
-            return prepare(connection.prepareStatement(theSql));
+            return prepare(connection.prepareStatement(theSql),
+                    this.paramMappers);
         }
 
         /**
@@ -921,7 +906,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
                                                  final String theSql,
                                                  final int resultSetType)
                 throws SQLException {
-            return prepare(connection.prepareStatement(theSql, resultSetType));
+            return prepare(connection.prepareStatement(theSql, resultSetType),
+                    this.paramMappers);
         }
 
         /**
