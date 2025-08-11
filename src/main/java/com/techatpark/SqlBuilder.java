@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -917,6 +916,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @throws SQLException if a database access error occurs
          * during parameter
          * binding
+         * @return prepare
          */
         private PreparedStatement prepare(final PreparedStatement ps)
                 throws SQLException {
@@ -928,6 +928,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param ps
          * @param pMappers
          * @throws SQLException
+         * @return ps
          */
         private PreparedStatement prepare(final PreparedStatement ps,
                                           final List<ParamMapper> pMappers)
@@ -1331,11 +1332,13 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
 
         /**
-         * Wrapper for CallableSqlBuilder to hide Batch Operations 
-         * for INOUT, OUT parameters.
+         * Wrapper for CallableSqlBuilder to hide Batch Operations.
+         * for INOUT,OUT parameters.
          */
         public final class CallableSqlBuilderWrapper implements Sql<Boolean> {
-            
+            /**
+             * this is callableStatement.
+             */
             private final CallableSqlBuilder callableSqlBuilder;
 
             private CallableSqlBuilderWrapper() {
@@ -1357,7 +1360,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              *
              * @param connection
              */
-            public Boolean execute(final Connection connection) throws SQLException {
+            public Boolean execute(final Connection connection)
+                    throws SQLException {
                 return callableSqlBuilder.execute(connection);
             }
 
@@ -1369,7 +1373,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final String value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final String value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1390,7 +1395,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Float value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Float value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1427,10 +1433,11 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param sqlType  the SQL type of the parameter,
              *                 as defined in {@link Types}
              * @param typeName the type name of the parameter,
-             *                 used for SQL types that require specific type information
+             * used for SQL types that require specific type information
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilder paramNull(final int sqlType, final String typeName) {
+            public CallableSqlBuilder paramNull(final int sqlType,
+                                                final String typeName) {
                 return callableSqlBuilder.paramNull(sqlType, typeName);
             }
 
@@ -1464,7 +1471,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Date value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Date value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1476,7 +1484,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Time value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Time value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1520,7 +1529,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final BigDecimal value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final BigDecimal value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1532,7 +1542,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Timestamp value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Timestamp value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1555,7 +1566,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final byte[] value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final byte[] value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1567,7 +1579,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Object value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Object value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1579,7 +1592,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Double value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Double value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1602,7 +1616,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Boolean value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Boolean value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1614,14 +1629,15 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Long value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Long value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
             /**
              * Query for Out Parameters.
-             *
              * @param mapper
+             * @param <T>
              * @return sql
              */
             public <T> Sql<T> queryOutParams(final StatementMapper<T> mapper) {
@@ -1635,7 +1651,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param targetSqlType the targeted SqlType.
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilder param(final Object value, final int targetSqlType) {
+            public CallableSqlBuilder param(final Object value,
+                                            final int targetSqlType) {
                 return callableSqlBuilder.param(value, targetSqlType);
             }
 
@@ -1669,7 +1686,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the value of the parameter to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Integer value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Integer value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1680,7 +1698,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @param value the Short value to be added
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilderWrapper outParam(final int type, final Short value) {
+            public CallableSqlBuilderWrapper outParam(final int type,
+                                                      final Short value) {
                 return callableSqlBuilder.outParam(type, value);
             }
 
@@ -1743,6 +1762,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @throws SQLException if a database access error occurs
          * during parameter
          * binding
+         * @return prepare
          */
         private PreparedStatement prepare(final PreparedStatement ps)
                 throws SQLException {
@@ -1754,6 +1774,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param ps
          * @param pMappers
          * @throws SQLException
+         * @return ps
          */
         private PreparedStatement prepare(final PreparedStatement ps,
                                           final List<PreparedSqlBuilder.ParamMapper> pMappers)
