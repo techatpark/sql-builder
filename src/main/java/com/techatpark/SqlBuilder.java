@@ -546,18 +546,19 @@ public sealed class SqlBuilder implements Sql<Integer> {
     /**
      * {@inheritDoc}
      */
-    protected <T> T getGeneratedKeys(final RowMapper<T> query,
-                             final Connection connection) throws SQLException {
-        T result = null;
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(getSql(), Statement.RETURN_GENERATED_KEYS);
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    result = query.get(rs);
+    protected <T> Sql<T> getGeneratedKeys(final RowMapper<T> query) {
+        return connection -> {
+            T result = null;
+            try (Statement stmt = connection.createStatement()) {
+                stmt.executeUpdate(getSql(), Statement.RETURN_GENERATED_KEYS);
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        result = query.get(rs);
+                    }
                 }
             }
-        }
-        return result;
+            return result;
+        };
     }
     /**
      * Get Generated Keys as List for a Query.
@@ -663,9 +664,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
      *                  RowMapper to map each row of the result set
      * @return a new Query instance for execution
      */
-    public <T> Sql<T> queryGeneratedKeys(
-            final RowMapper<T> rowMapper) {
-        return connection -> getGeneratedKeys(rowMapper, connection);
+    public <T> Sql<T> queryGeneratedKeys(final RowMapper<T> rowMapper) {
+        return getGeneratedKeys(rowMapper);
     }
 
     /**
@@ -1021,24 +1021,27 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * Get Generated Keys for a Query.
          * {@inheritDoc}
          */
-        protected <T> T getGeneratedKeys(final RowMapper<T> query,
-                     final Connection connection) throws SQLException {
-            T result = null;
-            try (PreparedStatement ps = getStatement(connection, this.getSql(),
-                    java.sql.Statement.RETURN_GENERATED_KEYS)) {
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        result = query.get(rs);
+        @Override
+        protected <T> Sql<T> getGeneratedKeys(final RowMapper<T> query) {
+            return connection -> {
+                T result = null;
+                try (PreparedStatement ps = getStatement(connection, this.getSql(),
+                        java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    ps.executeUpdate();
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            result = query.get(rs);
+                        }
                     }
                 }
-            }
-            return result;
+                return result;
+            };
         }
         /**
          * Get Generated Keys as List for a Query.
          * {@inheritDoc}
          */
+        @Override
         protected <T> List<T> getGeneratedKeysAsList(final RowMapper<T> query,
                              final Connection connection) throws SQLException {
             List<T> result = new ArrayList<>();
