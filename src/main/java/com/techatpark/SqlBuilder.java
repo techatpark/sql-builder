@@ -166,7 +166,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Byte> queryForByte() {
-        return getResult(BYTE_MAPPER);
+        return queryForOne(BYTE_MAPPER);
     }
 
 
@@ -177,7 +177,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Byte>> queryForListOfByte() {
-        return getResultAsList(BYTE_MAPPER);
+        return queryForList(BYTE_MAPPER);
     }
 
     /**
@@ -187,7 +187,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<byte[]> queryForBytes() {
-        return getResult(BYTES_MAPPER);
+        return queryForOne(BYTES_MAPPER);
     }
 
     /**
@@ -197,7 +197,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<byte[]>> queryForListOfBytes() {
-        return getResultAsList(BYTES_MAPPER);
+        return queryForList(BYTES_MAPPER);
     }
 
     /**
@@ -207,7 +207,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Integer> queryForInt() {
-        return getResult(INTEGER_MAPPER);
+        return queryForOne(INTEGER_MAPPER);
     }
 
 
@@ -218,7 +218,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Integer>> queryForListOfInt() {
-        return getResultAsList(INTEGER_MAPPER);
+        return queryForList(INTEGER_MAPPER);
     }
 
     /**
@@ -228,7 +228,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Short> queryForShort() {
-        return getResult(SHORT_MAPPER);
+        return queryForOne(SHORT_MAPPER);
     }
 
     /**
@@ -238,7 +238,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Short>> queryForListOfShort() {
-        return getResultAsList(SHORT_MAPPER);
+        return queryForList(SHORT_MAPPER);
     }
 
     /**
@@ -248,7 +248,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<String> queryForString() {
-        return getResult(STRING_MAPPER);
+        return queryForOne(STRING_MAPPER);
     }
 
     /**
@@ -258,7 +258,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<String>> queryForListOfString() {
-        return getResultAsList(STRING_MAPPER);
+        return queryForList(STRING_MAPPER);
     }
 
     /**
@@ -268,7 +268,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<URL> queryForURL() {
-        return getResult(URL_MAPPER);
+        return queryForOne(URL_MAPPER);
     }
 
     /**
@@ -278,7 +278,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<URL>> queryForListOfURL() {
-        return getResultAsList(URL_MAPPER);
+        return queryForList(URL_MAPPER);
     }
 
     /**
@@ -288,7 +288,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Double> queryForDouble() {
-        return getResult(DOUBLE_MAPPER);
+        return queryForOne(DOUBLE_MAPPER);
     }
 
     /**
@@ -298,7 +298,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Double>> queryForListOfDouble() {
-        return getResultAsList(DOUBLE_MAPPER);
+        return queryForList(DOUBLE_MAPPER);
     }
 
     /**
@@ -308,7 +308,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Float> queryForFloat() {
-        return getResult(FLOAT_MAPPER);
+        return queryForOne(FLOAT_MAPPER);
     }
 
     /**
@@ -318,7 +318,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Float>> queryForListOfFloat() {
-        return getResultAsList(FLOAT_MAPPER);
+        return queryForList(FLOAT_MAPPER);
     }
 
     /**
@@ -328,7 +328,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<BigDecimal> queryForBigDecimal() {
-        return getResult(BIG_DECIMAL_MAPPER);
+        return queryForOne(BIG_DECIMAL_MAPPER);
     }
 
     /**
@@ -338,7 +338,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<BigDecimal>> queryForListOfBigDecimal() {
-        return getResultAsList(BIG_DECIMAL_MAPPER);
+        return queryForList(BIG_DECIMAL_MAPPER);
     }
 
     /**
@@ -348,7 +348,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Boolean> queryForBoolean() {
-        return getResult(BOOLEAN_MAPPER);
+        return queryForOne(BOOLEAN_MAPPER);
     }
 
     /**
@@ -358,7 +358,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Boolean>> queryForListOfBoolean() {
-        return getResultAsList(BOOLEAN_MAPPER);
+        return queryForList(BOOLEAN_MAPPER);
     }
 
     /**
@@ -368,7 +368,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Long> queryForLong() {
-        return getResult(LONG_MAPPER);
+        return queryForOne(LONG_MAPPER);
     }
 
     /**
@@ -378,7 +378,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Long>> queryForListOfLong() {
-        return getResultAsList(LONG_MAPPER);
+        return queryForList(LONG_MAPPER);
     }
 
     /**
@@ -388,7 +388,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Date> queryForDate() {
-        return getResult(DATE_MAPPER);
+        return queryForOne(DATE_MAPPER);
     }
 
     /**
@@ -398,7 +398,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<java.sql.Date>> queryForListOfDate() {
-        return getResultAsList(DATE_MAPPER);
+        return queryForList(DATE_MAPPER);
     }
 
     /**
@@ -408,7 +408,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Time> queryForTime() {
-        return getResult(TIME_MAPPER);
+        return queryForOne(TIME_MAPPER);
     }
 
     /**
@@ -418,7 +418,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<java.sql.Time>> queryForListOfTime() {
-        return getResultAsList(TIME_MAPPER);
+        return queryForList(TIME_MAPPER);
     }
 
     /**
@@ -428,7 +428,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Timestamp> queryForTimestamp() {
-        return getResult(TIMESTAMP_MAPPER);
+        return queryForOne(TIMESTAMP_MAPPER);
     }
 
     /**
@@ -438,7 +438,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<java.sql.Timestamp>> queryForListOfTimestamp() {
-        return getResultAsList(TIMESTAMP_MAPPER);
+        return queryForList(TIMESTAMP_MAPPER);
     }
 
     /**
@@ -448,7 +448,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Object> queryForObject() {
-        return getResult(OBJECT_MAPPER);
+        return queryForOne(OBJECT_MAPPER);
     }
 
     /**
@@ -458,7 +458,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Object>> queryForListOfObject() {
-        return getResultAsList(OBJECT_MAPPER);
+        return queryForList(OBJECT_MAPPER);
     }
 
     /**
@@ -473,7 +473,17 @@ public sealed class SqlBuilder implements Sql<Integer> {
      */
     public <T> Sql<T> queryForOne(
             final RowMapper<T> rowMapper) {
-        return getResult(rowMapper);
+        return connection -> {
+            T result = null;
+            try (Statement stmt = connection.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery(getSql())) {
+                    if (rs.next()) {
+                        result = rowMapper.get(rs);
+                    }
+                }
+            }
+            return result;
+        };
     }
 
     /**
@@ -488,7 +498,17 @@ public sealed class SqlBuilder implements Sql<Integer> {
      */
     public <T> Sql<List<T>> queryForList(
             final RowMapper<T> rowMapper) {
-        return getResultAsList(rowMapper);
+        return connection -> {
+            List<T> result = new ArrayList<>();
+            try (Statement stmt = connection.createStatement()) {
+                try (ResultSet rs = stmt.executeQuery(getSql())) {
+                    while (rs.next()) {
+                        result.add(rowMapper.get(rs));
+                    }
+                }
+            }
+            return result;
+        };
     }
 
     /**
@@ -506,45 +526,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
         return exists;
     }
-
-    /**
-     * Get Result for a Query.
-     * @param query
-     * @return result
-     * @param <T>
-     * @throws SQLException
-     */
-    protected <T> Sql<T> getResult(final RowMapper<T> query) {
-        return connection -> {
-            T result = null;
-            try (Statement stmt = connection.createStatement()) {
-                try (ResultSet rs = stmt.executeQuery(getSql())) {
-                    if (rs.next()) {
-                        result = query.get(rs);
-                    }
-                }
-            }
-            return result;
-        };
-    }
-    /**
-     * {@inheritDoc}
-     */
-    protected <T> Sql<List<T>> getResultAsList(final RowMapper<T> query) {
-        return connection -> {
-            List<T> result = new ArrayList<>();
-            try (Statement stmt = connection.createStatement()) {
-                try (ResultSet rs = stmt.executeQuery(getSql())) {
-                    while (rs.next()) {
-                        result.add(query.get(rs));
-                    }
-                }
-            }
-            return result;
-        };
-    }
-
-
+    
     /**
      * add Batch.
      * @param sqlQuery
@@ -973,7 +955,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @throws SQLException
          */
         @Override
-        protected <T> Sql<T> getResult(final RowMapper<T> query) {
+        public <T> Sql<T> queryForOne(final RowMapper<T> query) {
             return connection -> {
                 T result = null;
                 try (PreparedStatement ps
@@ -992,7 +974,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * {@inheritDoc}
          */
         @Override
-        protected <T> Sql<List<T>> getResultAsList(final RowMapper<T> query) {
+        public <T> Sql<List<T>> queryForList(final RowMapper<T> query) {
             return connection -> {
                 List<T> result = new ArrayList<>();
                 try (PreparedStatement ps = getStatement(connection, getSql())) {
