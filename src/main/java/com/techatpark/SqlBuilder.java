@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1320,11 +1321,394 @@ public sealed class SqlBuilder implements Sql<Integer> {
         private final PreparedSqlBuilder preparedSqlBuilder;
 
         /**
+         * Wrapper to hide Batch for INm INOUT.
+         */
+        private final CallableSqlBuilderWrapper callableSqlBuilderWrapper;
+
+        /**
          * Creates Callable Sql Builder.
          * @param theSql
          */
         public CallableSqlBuilder(final String theSql) {
             this.preparedSqlBuilder = new PreparedSqlBuilder(theSql);
+            this.callableSqlBuilderWrapper = new CallableSqlBuilderWrapper();
+        }
+
+        /**
+         * Wrapper for CallableSqlBuilder to hide Batch Operations 
+         * for INOUT, OUT parameters.
+         */
+        public final class CallableSqlBuilderWrapper {
+            
+            private final CallableSqlBuilder callableSqlBuilder;
+
+            public CallableSqlBuilderWrapper() {
+                this.callableSqlBuilder = CallableSqlBuilder.this;
+            }
+
+            /**
+             * Adds a Short parameter to the SQL query.
+             *
+             * @param value the Short value to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Short value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @param dataSource
+             */
+            public Boolean execute(final DataSource dataSource) throws SQLException {
+                return callableSqlBuilder.execute(dataSource);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final String value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter with a null.
+             *
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder paramNull() {
+                return callableSqlBuilder.paramNull();
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Float value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Float value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Date value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter with a specific SQL type and type name as `NULL`
+             * to the SQL query.
+             * This method is used when the SQL parameter should be set to
+             * `NULL`for types
+             * that require a type name in addition to the SQL type, such as SQL
+             * `STRUCT` or `ARRAY`.
+             *
+             * @param sqlType  the SQL type of the parameter,
+             *                 as defined in {@link Types}
+             * @param typeName the type name of the parameter,
+             *                 used for SQL types that require specific type information
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder paramNull(final int sqlType, final String typeName) {
+                return callableSqlBuilder.paramNull(sqlType, typeName);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Integer value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final BigDecimal value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Date value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Time value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used o bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Long value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Time value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Set Out Parameter.
+             *
+             * @param type
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type) {
+                return callableSqlBuilder.outParam(type);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final BigDecimal value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Timestamp value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final String value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final byte[] value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Object value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining and
+             * is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Double value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Object value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Boolean value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used o bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Long value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Query for Out Parameters.
+             *
+             * @param mapper
+             * @return sql
+             */
+            public <T> Sql<T> queryOutParams(final StatementMapper<T> mapper) {
+                return callableSqlBuilder.queryOutParams(mapper);
+            }
+
+            /**
+             * Adds an Object parameter to the SQL query with targetSqlType.
+             *
+             * @param value         the Object value to be added
+             * @param targetSqlType the targeted SqlType.
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Object value, final int targetSqlType) {
+                return callableSqlBuilder.param(value, targetSqlType);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining and
+             * is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Double value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final byte[] value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param type
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Integer value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a Short parameter to the SQL query.
+             *
+             * @param type
+             * @param value the Short value to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilderWrapper outParam(final int type, final Short value) {
+                return callableSqlBuilder.outParam(type, value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Boolean value) {
+                return callableSqlBuilder.param(value);
+            }
+
+            /**
+             * Adds a parameter to the SQL query. The method allows chaining
+             * and is used to bind values to placeholders in the SQL query.
+             *
+             * @param value the value of the parameter to be added
+             * @return the current SqlBuilder instance, for method chaining
+             */
+            public CallableSqlBuilder param(final Timestamp value) {
+                return callableSqlBuilder.param(value);
+            }
         }
 
         /**
@@ -1547,11 +1931,11 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param type
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type) {
+        public CallableSqlBuilderWrapper outParam(final int type) {
             this.preparedSqlBuilder.param((ps, index) -> {
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
-            return this;
+            return this.callableSqlBuilderWrapper;
         }
 
         /**
@@ -1561,14 +1945,14 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          * @param <T>
          */
-        private <T> CallableSqlBuilder inOutParam(final int type,
+        private <T> CallableSqlBuilderWrapper inOutParam(final int type,
                                                   final T value) {
             this.preparedSqlBuilder.param((ps, index) -> {
                 new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
                         .param(value).paramMappers.get(0).set(ps, index);
                 ((CallableStatement) ps).registerOutParameter(index, type);
             });
-            return this;
+            return this.callableSqlBuilderWrapper;
         }
 
         /**
@@ -1589,7 +1973,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type,
+        public CallableSqlBuilderWrapper outParam(final int type,
                                            final Integer value) {
             return inOutParam(type, value);
         }
@@ -1599,7 +1983,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the Short value to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Short value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Short value) {
             return inOutParam(type, value);
         }
         /**
@@ -1609,7 +1993,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final String value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final String value) {
             return inOutParam(type, value);
         }
         /**
@@ -1619,7 +2003,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Double value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Double value) {
             return inOutParam(type, value);
         }
 
@@ -1630,7 +2014,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type,
+        public CallableSqlBuilderWrapper outParam(final int type,
                                            final Boolean value) {
             return inOutParam(type, value);
         }
@@ -1641,7 +2025,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Long value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Long value) {
             return inOutParam(type, value);
         }
         /**
@@ -1651,7 +2035,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Date value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Date value) {
             return inOutParam(type, value);
         }
         /**
@@ -1661,7 +2045,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Float value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Float value) {
             return inOutParam(type, value);
         }
         /**
@@ -1671,7 +2055,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final byte[] value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final byte[] value) {
             return inOutParam(type, value);
         }
         /**
@@ -1681,7 +2065,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type,
+        public CallableSqlBuilderWrapper outParam(final int type,
                                            final BigDecimal value) {
             return inOutParam(type, value);
         }
@@ -1692,7 +2076,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Time value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Time value) {
             return inOutParam(type, value);
         }
         /**
@@ -1702,7 +2086,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type,
+        public CallableSqlBuilderWrapper outParam(final int type,
                                            final Timestamp value) {
 
             return inOutParam(type, value);
@@ -1714,7 +2098,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param value the value of the parameter to be added
          * @return the current SqlBuilder instance, for method chaining
          */
-        public CallableSqlBuilder outParam(final int type, final Object value) {
+        public CallableSqlBuilderWrapper outParam(final int type, final Object value) {
             return inOutParam(type, value);
         }
 
