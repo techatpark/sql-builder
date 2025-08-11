@@ -918,9 +918,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * during parameter
          * binding
          */
-        private void prepare(final PreparedStatement ps)
+        private PreparedStatement prepare(final PreparedStatement ps)
                 throws SQLException {
-            prepareWithMappers(ps, this.paramMappers);
+            return prepare(ps, this.paramMappers);
         }
 
         /**
@@ -929,12 +929,13 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param pMappers
          * @throws SQLException
          */
-        void prepareWithMappers(final PreparedStatement ps,
+        private PreparedStatement prepare(final PreparedStatement ps,
                                           final List<ParamMapper> pMappers)
                 throws SQLException {
             for (int i = 0; i < pMappers.size(); i++) {
                 pMappers.get(i).set(ps, (i + 1));
             }
+            return ps;
         }
 
         /**
@@ -1140,20 +1141,15 @@ public sealed class SqlBuilder implements Sql<Integer> {
 
             private void prepare(final PreparedStatement ps)
                     throws SQLException {
-
                 int batchCount = (this.preparedSqlBuilder.paramMappers.size()
                         / this.paramsPerBatch);
-
-                prepareWithMappers(ps, PreparedSqlBuilder.this
-                        .paramMappers);
-                ps.addBatch();
-
+                PreparedSqlBuilder.this.prepare(ps, PreparedSqlBuilder.this
+                        .paramMappers).addBatch();
                 for (int i = 0; i < batchCount; i++) {
                     int from = i * this.paramsPerBatch;
-                    prepareWithMappers(ps, this.preparedSqlBuilder
+                    PreparedSqlBuilder.this.prepare(ps, this.preparedSqlBuilder
                             .paramMappers.subList(from,
-                                    from + this.paramsPerBatch));
-                    ps.addBatch();
+                                    from + this.paramsPerBatch)).addBatch();
                 }
             }
             /**
@@ -1338,11 +1334,11 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * Wrapper for CallableSqlBuilder to hide Batch Operations 
          * for INOUT, OUT parameters.
          */
-        public final class CallableSqlBuilderWrapper {
+        public final class CallableSqlBuilderWrapper implements Sql<Boolean> {
             
             private final CallableSqlBuilder callableSqlBuilder;
 
-            public CallableSqlBuilderWrapper() {
+            private CallableSqlBuilderWrapper() {
                 this.callableSqlBuilder = CallableSqlBuilder.this;
             }
 
@@ -1359,10 +1355,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
             /**
              * {@inheritDoc}
              *
-             * @param dataSource
+             * @param connection
              */
-            public Boolean execute(final DataSource dataSource) throws SQLException {
-                return callableSqlBuilder.execute(dataSource);
+            public Boolean execute(final Connection connection) throws SQLException {
+                return callableSqlBuilder.execute(connection);
             }
 
             /**
@@ -1748,9 +1744,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * during parameter
          * binding
          */
-        private void prepare(final PreparedStatement ps)
+        private PreparedStatement prepare(final PreparedStatement ps)
                 throws SQLException {
-            prepareWithMappers(ps, this.preparedSqlBuilder.paramMappers);
+            return prepare(ps, this.preparedSqlBuilder.paramMappers);
         }
 
         /**
@@ -1759,12 +1755,13 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @param pMappers
          * @throws SQLException
          */
-        void prepareWithMappers(final PreparedStatement ps,
-                    final List<PreparedSqlBuilder.ParamMapper> pMappers)
+        private PreparedStatement prepare(final PreparedStatement ps,
+                                          final List<PreparedSqlBuilder.ParamMapper> pMappers)
                 throws SQLException {
             for (int i = 0; i < pMappers.size(); i++) {
                 pMappers.get(i).set(ps, (i + 1));
             }
+            return ps;
         }
 
         /**
@@ -2202,16 +2199,14 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 int batchCount = (this.preparedSqlBuilder.paramMappers.size()
                         / this.paramsPerBatch);
 
-                prepareWithMappers(ps, CallableSqlBuilder.this
-                        .preparedSqlBuilder.paramMappers);
-                ps.addBatch();
+                CallableSqlBuilder.this.prepare(ps, CallableSqlBuilder.this
+                        .preparedSqlBuilder.paramMappers).addBatch();
 
                 for (int i = 0; i < batchCount; i++) {
                     int from = i * this.paramsPerBatch;
-                    prepareWithMappers(ps, this.preparedSqlBuilder
+                    CallableSqlBuilder.this.prepare(ps, this.preparedSqlBuilder
                             .paramMappers.subList(from,
-                                    from + this.paramsPerBatch));
-                    ps.addBatch();
+                                    from + this.paramsPerBatch)).addBatch();
                 }
             }
 
