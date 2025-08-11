@@ -1709,6 +1709,24 @@ public sealed class SqlBuilder implements Sql<Integer> {
             });
             return this;
         }
+
+        /**
+         * Adds INOUT Parameter.
+         * @param type
+         * @param value
+         * @return the current SqlBuilder instance, for method chaining
+         * @param <T>
+         */
+        private <T> CallableSqlBuilder inOutParam(final int type,
+                                                  final T value) {
+            this.preparedSqlBuilder.param((ps, index) -> {
+                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
+                        .param(value).paramMappers.get(0).set(ps, index);
+                ((CallableStatement) ps).registerOutParameter(index, type);
+            });
+            return this;
+        }
+
         /**
          * Adds a parameter to the SQL query. The method allows chaining
          * and is used to bind values to placeholders in the SQL query.
@@ -1718,12 +1736,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         public CallableSqlBuilder outParam(final int type,
                                            final Integer value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a Short parameter to the SQL query.
@@ -1732,12 +1745,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Short value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1747,12 +1755,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final String value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining and
@@ -1762,12 +1765,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Double value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
 
         /**
@@ -1779,12 +1777,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         public CallableSqlBuilder outParam(final int type,
                                            final Boolean value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1794,12 +1787,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Long value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1809,12 +1797,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Date value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1824,12 +1807,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Float value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1839,12 +1817,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final byte[] value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1855,12 +1828,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          */
         public CallableSqlBuilder outParam(final int type,
                                            final BigDecimal value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1870,12 +1838,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Time value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1887,12 +1850,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         public CallableSqlBuilder outParam(final int type,
                                            final Timestamp value) {
 
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
         /**
          * Adds a parameter to the SQL query. The method allows chaining
@@ -1902,12 +1860,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return the current SqlBuilder instance, for method chaining
          */
         public CallableSqlBuilder outParam(final int type, final Object value) {
-            this.preparedSqlBuilder.param((ps, index) -> {
-                new PreparedSqlBuilder(this.preparedSqlBuilder.getSql())
-        .param(value).paramMappers.get(0).set(ps, index);
-                ((CallableStatement) ps).registerOutParameter(index, type);
-            });
-            return this;
+            return inOutParam(type, value);
         }
 
         /**
