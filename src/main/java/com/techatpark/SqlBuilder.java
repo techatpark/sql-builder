@@ -120,7 +120,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Byte> queryForByte() {
-        return new SingleRecordQuery<>(BYTE_MAPPER);
+        return connection -> getResult(new Query<>((BYTE_MAPPER)), connection);
     }
 
 
@@ -141,7 +141,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<byte[]> queryForBytes() {
-        return new SingleRecordQuery<>(BYTES_MAPPER);
+        return connection -> getResult(new Query<>((BYTES_MAPPER)), connection);
     }
 
     /**
@@ -161,7 +161,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Integer> queryForInt() {
-        return new SingleRecordQuery<>(INTEGER_MAPPER);
+        return connection -> getResult(new Query<>((INTEGER_MAPPER)), connection);
     }
 
 
@@ -182,7 +182,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Short> queryForShort() {
-        return new SingleRecordQuery<>(SHORT_MAPPER);
+        return connection -> getResult(new Query<>((SHORT_MAPPER)), connection);
     }
 
     /**
@@ -202,7 +202,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<String> queryForString() {
-        return new SingleRecordQuery<>(STRING_MAPPER);
+        return connection -> getResult(new Query<>((STRING_MAPPER)), connection);
     }
 
     /**
@@ -222,7 +222,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<URL> queryForURL() {
-        return new SingleRecordQuery<>(URL_MAPPER);
+        return connection -> getResult(new Query<>((URL_MAPPER)), connection);
     }
 
     /**
@@ -242,7 +242,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Double> queryForDouble() {
-        return new SingleRecordQuery<>(DOUBLE_MAPPER);
+        return connection -> getResult(new Query<>((DOUBLE_MAPPER)), connection);
     }
 
     /**
@@ -262,7 +262,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Float> queryForFloat() {
-        return new SingleRecordQuery<>(FLOAT_MAPPER);
+        return connection -> getResult(new Query<>((FLOAT_MAPPER)), connection);
     }
 
     /**
@@ -282,7 +282,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<BigDecimal> queryForBigDecimal() {
-        return new SingleRecordQuery<>(BIG_DECIMAL_MAPPER);
+        return connection -> getResult(new Query<>((BIG_DECIMAL_MAPPER)), connection);
     }
 
     /**
@@ -302,7 +302,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Boolean> queryForBoolean() {
-        return new SingleRecordQuery<>(BOOLEAN_MAPPER);
+        return connection -> getResult(new Query<>((BOOLEAN_MAPPER)), connection);
     }
 
     /**
@@ -322,7 +322,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Long> queryForLong() {
-        return new SingleRecordQuery<>(LONG_MAPPER);
+        return connection -> getResult(new Query<>((LONG_MAPPER)), connection);
     }
 
     /**
@@ -342,7 +342,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Date> queryForDate() {
-        return new SingleRecordQuery<>(DATE_MAPPER);
+        return connection -> getResult(new Query<>((DATE_MAPPER)), connection);
     }
 
     /**
@@ -362,7 +362,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Time> queryForTime() {
-        return new SingleRecordQuery<>(TIME_MAPPER);
+        return connection -> getResult(new Query<>((TIME_MAPPER)), connection);
     }
 
     /**
@@ -382,7 +382,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Timestamp> queryForTimestamp() {
-        return new SingleRecordQuery<>(TIMESTAMP_MAPPER);
+        return connection -> getResult(new Query<>((TIMESTAMP_MAPPER)), connection);
     }
 
     /**
@@ -402,7 +402,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Object> queryForObject() {
-        return new SingleRecordQuery<>(OBJECT_MAPPER);
+        return connection -> getResult(new Query<>((OBJECT_MAPPER)), connection);
     }
 
     /**
@@ -427,7 +427,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
      */
     public <T> Sql<T> queryForOne(
             final RowMapper<T> rowMapper) {
-        return this.new SingleRecordQuery<>(rowMapper);
+        return connection -> getResult(new Query<>(rowMapper)
+                , connection);
     }
 
     /**
@@ -691,32 +692,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
 
         T mapRow(final ResultSet rs) throws SQLException {
             return rowMapper.get(rs);
-        }
-    }
-
-    public final class SingleRecordQuery<T> extends Query<T> implements Sql<T> {
-
-        /**
-         * Private constructor for creating a Query instance with
-         * the specified RowMapper.
-         *
-         * @param theRowMapper the RowMapper used to map the ResultSet rows
-         */
-        private SingleRecordQuery(final RowMapper<T> theRowMapper) {
-            super(theRowMapper);
-        }
-
-        /**
-         * Executes the SQL query and returns a single mapped result
-         * from the ResultSet.
-         *
-         * @param connection the database connection used to execute the query
-         * @return the single mapped result, or null if no result is found
-         * @throws SQLException if a database access error occurs
-         */
-        @Override
-        public T execute(final Connection connection) throws SQLException {
-            return getResult(this, connection);
         }
     }
 
