@@ -161,4 +161,4 @@ with Batch,
         .executeBatch(dataSource);
 ```
 
-**Note:** Stored procedures will only work with `IN` parameters—`OUT`/`INOUT` parameters are not batch-friendly.
+> **Note:** Stored procedures will only work with `IN` parameters—`OUT`/`INOUT` parameters are not batch-friendly.
