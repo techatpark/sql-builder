@@ -112,7 +112,7 @@ int[] updatedRows = SqlBuilder
 
 ### Stored Procedures
 
-with IN Parameters,
+with `IN` Parameters,
 
 ```java
 SqlBuilder
@@ -122,7 +122,7 @@ SqlBuilder
         .execute(dataSource);
 ```
 
-with OUT Parameters,
+with `OUT` Parameters,
 
 ```java
 long id = SqlBuilder
@@ -134,7 +134,7 @@ long id = SqlBuilder
         .execute(dataSource);
 ```
 
-with INOUT Parameters,
+with `INOUT` Parameters,
 
 ```java
 String newTitle = SqlBuilder
@@ -161,4 +161,4 @@ with Batch,
         .executeBatch(dataSource);
 ```
 
-**Note:** Stored procedures will only work with IN parameters—OUT/INOUT parameters are not batch-friendly.
+**Note:** Stored procedures will only work with `IN` parameters—`OUT`/`INOUT` parameters are not batch-friendly.
