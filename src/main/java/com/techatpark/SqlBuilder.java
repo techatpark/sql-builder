@@ -15,8 +15,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
  * SqlBuilder is a utility class that simplifies the process of constructing
  * SQL queries with dynamic parameters and executing them. It helps developers
@@ -28,69 +26,78 @@ public sealed class SqlBuilder implements Sql<Integer> {
     /**
      * Mapper for String.
      */
-    private static RowMapper<String> STRING_MAPPER = rs -> rs.getString(1);
+    private static final RowMapper<String> STRING_MAPPER
+            = rs -> rs.getString(1);
     /**
      * Mapper for Integer.
      */
-    private static RowMapper<Integer> INTEGER_MAPPER = rs -> rs.getInt(1);
+    private static final RowMapper<Integer> INTEGER_MAPPER
+            = rs -> rs.getInt(1);
     /**
      * Mapper for BYTE.
      */
-    private static RowMapper<Byte> BYTE_MAPPER = rs -> rs.getByte(1);
+    private static final RowMapper<Byte> BYTE_MAPPER
+            = rs -> rs.getByte(1);
     /**
      * Mapper for bytes.
      */
-    private static RowMapper<byte[]> BYTES_MAPPER = rs -> rs.getBytes(1);
+    private static final RowMapper<byte[]> BYTES_MAPPER
+            = rs -> rs.getBytes(1);
     /**
      * Mapper for Short.
      */
-    private static RowMapper<Short> SHORT_MAPPER = rs -> rs.getShort(1);
+    private static final RowMapper<Short> SHORT_MAPPER
+            = rs -> rs.getShort(1);
     /**
      * Mapper for URL.
      */
-    private static RowMapper<URL> URL_MAPPER = rs -> rs.getURL(1);
+    private static final RowMapper<URL> URL_MAPPER
+            = rs -> rs.getURL(1);
     /**
      * Mapper for Double.
      */
-    private static RowMapper<Double> DOUBLE_MAPPER = rs -> rs.getDouble(1);
+    private static final RowMapper<Double> DOUBLE_MAPPER
+            = rs -> rs.getDouble(1);
     /**
      * Mapper for Float.
      */
-    private static RowMapper<Float> FLOAT_MAPPER = rs -> rs.getFloat(1);
+    private static final RowMapper<Float> FLOAT_MAPPER
+            = rs -> rs.getFloat(1);
     /**
      * Mapper for BigDecimal.
      */
-    private static RowMapper<BigDecimal> BIG_DECIMAL_MAPPER = rs -> rs.getBigDecimal(1);
+    private static final RowMapper<BigDecimal> BIG_DECIMAL_MAPPER
+            = rs -> rs.getBigDecimal(1);
     /**
      * Mapper for Boolean.
      */
-    private static RowMapper<Boolean> BOOLEAN_MAPPER = rs -> rs.getBoolean(1);
+    private static final RowMapper<Boolean> BOOLEAN_MAPPER
+            = rs -> rs.getBoolean(1);
     /**
      * Mapper for Long.
      */
-    private static RowMapper<Long> LONG_MAPPER = rs -> rs.getLong(1);
+    private static final RowMapper<Long> LONG_MAPPER
+            = rs -> rs.getLong(1);
     /**
      * Mapper for Date.
      */
-    private static RowMapper<Date> DATE_MAPPER = rs -> rs.getDate(1);
+    private static final RowMapper<Date> DATE_MAPPER
+            = rs -> rs.getDate(1);
     /**
      * Mapper for Time.
      */
-    private static RowMapper<Time> TIME_MAPPER = rs -> rs.getTime(1);
+    private static final RowMapper<Time> TIME_MAPPER
+            = rs -> rs.getTime(1);
     /**
      * Mapper for TimeStamp.
      */
-    private static RowMapper<Timestamp> TIMESTAMP_MAPPER = rs -> rs.getTimestamp(1);
+    private static final RowMapper<Timestamp> TIMESTAMP_MAPPER
+            = rs -> rs.getTimestamp(1);
     /**
      * Mapper for Object.
      */
-    private static RowMapper<Object> OBJECT_MAPPER = rs -> rs.getObject(1);
-
-    /**
-     * The SQL query to be executed.
-     */
-    private final String sql;
-
+    private static final RowMapper<Object> OBJECT_MAPPER
+            = rs -> rs.getObject(1);
     /**
      * Builds Callable Sql Builder from Sql.
      *
@@ -120,6 +127,11 @@ public sealed class SqlBuilder implements Sql<Integer> {
     public static SqlBuilder sql(final String theSql) {
         return new SqlBuilder(theSql);
     }
+
+    /**
+     * The SQL query to be executed.
+     */
+    private final String sql;
 
     /**
      * Constructor that initializes the SqlBuilder with a given SQL query.
@@ -526,7 +538,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
         }
         return exists;
     }
-    
+
     /**
      * add Batch.
      * @param sqlQuery
@@ -958,7 +970,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
         public <T> Sql<List<T>> queryForList(final RowMapper<T> query) {
             return connection -> {
                 List<T> result = new ArrayList<>();
-                try (PreparedStatement ps = getStatement(connection, getSql())) {
+                try (PreparedStatement ps = getStatement(connection,
+                        getSql())) {
                     try (ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
                             result.add(query.get(rs));
@@ -976,8 +989,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
         public <T> Sql<T> queryGeneratedKeys(final RowMapper<T> rowMapper) {
             return connection -> {
                 T result = null;
-                try (PreparedStatement ps = getStatement(connection, this.getSql(),
-                        java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement ps = getStatement(connection,
+                        this.getSql(), Statement.RETURN_GENERATED_KEYS)) {
                     ps.executeUpdate();
                     try (ResultSet rs = ps.getGeneratedKeys()) {
                         if (rs.next()) {
@@ -996,8 +1009,8 @@ public sealed class SqlBuilder implements Sql<Integer> {
         queryGeneratedKeysAsList(final RowMapper<T> rowMapper) {
             return connection -> {
                 List<T> result = new ArrayList<>();
-                try (PreparedStatement ps = getStatement(connection, this.getSql(),
-                        java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement ps = getStatement(connection,
+                        this.getSql(), Statement.RETURN_GENERATED_KEYS)) {
                     ps.executeUpdate();
                     try (ResultSet rs = ps.getGeneratedKeys()) {
                         while (rs.next()) {
