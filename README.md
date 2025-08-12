@@ -148,17 +148,17 @@ String newTitle = SqlBuilder
 with Batch,
 
 ```java
- SqlBuilder
-        .prepareCall("CALL insert_movie_in(?, ?)")
-            .param("Inception", Types.VARCHAR)
-            .paramNull(Types.VARCHAR, "VARCHAR")
-        .addBatch()
-            .param("Dunkrik")
-            .param("Nolan")
-        .addBatch()
-            .param("Avatar")
-            .param("Cameroon")
-        .executeBatch(dataSource);
+SqlBuilder
+    .prepareCall("CALL insert_movie_in(?, ?)")
+        .param("Inception", Types.VARCHAR)
+        .paramNull(Types.VARCHAR, "VARCHAR")
+    .addBatch()
+        .param("Dunkrik")
+        .param("Nolan")
+    .addBatch()
+        .param("Avatar")
+        .param("Cameroon")
+    .executeBatch(dataSource);
 ```
 
 > **Note:** Batch for Stored procedures will only work with `IN` parameters—`OUT`/`INOUT` parameters are not batch-friendly.
