@@ -1342,8 +1342,9 @@ public sealed class SqlBuilder implements Sql<Integer> {
              *
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilder paramNull() {
-                return callableSqlBuilder.paramNull();
+            public CallableSqlBuilderWrapper paramNull() {
+                callableSqlBuilder.paramNull();
+                return this;
             }
 
             /**
@@ -1396,9 +1397,10 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * used for SQL types that require specific type information
              * @return the current SqlBuilder instance, for method chaining
              */
-            public CallableSqlBuilder paramNull(final int sqlType,
+            public CallableSqlBuilderWrapper paramNull(final int sqlType,
                                                 final String typeName) {
-                return callableSqlBuilder.paramNull(sqlType, typeName);
+                callableSqlBuilder.paramNull(sqlType, typeName);
+                return this;
             }
 
             /**
