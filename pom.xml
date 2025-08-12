@@ -28,6 +28,14 @@
     <postgresql.version>42.7.7</postgresql.version>
   </properties>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/techatpark/sql-builder</url>
+    </repository>
+  </distributionManagement>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
