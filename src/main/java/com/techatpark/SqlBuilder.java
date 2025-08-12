@@ -1171,6 +1171,12 @@ public sealed class SqlBuilder implements Sql<Integer> {
             /**
              * {@inheritDoc}
              */
+            public PreparedBatch param(final Integer value) {
+                return preparedParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
             public PreparedBatch param(final Double value) {
                 return preparedParam(value);
             }
@@ -2269,6 +2275,12 @@ public sealed class SqlBuilder implements Sql<Integer> {
              * @return the current SqlBuilder instance, for method chaining
              */
             public CallableBatch param(final String value) {
+                return callableParam(value);
+            }
+            /**
+             * {@inheritDoc}
+             */
+            public CallableBatch param(final Integer value) {
                 return callableParam(value);
             }
             /**

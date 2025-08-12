@@ -626,7 +626,7 @@ class AllinAllTest extends BaseTest {
                 .execute(dataSource);
         verifyData();
 
-        SqlBuilder.prepareCall("CALL insert_alltypes_in_and_out(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        SqlBuilder.prepareCall("CALL insert_alltypes_in_and_out(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                 .outParam(Types.VARCHAR, STR_VAL)
                 .paramNull(Types.VARCHAR, "VARCHAR")
                 .param(INT_VAL)
