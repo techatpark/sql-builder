@@ -602,6 +602,31 @@ class AllinAllTest extends BaseTest {
 
         verifyData();
     }
+    @Test
+    void testStoredProcedure_IN_OUT() throws Exception {
+
+        SqlBuilder.prepareCall("CALL insert_alltypes_in_and_out(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                .outParam(Types.VARCHAR, STR_VAL)
+                .param(STR_VAL)
+                .param(INT_VAL)
+                .param(LONG_VAL)
+                .param(DOUBLE_VAL)
+                .param(FLOAT_VAL)
+                .param(BOOL_VAL)
+                .param(SHORT_VAL)
+                .param(BYTE_VAL)
+                .param(DATE_VAL)
+                .param(TIME_VAL)
+                .param(TIMESTAMP_VAL)
+                .param(BIG_DECIMAL_VAL)
+                .param(BYTES_VAL)
+                .param(URL_STR)
+                .paramNull()
+                .execute(dataSource);
+        verifyData();
+
+
+    }
 
     // Define Java record for table mapping
     record AllTypesRecord(String str, int intVal, long longVal, double doubleVal, float floatVal, boolean boolVal,
