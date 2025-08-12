@@ -25,6 +25,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Publish to GitHub Maven Repository
-      run: ./mvnw -DskipTests -Dcheckstyle.skip deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: ./mvnw -DskipTests -Dcheckstyle.skip deploy
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
