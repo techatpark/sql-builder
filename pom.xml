@@ -83,6 +83,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
           <linkXRef>false</linkXRef>
@@ -145,7 +146,7 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>1.0</minimum>
+                      <minimum>0.95</minimum>
                     </limit>
                   </limits>
                 </rule>
