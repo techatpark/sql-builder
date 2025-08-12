@@ -536,7 +536,27 @@ class AllinAllTest extends BaseTest {
 
     @Test
     void testStoredProcedure_IN() throws Exception {
-        SqlBuilder.prepareCall("CALL insert_alltypes_in(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+
+        SqlBuilder.CallableSqlBuilder callableSqlBuilder = SqlBuilder.prepareCall("CALL insert_alltypes_in(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                .param(STR_VAL)
+                .param(INT_VAL)
+                .param(LONG_VAL)
+                .param(DOUBLE_VAL)
+                .param(FLOAT_VAL)
+                .param(BOOL_VAL)
+                .param(SHORT_VAL)
+                .param(BYTE_VAL)
+                .param(DATE_VAL)
+                .param(TIME_VAL)
+                .param(TIMESTAMP_VAL)
+                .param(BIG_DECIMAL_VAL)
+                .param(BYTES_VAL)
+                .param(URL_STR)
+                .paramNull();
+        callableSqlBuilder.execute(dataSource);
+        verifyData();
+
+        callableSqlBuilder.addBatch()
                 .param(STR_VAL)
                 .param(INT_VAL)
                 .param(LONG_VAL)
@@ -552,8 +572,12 @@ class AllinAllTest extends BaseTest {
                 .param(BYTES_VAL)
                 .param(URL_STR)
                 .paramNull()
-                .execute(dataSource);
-        verifyData();
+            .executeBatch(dataSource);
+
+        assertEquals(3L, SqlBuilder.prepareSql("SELECT COUNT(*) FROM AllTypes")
+                .queryForLong()
+                .execute(dataSource));
+
     }
 
     @Test
