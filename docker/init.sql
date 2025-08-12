@@ -116,8 +116,8 @@ CREATE PROCEDURE insert_alltypes_in_and_out(
     IN p_bigdecimalval DECIMAL(15, 2),
     IN p_bytesval BYTEA,
     IN p_urlval VARCHAR,
-    IN p_nullval VARCHAR
-
+    IN p_nullval VARCHAR,
+    OUT p_shortval_out SMALLINT
 )
 LANGUAGE plpgsql
 AS $$
@@ -135,6 +135,7 @@ BEGIN
 
     -- Return the input string as output
     p_str_out := p_str;
+    p_shortval_out := p_shortval;
 END;
 $$;
 

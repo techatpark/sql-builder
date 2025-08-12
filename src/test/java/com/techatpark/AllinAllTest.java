@@ -605,7 +605,7 @@ class AllinAllTest extends BaseTest {
     @Test
     void testStoredProcedure_IN_OUT() throws Exception {
 
-        SqlBuilder.prepareCall("CALL insert_alltypes_in_and_out(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        SqlBuilder.prepareCall("CALL insert_alltypes_in_and_out(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                 .outParam(Types.VARCHAR, STR_VAL)
                 .param(STR_VAL)
                 .param(INT_VAL)
@@ -622,6 +622,7 @@ class AllinAllTest extends BaseTest {
                 .param(BYTES_VAL)
                 .param(URL_STR)
                 .paramNull()
+                .outParam(Types.SMALLINT)
                 .execute(dataSource);
         verifyData();
 
@@ -642,6 +643,7 @@ class AllinAllTest extends BaseTest {
                 .param(BYTES_VAL)
                 .param(URL_STR)
                 .paramNull()
+                .outParam(Types.SMALLINT)
                 .execute(dataSource);
 
         assertEquals(2L, SqlBuilder.prepareSql("SELECT COUNT(*) FROM AllTypes")
