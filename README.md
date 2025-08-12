@@ -73,7 +73,7 @@ Fetch list of records,
 ```java
 List<Movie> movies = SqlBuilder
                 .prepareSql("SELECT id, title, directed_by from movie")
-                    .queryForList(this::mapRow)
+                .queryForList(this::mapRow)
                 .execute(dataSource);
 ```
 
@@ -82,7 +82,7 @@ Check if the record exists
 boolean exists = SqlBuilder
         .prepareSql("SELECT 1 FROM movie WHERE id = ?")
             .param(generatedId)
-            .queryForExists()
+        .queryForExists()
         .execute(dataSource);
 ```
 
@@ -161,4 +161,4 @@ with Batch,
         .executeBatch(dataSource);
 ```
 
-> **Note:** Stored procedures will only work with `IN` parameters—`OUT`/`INOUT` parameters are not batch-friendly.
+> **Note:** Batch for Stored procedures will only work with `IN` parameters—`OUT`/`INOUT` parameters are not batch-friendly.
