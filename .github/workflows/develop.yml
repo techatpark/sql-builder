@@ -6,11 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI
+name: Dev Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
 
 jobs:
   build:
@@ -24,7 +26,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Publish to GitHub Maven Repository
-      run: ./mvnw -DskipTests -Dcheckstyle.skip deploy -s $GITHUB_WORKSPACE/settings.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build the Infrastructure
+      run: docker compose up -d
+    - name: Quality Check
+      run: mvn -B jacoco:prepare-agent install jacoco:report --file pom.xml
