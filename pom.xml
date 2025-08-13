@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>Sql Builder</name>
-  <description>SQL Builder using Native Java</description>
+  <description>SQL Builder for Java</description>
   <groupId>com.techatpark</groupId>
   <artifactId>sql-builder</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -154,7 +154,7 @@
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.98</minimum>
+                      <minimum>0.99</minimum>
                     </limit>
                   </limits>
                 </rule>
