@@ -597,26 +597,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
     }
 
     /**
-     * RowMapper is an interface that defines how to map each row of a ResultSet
-     * to a Java object.
-     *
-     * @param <T> the type of object to map the result set to
-     */
-    public interface RowMapper<T> {
-
-
-
-        /**
-         * Maps a single row of the result set to an object.
-         *
-         * @param rs the result set obtained from executing the SQL query
-         * @return the mapped object
-         * @throws SQLException if an SQL error occurs during mapping
-         */
-        T get(ResultSet rs) throws SQLException;
-    }
-
-    /**
      * Creates a new Generated Keys object that can be used to execute
      * a SELECT query and map the result set to a specific object type
      * using the provided RowMapper.
@@ -1248,31 +1228,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 return this;
             }
         }
-        /**
-         * Functional interface representing a parameter mapper
-         * that binds parameters
-         * to a {@link PreparedStatement}. Implementations of this interface are
-         * responsible for mapping a specific parameter
-         * to the appropriate placeholder
-         * in the SQL query.
-         */
-        public interface ParamMapper {
-
-            /**
-             * Binds the provided parameters to the placeholders in the given
-             * {@link PreparedStatement}. This method is called to map and set
-             * parameter values for the SQL query.
-             *
-             * @param ps the {@link PreparedStatement}
-             *                          to bind parameters to
-             * @param index index of the parameter.
-             * @throws SQLException if a database access error occurs or if
-             *                      parameter binding fails
-             */
-            void set(PreparedStatement ps,
-                     int index) throws SQLException;
-        }
-
     }
 
     public static final class CallableSqlBuilder implements Sql<Boolean> {
@@ -1756,7 +1711,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
          * @return ps
          */
         private PreparedStatement prepare(final PreparedStatement ps,
-                          final List<PreparedSqlBuilder.ParamMapper> pMappers)
+                          final List<ParamMapper> pMappers)
                 throws SQLException {
             for (int i = 0; i < pMappers.size(); i++) {
                 pMappers.get(i).set(ps, (i + 1));
@@ -2356,23 +2311,6 @@ public sealed class SqlBuilder implements Sql<Integer> {
                 this.preparedSqlBuilder.param(value, targetSqlType);
                 return this;
             }
-        }
-
-
-        /**
-         * StatementMapper is an interface that defines how to map statement
-         * to a Java object.
-         *
-         * @param <T> the type of object to map the result set to
-         */
-        @FunctionalInterface
-        public interface StatementMapper<T> {
-            /**
-             * Gets Value from Statement.
-             * @param statement
-             * @return result
-             */
-            T get(CallableStatement statement) throws SQLException;
         }
     }
 }
