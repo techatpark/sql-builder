@@ -1,4 +1,4 @@
-package com.techatpark;
+package com.techatpark.sql;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

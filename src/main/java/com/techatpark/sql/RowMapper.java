@@ -1,4 +1,4 @@
-package com.techatpark;
+package com.techatpark.sql;
 
 import java.math.BigDecimal;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package com.techatpark;
+package com.techatpark.sql;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
