@@ -24,81 +24,6 @@ import java.util.List;
 public sealed class SqlBuilder implements Sql<Integer> {
 
     /**
-     * Mapper for String.
-     */
-    private static final RowMapper<String> STRING_MAPPER
-            = rs -> rs.getString(1);
-    /**
-     * Mapper for Integer.
-     */
-    private static final RowMapper<Integer> INTEGER_MAPPER
-            = rs -> rs.getInt(1);
-    /**
-     * Mapper for BYTE.
-     */
-    private static final RowMapper<Byte> BYTE_MAPPER
-            = rs -> rs.getByte(1);
-    /**
-     * Mapper for bytes.
-     */
-    private static final RowMapper<byte[]> BYTES_MAPPER
-            = rs -> rs.getBytes(1);
-    /**
-     * Mapper for Short.
-     */
-    private static final RowMapper<Short> SHORT_MAPPER
-            = rs -> rs.getShort(1);
-    /**
-     * Mapper for URL.
-     */
-    private static final RowMapper<URL> URL_MAPPER
-            = rs -> rs.getURL(1);
-    /**
-     * Mapper for Double.
-     */
-    private static final RowMapper<Double> DOUBLE_MAPPER
-            = rs -> rs.getDouble(1);
-    /**
-     * Mapper for Float.
-     */
-    private static final RowMapper<Float> FLOAT_MAPPER
-            = rs -> rs.getFloat(1);
-    /**
-     * Mapper for BigDecimal.
-     */
-    private static final RowMapper<BigDecimal> BIG_DECIMAL_MAPPER
-            = rs -> rs.getBigDecimal(1);
-    /**
-     * Mapper for Boolean.
-     */
-    private static final RowMapper<Boolean> BOOLEAN_MAPPER
-            = rs -> rs.getBoolean(1);
-    /**
-     * Mapper for Long.
-     */
-    private static final RowMapper<Long> LONG_MAPPER
-            = rs -> rs.getLong(1);
-    /**
-     * Mapper for Date.
-     */
-    private static final RowMapper<Date> DATE_MAPPER
-            = rs -> rs.getDate(1);
-    /**
-     * Mapper for Time.
-     */
-    private static final RowMapper<Time> TIME_MAPPER
-            = rs -> rs.getTime(1);
-    /**
-     * Mapper for TimeStamp.
-     */
-    private static final RowMapper<Timestamp> TIMESTAMP_MAPPER
-            = rs -> rs.getTimestamp(1);
-    /**
-     * Mapper for Object.
-     */
-    private static final RowMapper<Object> OBJECT_MAPPER
-            = rs -> rs.getObject(1);
-    /**
      * Builds Callable Sql Builder from Sql.
      *
      * @param theSql the SQL query to be prepared and executed
@@ -178,7 +103,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Byte> queryForByte() {
-        return queryForOne(BYTE_MAPPER);
+        return queryForOne(RowMapper.BYTE_MAPPER);
     }
 
 
@@ -189,7 +114,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Byte>> queryForListOfByte() {
-        return queryForList(BYTE_MAPPER);
+        return queryForList(RowMapper.BYTE_MAPPER);
     }
 
     /**
@@ -199,7 +124,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<byte[]> queryForBytes() {
-        return queryForOne(BYTES_MAPPER);
+        return queryForOne(RowMapper.BYTES_MAPPER);
     }
 
     /**
@@ -209,7 +134,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<byte[]>> queryForListOfBytes() {
-        return queryForList(BYTES_MAPPER);
+        return queryForList(RowMapper.BYTES_MAPPER);
     }
 
     /**
@@ -219,7 +144,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Integer> queryForInt() {
-        return queryForOne(INTEGER_MAPPER);
+        return queryForOne(RowMapper.INTEGER_MAPPER);
     }
 
 
@@ -230,7 +155,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Integer>> queryForListOfInt() {
-        return queryForList(INTEGER_MAPPER);
+        return queryForList(RowMapper.INTEGER_MAPPER);
     }
 
     /**
@@ -240,7 +165,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Short> queryForShort() {
-        return queryForOne(SHORT_MAPPER);
+        return queryForOne(RowMapper.SHORT_MAPPER);
     }
 
     /**
@@ -250,7 +175,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Short>> queryForListOfShort() {
-        return queryForList(SHORT_MAPPER);
+        return queryForList(RowMapper.SHORT_MAPPER);
     }
 
     /**
@@ -260,7 +185,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<String> queryForString() {
-        return queryForOne(STRING_MAPPER);
+        return queryForOne(RowMapper.STRING_MAPPER);
     }
 
     /**
@@ -270,7 +195,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<String>> queryForListOfString() {
-        return queryForList(STRING_MAPPER);
+        return queryForList(RowMapper.STRING_MAPPER);
     }
 
     /**
@@ -280,7 +205,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<URL> queryForURL() {
-        return queryForOne(URL_MAPPER);
+        return queryForOne(RowMapper.URL_MAPPER);
     }
 
     /**
@@ -290,7 +215,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<URL>> queryForListOfURL() {
-        return queryForList(URL_MAPPER);
+        return queryForList(RowMapper.URL_MAPPER);
     }
 
     /**
@@ -300,7 +225,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Double> queryForDouble() {
-        return queryForOne(DOUBLE_MAPPER);
+        return queryForOne(RowMapper.DOUBLE_MAPPER);
     }
 
     /**
@@ -310,7 +235,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Double>> queryForListOfDouble() {
-        return queryForList(DOUBLE_MAPPER);
+        return queryForList(RowMapper.DOUBLE_MAPPER);
     }
 
     /**
@@ -320,7 +245,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Float> queryForFloat() {
-        return queryForOne(FLOAT_MAPPER);
+        return queryForOne(RowMapper.FLOAT_MAPPER);
     }
 
     /**
@@ -330,7 +255,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Float>> queryForListOfFloat() {
-        return queryForList(FLOAT_MAPPER);
+        return queryForList(RowMapper.FLOAT_MAPPER);
     }
 
     /**
@@ -340,7 +265,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<BigDecimal> queryForBigDecimal() {
-        return queryForOne(BIG_DECIMAL_MAPPER);
+        return queryForOne(RowMapper.BIG_DECIMAL_MAPPER);
     }
 
     /**
@@ -350,7 +275,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<BigDecimal>> queryForListOfBigDecimal() {
-        return queryForList(BIG_DECIMAL_MAPPER);
+        return queryForList(RowMapper.BIG_DECIMAL_MAPPER);
     }
 
     /**
@@ -360,7 +285,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Boolean> queryForBoolean() {
-        return queryForOne(BOOLEAN_MAPPER);
+        return queryForOne(RowMapper.BOOLEAN_MAPPER);
     }
 
     /**
@@ -370,7 +295,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Boolean>> queryForListOfBoolean() {
-        return queryForList(BOOLEAN_MAPPER);
+        return queryForList(RowMapper.BOOLEAN_MAPPER);
     }
 
     /**
@@ -380,7 +305,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Long> queryForLong() {
-        return queryForOne(LONG_MAPPER);
+        return queryForOne(RowMapper.LONG_MAPPER);
     }
 
     /**
@@ -390,7 +315,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Long>> queryForListOfLong() {
-        return queryForList(LONG_MAPPER);
+        return queryForList(RowMapper.LONG_MAPPER);
     }
 
     /**
@@ -400,7 +325,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Date> queryForDate() {
-        return queryForOne(DATE_MAPPER);
+        return queryForOne(RowMapper.DATE_MAPPER);
     }
 
     /**
@@ -410,7 +335,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<java.sql.Date>> queryForListOfDate() {
-        return queryForList(DATE_MAPPER);
+        return queryForList(RowMapper.DATE_MAPPER);
     }
 
     /**
@@ -420,7 +345,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Time> queryForTime() {
-        return queryForOne(TIME_MAPPER);
+        return queryForOne(RowMapper.TIME_MAPPER);
     }
 
     /**
@@ -430,7 +355,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<java.sql.Time>> queryForListOfTime() {
-        return queryForList(TIME_MAPPER);
+        return queryForList(RowMapper.TIME_MAPPER);
     }
 
     /**
@@ -440,7 +365,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<java.sql.Timestamp> queryForTimestamp() {
-        return queryForOne(TIMESTAMP_MAPPER);
+        return queryForOne(RowMapper.TIMESTAMP_MAPPER);
     }
 
     /**
@@ -450,7 +375,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<java.sql.Timestamp>> queryForListOfTimestamp() {
-        return queryForList(TIMESTAMP_MAPPER);
+        return queryForList(RowMapper.TIMESTAMP_MAPPER);
     }
 
     /**
@@ -460,7 +385,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<Object> queryForObject() {
-        return queryForOne(OBJECT_MAPPER);
+        return queryForOne(RowMapper.OBJECT_MAPPER);
     }
 
     /**
@@ -470,7 +395,7 @@ public sealed class SqlBuilder implements Sql<Integer> {
      * @return a new Query instance for execution
      */
     public Sql<List<Object>> queryForListOfObject() {
-        return queryForList(OBJECT_MAPPER);
+        return queryForList(RowMapper.OBJECT_MAPPER);
     }
 
     /**
