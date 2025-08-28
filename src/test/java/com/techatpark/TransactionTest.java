@@ -9,12 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class TransactionTest extends BaseTest {
 
     @BeforeEach
-    void clearData() throws SQLException {
-        SqlBuilder.prepareSql("TRUNCATE TABLE movie")
+    void init() throws SQLException {
+        Tranaction
+                .begin(SqlBuilder.prepareSql("TRUNCATE TABLE movie"))
+                .thenApply(updatedRows -> SqlBuilder.prepareSql("TRUNCATE TABLE director"))
                 .execute(dataSource);
-        SqlBuilder.prepareSql("TRUNCATE TABLE director")
-                .execute(dataSource);
-
     }
 
     @Test
