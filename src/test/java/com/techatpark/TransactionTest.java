@@ -73,31 +73,41 @@ class TransactionTest extends BaseTest {
         try (Connection conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
 
+            // Insert director
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO director(name) VALUES (?)")) {
                 ps.setString(1, "Steven Spielberg");
                 ps.executeUpdate();
             }
 
+            // Insert first movie
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
                 ps.setString(1, "E.T.");
                 ps.setString(2, "Steven Spielberg");
                 ps.executeUpdate();
-
-                Savepoint savepoint1 = conn.setSavepoint("AfterET");
-
-                ps.setString(1, "Ready Player One");
-                ps.setString(2, "Steven Spielberg");
-                ps.executeUpdate();
-
-                // Rollback to savepoint, remove "Ready Player One"
-                conn.rollback(savepoint1);
-
-                conn.commit();
             }
+
+            // Create savepoint after successful insert
+            Savepoint savepoint1 = conn.setSavepoint("AfterET");
+
+            try {
+                // Insert invalid movie (null title → should fail)
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
+                    ps.setNull(1, Types.VARCHAR);
+                    ps.setString(2, "Steven Spielberg");
+                    ps.executeUpdate();
+                }
+            } catch (SQLException e) {
+                // Rollback only to savepoint, keep "E.T."
+                conn.rollback(savepoint1);
+            }
+
+            conn.commit();
         }
 
+        // Verify only "E.T." exists
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT title FROM movie");
