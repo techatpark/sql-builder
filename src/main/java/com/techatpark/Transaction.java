@@ -41,20 +41,31 @@ public final class Transaction<T> implements Sql<T> {
     /** The SQL operation to be executed in this transaction stage. */
     private final Sql<T> sql;
 
+    /**
+     * Save Points in the context.
+     */
     private final Map<String, Savepoint> savepointMap;
 
+    /**
+     * Save Point to be Called after Execute.
+     */
     private String savePoint;
 
+    /**
+     * Reollact Point after Execute.
+     */
     private String rollBackSavePoint;
 
     /**
      * Constructs a transaction stage with the given SQL operation.
      *
      * @param theSql the SQL operation to be executed
+     * @param map
      */
-    private Transaction(final Sql<T> theSql, Map<String, Savepoint> savepointMap) {
+    private Transaction(final Sql<T> theSql,
+                        final Map<String, Savepoint> map) {
         this.sql = theSql;
-        this.savepointMap = savepointMap;
+        this.savepointMap = map;
     }
 
     /**
@@ -83,7 +94,7 @@ public final class Transaction<T> implements Sql<T> {
         return new Transaction<>(connection -> {
             T t = sql.execute(connection);
             R r = tSqlFunction.apply(t).execute(connection);
-            if(this.savePoint != null) {
+            if (this.savePoint != null) {
                 this.savepointMap.put(this.savePoint,
                         connection.setSavepoint(this.savePoint));
             }
@@ -109,9 +120,9 @@ public final class Transaction<T> implements Sql<T> {
     public T execute(final Connection connection) throws SQLException {
         connection.setAutoCommit(false);
         T t = sql.execute(connection);
-        if (this.rollBackSavePoint != null ) {
+        if (this.rollBackSavePoint != null) {
             Savepoint savepoint = this.savepointMap.get(this.rollBackSavePoint);
-            if(savepoint!= null) {
+            if (savepoint != null) {
                 connection.rollback(savepoint);
             }
         }
