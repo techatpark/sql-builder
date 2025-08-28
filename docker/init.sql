@@ -1,5 +1,6 @@
 -- Drop tables if they exist
 DROP TABLE IF EXISTS movie;
+DROP TABLE IF EXISTS director;
 DROP TABLE IF EXISTS alltypes;
 
 -- Create movie table
@@ -7,6 +8,11 @@ CREATE TABLE movie (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(80) NOT NULL,
     directed_by VARCHAR(80)
+);
+
+CREATE TABLE director (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(80) UNIQUE NOT NULL
 );
 
 -- Create AllTypes table
