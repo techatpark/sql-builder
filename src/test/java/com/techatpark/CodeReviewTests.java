@@ -53,6 +53,7 @@ class CodeReviewTests {
                                 Throwable.class,
                                 BigDecimal.class,
                                 Sql.class,
+                                Transaction.class,
                                 RowMapper.class,
                                 StatementMapper.class,
                                 ParamMapper.class,
@@ -69,6 +70,7 @@ class CodeReviewTests {
                                 ArrayList.class,
                                 List.class,
                                 Iterator.class,
+                                Function.class,
                                 UnsupportedOperationException.class) ;// see next section
 
         rule.check(importedClasses);
