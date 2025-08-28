@@ -131,21 +131,28 @@ class TransactionTest extends BaseTest {
                 .execute(dataSource);
 
         // ✅ Verification
+        Assertions.assertEquals(1,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM director")
+                        .queryForInt()
+                        .execute(dataSource));
+
         Assertions.assertEquals(2,
                 SqlBuilder.prepareSql("SELECT COUNT(id) FROM movie")
                         .queryForInt()
                         .execute(dataSource));
 
-        Assertions.assertEquals(1,
-                SqlBuilder.prepareSql("SELECT COUNT(id) FROM director")
-                        .queryForInt()
-                        .execute(dataSource));
+
     }
 
     @Test
     @Disabled
+    //  Savepoints allow you to selectively discard parts of the transaction, while committing the rest.
+    //  After defining a savepoint with SAVEPOINT, you can if needed roll back to the savepoint with ROLLBACK
+    //  TO. All the transaction's database changes between defining
+    //  the savepoint and rolling back to it are discarded, but changes earlier than the savepoint are kept.
     void testNolanMoviesWithSavepointRollback() throws SQLException {
-        Transaction
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            Transaction
                 // Step 1: Insert director and return generated ID
                 .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
                         .param("Christopher Nolan")
@@ -157,35 +164,31 @@ class TransactionTest extends BaseTest {
                         .param(directorId)
                         .queryForString())
 
-                // Create savepoint before risky additional movie inserts
                 .savePoint("savepoint_nolan_additional_works")
 
-                // Step 3: Attempt to insert movies
+                // Step 3: Use directorName to insert movies
                 .thenApply(directorName -> SqlBuilder
                         .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
                         .param("Tenet").param(directorName)
-                        .param("Oppenheimer").param(directorName))
+                        .paramNull().param(directorName))
 
-                // Rollback to savepoint (discard risky inserts)
                 .rollBackTo("savepoint_nolan_additional_works")
 
                 // Execute as one transaction
                 .execute(dataSource);
+        });
+
 
         // ✅ Assertions
-        String director = SqlBuilder.prepareSql("SELECT name FROM director WHERE name = ?")
-                .param("Christopher Nolan")
-                .queryForString()
-                .execute(dataSource);
-        assertEquals("Christopher Nolan", director);
+        Assertions.assertEquals(1,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM director")
+                        .queryForInt()
+                        .execute(dataSource));
 
-        Integer countMovies = SqlBuilder.prepareSql(
-                        "SELECT COUNT(*) FROM movie WHERE title IN (?, ?)")
-                .param("Tenet")
-                .param("Oppenheimer")
-                .queryForInt()
-                .execute(dataSource);
-        assertEquals(0, countMovies);
+        Assertions.assertEquals(0,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM movie")
+                        .queryForInt()
+                        .execute(dataSource));
     }
 
 

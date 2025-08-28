@@ -5,7 +5,7 @@
 ## Why Use SQL Builder?
 
 - **Simpler Fluent & Smart API:** Focused on readability, typesafe and minimal configuration.
-- **Framework Independent:** It can be used in any Java framework ( Quarkus, Spring Boot etc )
+- **Framework Independent:** It can be used in any Java framework ( [Quarkus](https://github.com/quarkusio/quarkus/discussions/38740), Spring Boot etc )
 - **Lightweight:** with no third party dependencies
 
 ## Usage
