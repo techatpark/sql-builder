@@ -184,3 +184,7 @@ Transaction
     // Execute as one transaction
     .execute(dataSource);
 ```
+
+with Save Points, JDBC does allow multiple savepoints, but you need to carefully manage them because:
+
+> When you rollback(savepoint1), all changes after savepoint1 are undone — which includes everything after savepoint1, even if you created savepoint2 in between. After rolling back to an earlier savepoint, any later savepoints are automatically invalidated by the JDBC driver and cannot be used anymore.
