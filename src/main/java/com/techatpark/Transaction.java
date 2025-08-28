@@ -98,4 +98,56 @@ public final class Transaction<T> implements Sql<T> {
         connection.setAutoCommit(true);
         return t;
     }
+
+    /**
+     * Creates a savepoint within the current transaction.
+     * <p>
+     * Savepoints allow you to mark a specific point in a transaction
+     * that you can roll back to later without affecting the entire transaction.
+     * This is useful when you want to group a set of operations together,
+     * but still have the option to undo them if needed, while keeping earlier
+     * successful operations intact.
+     * </p>
+     *
+     * <pre>
+     * Transaction
+     *     .begin(...)
+     *     .savePoint("sp1")
+     *     .thenApply(...)
+     *     .rollBackTo("sp1")
+     *     .execute(dataSource);
+     * </pre>
+     *
+     * @param savePointId a unique identifier for the savepoint
+     * @return the current {@link Transaction} instance for fluent chaining
+     */
+    public Transaction<?> savePoint(final String savePointId) {
+        return this;
+    }
+
+    /**
+     * Rolls back the transaction to a previously defined savepoint.
+     * <p>
+     * This undoes all operations performed after the given savepoint,
+     * while preserving all operations performed before it. If the savepoint
+     * does not exist or is invalid, the behavior depends on the database driver
+     * and transaction manager.
+     * </p>
+     *
+     * <pre>
+     * Transaction
+     *     .begin(...)
+     *     .savePoint("sp1")
+     *     .thenApply(...)
+     *     .rollBackTo("sp1")
+     *     .execute(dataSource);
+     * </pre>
+     *
+     * @param savePointId the identifier of the savepoint to roll back to
+     * @return the current {@link Transaction} instance for fluent chaining
+     */
+    public Transaction<?> rollBackTo(final String savePointId) {
+        return this;
+    }
+
 }

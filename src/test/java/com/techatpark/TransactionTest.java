@@ -142,5 +142,52 @@ class TransactionTest extends BaseTest {
                         .execute(dataSource));
     }
 
+    @Test
+    @Disabled
+    void testNolanMoviesWithSavepointRollback() throws SQLException {
+        Transaction
+                // Step 1: Insert director and return generated ID
+                .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
+                        .param("Christopher Nolan")
+                        .queryGeneratedKeys(rs -> rs.getLong(1)))
+
+                // Step 2: Use directorId to fetch directorName
+                .thenApply(directorId -> SqlBuilder
+                        .prepareSql("SELECT name FROM director WHERE id = ?")
+                        .param(directorId)
+                        .queryForString())
+
+                // Create savepoint before risky additional movie inserts
+                .savePoint("savepoint_nolan_additional_works")
+
+                // Step 3: Attempt to insert movies
+                .thenApply(directorName -> SqlBuilder
+                        .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                        .param("Tenet").param(directorName)
+                        .param("Oppenheimer").param(directorName))
+
+                // Rollback to savepoint (discard risky inserts)
+                .rollBackTo("savepoint_nolan_additional_works")
+
+                // Execute as one transaction
+                .execute(dataSource);
+
+        // ✅ Assertions
+        String director = SqlBuilder.prepareSql("SELECT name FROM director WHERE name = ?")
+                .param("Christopher Nolan")
+                .queryForString()
+                .execute(dataSource);
+        assertEquals("Christopher Nolan", director);
+
+        Integer countMovies = SqlBuilder.prepareSql(
+                        "SELECT COUNT(*) FROM movie WHERE title IN (?, ?)")
+                .param("Tenet")
+                .param("Oppenheimer")
+                .queryForInt()
+                .execute(dataSource);
+        assertEquals(0, countMovies);
+    }
+
+
 
 }
