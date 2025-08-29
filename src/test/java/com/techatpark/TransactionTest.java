@@ -161,7 +161,7 @@ class TransactionTest extends BaseTest {
     //  TO. All the transaction's database changes between defining
     //  the savepoint and rolling back to it are discarded, but changes earlier than the savepoint are kept.
     void testNolanMoviesWithSavepointRollback() throws SQLException {
-        SQLException exception = assertThrows(SQLException.class, () -> {
+
             Transaction
                 // Step 1: Insert director and return generated ID
                 .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
@@ -174,19 +174,16 @@ class TransactionTest extends BaseTest {
                         .param(directorId)
                         .queryForString())
 
-                .savePoint("savepoint_nolan_additional_works")
-
-                // Step 3: Use directorName to insert movies
-                .thenApply(directorName -> SqlBuilder
+                .savePoint("savepoint_nolan_additional_works", directorName -> SqlBuilder
                         .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
-                        .param("Tenet").param(directorName)
-                        .paramNull().param(directorName))
-
-                .rollBackTo("savepoint_nolan_additional_works")
+                        .param("Tenet")
+                        .param(directorName)
+                        .paramNull() // NOTNULL Error
+                        .param(directorName))
 
                 // Execute as one transaction
                 .execute(dataSource);
-        });
+
 
 
         // ✅ Assertions

@@ -4,6 +4,7 @@ import com.techatpark.sql.Sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.function.Function;
 
 /**
@@ -119,35 +120,23 @@ public class Transaction<T> implements Sql<T> {
      * </pre>
      *
      * @param savePointId a unique identifier for the savepoint
+     * @param tSqlFunction function mapping the result of this SQL to next SQL
+     * @param <R>          the result type of the next SQL operation
      * @return the current {@link Transaction} instance for fluent chaining
      */
-    public Transaction<T> savePoint(final String savePointId) {
-        return this;
-    }
-
-    /**
-     * Rolls back the transaction to a previously defined savepoint.
-     * <p>
-     * This undoes all operations performed after the given savepoint,
-     * while preserving all operations performed before it. If the savepoint
-     * does not exist or is invalid, the behavior depends on the database driver
-     * and transaction manager.
-     * </p>
-     *
-     * <pre>
-     * Transaction
-     *     .begin(...)
-     *     .savePoint("sp1")
-     *     .thenApply(...)
-     *     .rollBackTo("sp1")
-     *     .execute(dataSource);
-     * </pre>
-     *
-     * @param savePointId the identifier of the savepoint to roll back to
-     * @return the current {@link Transaction} instance for fluent chaining
-     */
-    public Transaction<T> rollBackTo(final String savePointId) {
-        return this;
+    public  <R> Transaction<R> savePoint(final String savePointId,
+                                    final Function<T, Sql<R>> tSqlFunction) {
+        return new Transaction<>(connection -> {
+            T t = sql.execute(connection);
+            Savepoint savepoint = connection.setSavepoint(savePointId);
+            R r = null;
+            try {
+                r = tSqlFunction.apply(t).execute(connection);
+            } catch (SQLException sqlException) {
+                connection.rollback(savepoint);
+            }
+            return r;
+        });
     }
 
 }
