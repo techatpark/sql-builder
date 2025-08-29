@@ -19,8 +19,10 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -53,6 +55,7 @@ class CodeReviewTests {
                                 Throwable.class,
                                 BigDecimal.class,
                                 Sql.class,
+                                Transaction.class,
                                 RowMapper.class,
                                 StatementMapper.class,
                                 ParamMapper.class,
@@ -69,6 +72,9 @@ class CodeReviewTests {
                                 ArrayList.class,
                                 List.class,
                                 Iterator.class,
+                                HashMap.class,
+                                Map.class,
+                                Function.class,
                                 UnsupportedOperationException.class) ;// see next section
 
         rule.check(importedClasses);

@@ -9,82 +9,63 @@ import static org.junit.jupiter.api.Assertions.*;
 class TransactionTest extends BaseTest {
 
     @BeforeEach
-    void clearData() throws SQLException {
-        SqlBuilder.prepareSql("TRUNCATE TABLE movie")
+    void init() throws SQLException {
+        Transaction
+                .begin(SqlBuilder.prepareSql("TRUNCATE TABLE movie"))
+                .thenApply(updatedRows -> SqlBuilder.prepareSql("TRUNCATE TABLE director"))
                 .execute(dataSource);
-        SqlBuilder.prepareSql("TRUNCATE TABLE director")
-                .execute(dataSource);
-
     }
 
     @Test
     void testBasicCommit() throws SQLException {
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false);
+        Transaction
+                .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
+                        .param("Nolan")
+                        .queryGeneratedKeys(resultSet -> resultSet.getLong(1)))
+                .thenApply(generetedId -> SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                        .param("Dunkirk")
+                        .param(generetedId.toString())
+                        .param("Inception")
+                        .param(generetedId.toString()))
+                .execute(dataSource);
 
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO director(name) VALUES (?)")) {
-                ps.setString(1, "Christopher Nolan");
-                ps.executeUpdate();
-            }
+        Assertions.assertEquals(2,
+                SqlBuilder.prepareSql("SELECT COUNT(id) from movie")
+                        .queryForInt()
+                        .execute(dataSource));
 
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
-                ps.setString(1, "Inception");
-                ps.setString(2, "Christopher Nolan");
-                ps.executeUpdate();
+        Assertions.assertEquals(1,
+                SqlBuilder.prepareSql("SELECT COUNT(id) from director")
+                        .queryForInt()
+                        .execute(dataSource));
 
-                ps.setString(1, "Interstellar");
-                ps.setString(2, "Christopher Nolan");
-                ps.executeUpdate();
-            }
-
-            conn.commit(); // ✅ Commit transaction
-        }
-
-        try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM movie");
-            rs.next();
-            assertEquals(2, rs.getInt(1));
-
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM director");
-            rs.next();
-            assertEquals(1, rs.getInt(1));
-        }
     }
 
     @Test
-    void testRollback() throws SQLException {
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false);
+    void testInvalidCommit() throws SQLException {
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            Transaction
+                    .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
+                            .param("Nolan")
+                            .queryGeneratedKeys(resultSet -> resultSet.getLong(1)))
+                    .thenApply(generetedId -> SqlBuilder.prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                            .param("Inception")
+                            .param(generetedId.toString())
+                            .paramNull()
+                            .param(generetedId.toString()))
+                    .execute(dataSource);
+        });
 
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO director(name) VALUES (?)")) {
-                ps.setString(1, "Steven Spielberg");
-                ps.executeUpdate();
-            }
+        Assertions.assertEquals(0,
+                SqlBuilder.prepareSql("SELECT COUNT(id) from director")
+                        .queryForInt()
+                        .execute(dataSource));
 
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
-                ps.setString(1, "Jurassic Park");
-                ps.setString(2, "Steven Spielberg");
-                ps.executeUpdate();
-            }
+        Assertions.assertEquals(0,
+                SqlBuilder.prepareSql("SELECT COUNT(id) from movie")
+                        .queryForInt()
+                        .execute(dataSource));
 
-            conn.rollback(); // ❌ Rollback entire transaction
-        }
-
-        try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM director");
-            rs.next();
-            assertEquals(0, rs.getInt(1));
-
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM movie");
-            rs.next();
-            assertEquals(0, rs.getInt(1));
-        }
     }
 
     @Test
@@ -92,31 +73,41 @@ class TransactionTest extends BaseTest {
         try (Connection conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
 
+            // Insert director
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO director(name) VALUES (?)")) {
                 ps.setString(1, "Steven Spielberg");
                 ps.executeUpdate();
             }
 
+            // Insert first movie
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
                 ps.setString(1, "E.T.");
                 ps.setString(2, "Steven Spielberg");
                 ps.executeUpdate();
-
-                Savepoint savepoint1 = conn.setSavepoint("AfterET");
-
-                ps.setString(1, "Ready Player One");
-                ps.setString(2, "Steven Spielberg");
-                ps.executeUpdate();
-
-                // Rollback to savepoint, remove "Ready Player One"
-                conn.rollback(savepoint1);
-
-                conn.commit();
             }
+
+            // Create savepoint after successful insert
+            Savepoint savepoint1 = conn.setSavepoint("AfterET");
+
+            try {
+                // Insert invalid movie (null title → should fail)
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
+                    ps.setNull(1, Types.VARCHAR);
+                    ps.setString(2, "Steven Spielberg");
+                    ps.executeUpdate();
+                }
+            } catch (SQLException e) {
+                // Rollback only to savepoint, keep "E.T."
+                conn.rollback(savepoint1);
+            }
+
+            conn.commit();
         }
 
+        // Verify only "E.T." exists
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT title FROM movie");
@@ -128,58 +119,85 @@ class TransactionTest extends BaseTest {
 
     @Test
     void testChainedQueries() throws SQLException {
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false);
+        Transaction
+                // Step 1: Insert director and return generated ID
+                .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
+                        .param("Christopher Nolan")
+                        .queryGeneratedKeys(rs -> rs.getLong(1)))
 
-            long directorId;
-            // Step 1: Insert director and get generated id
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO director(name) VALUES (?) RETURNING id")) {
-                ps.setString(1, "Christopher Nolan");
-                try (ResultSet rs = ps.executeQuery()) {
-                    assertTrue(rs.next());
-                    directorId = rs.getLong(1);
-                }
-            }
+                // Step 2: Use directorId to fetch directorName
+                .thenApply(directorId -> SqlBuilder
+                        .prepareSql("SELECT name FROM director WHERE id = ?")
+                        .param(directorId)
+                        .queryForString())
 
-            // Step 2: Use directorId in a SELECT to fetch the name
-            String directorName = null;
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT name FROM director WHERE id = ?")) {
-                ps.setLong(1, directorId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    assertTrue(rs.next());
-                    directorName = rs.getString(1);
-                }
-            }
+                // Step 3: Use directorName to insert movies
+                .thenApply(directorName -> SqlBuilder
+                        .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                        .param("Tenet").param(directorName)
+                        .param("Oppenheimer").param(directorName))
 
-            // Step 3: Use directorName in inserting movies
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO movie(title, directed_by) VALUES (?, ?)")) {
-                ps.setString(1, "Tenet");
-                ps.setString(2, directorName);
-                ps.executeUpdate();
+                // Execute as one transaction
+                .execute(dataSource);
 
-                ps.setString(1, "Oppenheimer");
-                ps.setString(2, directorName);
-                ps.executeUpdate();
-            }
+        // ✅ Verification
+        Assertions.assertEquals(1,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM director")
+                        .queryForInt()
+                        .execute(dataSource));
 
-            conn.commit(); // ✅ Commit all chained operations
-        }
+        Assertions.assertEquals(2,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM movie")
+                        .queryForInt()
+                        .execute(dataSource));
 
-        // Verify both tables
-        try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
 
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM director");
-            rs.next();
-            assertEquals(1, rs.getInt(1));
-
-            rs = stmt.executeQuery("SELECT COUNT(*) FROM movie");
-            rs.next();
-            assertEquals(2, rs.getInt(1));
-        }
     }
+
+    @Test
+    @Disabled
+    //  Savepoints allow you to selectively discard parts of the transaction, while committing the rest.
+    //  After defining a savepoint with SAVEPOINT, you can if needed roll back to the savepoint with ROLLBACK
+    //  TO. All the transaction's database changes between defining
+    //  the savepoint and rolling back to it are discarded, but changes earlier than the savepoint are kept.
+    void testNolanMoviesWithSavepointRollback() throws SQLException {
+
+            Transaction
+                // Step 1: Insert director and return generated ID
+                .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
+                        .param("Christopher Nolan")
+                        .queryGeneratedKeys(rs -> rs.getLong(1)))
+
+                // Step 2: Use directorId to fetch directorName
+                .thenApply(directorId -> SqlBuilder
+                        .prepareSql("SELECT name FROM director WHERE id = ?")
+                        .param(directorId)
+                        .queryForString())
+
+                .savePoint("savepoint_nolan_additional_works", directorName -> SqlBuilder
+                        .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+                        .param("Tenet")
+                        .param(directorName)
+                        .paramNull() // NOTNULL Error
+                        .param(directorName))
+
+                // Execute as one transaction
+                .execute(dataSource);
+
+
+
+        // ✅ Assertions
+        Assertions.assertEquals(1,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM director")
+                        .queryForInt()
+                        .execute(dataSource));
+
+        Assertions.assertEquals(0,
+                SqlBuilder.prepareSql("SELECT COUNT(id) FROM movie")
+                        .queryForInt()
+                        .execute(dataSource));
+    }
+
+
 
 }
