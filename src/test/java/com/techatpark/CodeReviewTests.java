@@ -56,6 +56,7 @@ class CodeReviewTests {
                                 BigDecimal.class,
                                 Sql.class,
                                 Transaction.class,
+                                SqlContainer.class,
                                 RowMapper.class,
                                 StatementMapper.class,
                                 ParamMapper.class,
