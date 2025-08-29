@@ -153,7 +153,7 @@ public final class Transaction<T> implements Sql<T> {
      * @param savePointId a unique identifier for the savepoint
      * @return the current {@link Transaction} instance for fluent chaining
      */
-    public Transaction<?> savePoint(final String savePointId) {
+    public Transaction<T> savePoint(final String savePointId) {
         this.savePoint = savePointId;
         return this;
     }
@@ -179,7 +179,7 @@ public final class Transaction<T> implements Sql<T> {
      * @param savePointId the identifier of the savepoint to roll back to
      * @return the current {@link Transaction} instance for fluent chaining
      */
-    public Transaction<?> rollBackTo(final String savePointId) {
+    public Transaction<T> rollBackTo(final String savePointId) {
         this.rollBackSavePoint = savePointId;
         return this;
     }
