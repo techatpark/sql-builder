@@ -4,9 +4,6 @@ import com.techatpark.sql.Sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -36,36 +33,18 @@ import java.util.function.Function;
  *
  * @param <T> the result type of the SQL operation at the current stage.
  */
-public final class Transaction<T> implements Sql<T> {
+public class Transaction<T> implements Sql<T> {
 
     /** The SQL operation to be executed in this transaction stage. */
     private final Sql<T> sql;
 
     /**
-     * Save Points in the context.
-     */
-    private final Map<String, Savepoint> savepointMap;
-
-    /**
-     * Save Point to be Called after Execute.
-     */
-    private String savePoint;
-
-    /**
-     * Reollact Point after Execute.
-     */
-    private String rollBackSavePoint;
-
-    /**
      * Constructs a transaction stage with the given SQL operation.
      *
      * @param theSql the SQL operation to be executed
-     * @param map
      */
-    private Transaction(final Sql<T> theSql,
-                        final Map<String, Savepoint> map) {
+    protected Transaction(final Sql<T> theSql) {
         this.sql = theSql;
-        this.savepointMap = map;
     }
 
     /**
@@ -76,7 +55,7 @@ public final class Transaction<T> implements Sql<T> {
      * @return a new {@code Transaction} instance
      */
     public static <T> Transaction<T> begin(final Sql<T> sql) {
-        return new Transaction<>(sql, new HashMap<>());
+        return new Transaction<>(sql);
     }
 
     /**
@@ -93,13 +72,8 @@ public final class Transaction<T> implements Sql<T> {
             final Function<T, Sql<R>> tSqlFunction) {
         return new Transaction<>(connection -> {
             T t = sql.execute(connection);
-            R r = tSqlFunction.apply(t).execute(connection);
-            if (this.savePoint != null) {
-                this.savepointMap.put(this.savePoint,
-                        connection.setSavepoint(this.savePoint));
-            }
-            return r;
-        }, this.savepointMap);
+            return tSqlFunction.apply(t).execute(connection);
+        });
     }
 
     /**
@@ -120,12 +94,6 @@ public final class Transaction<T> implements Sql<T> {
     public T execute(final Connection connection) throws SQLException {
         connection.setAutoCommit(false);
         T t = sql.execute(connection);
-        if (this.rollBackSavePoint != null) {
-            Savepoint savepoint = this.savepointMap.get(this.rollBackSavePoint);
-            if (savepoint != null) {
-                connection.rollback(savepoint);
-            }
-        }
         connection.commit();
         connection.setAutoCommit(true);
         return t;
@@ -154,7 +122,6 @@ public final class Transaction<T> implements Sql<T> {
      * @return the current {@link Transaction} instance for fluent chaining
      */
     public Transaction<T> savePoint(final String savePointId) {
-        this.savePoint = savePointId;
         return this;
     }
 
@@ -180,7 +147,6 @@ public final class Transaction<T> implements Sql<T> {
      * @return the current {@link Transaction} instance for fluent chaining
      */
     public Transaction<T> rollBackTo(final String savePointId) {
-        this.rollBackSavePoint = savePointId;
         return this;
     }
 
