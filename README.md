@@ -185,6 +185,28 @@ Transaction
     .execute(dataSource);
 ```
 
-with Save Points, JDBC does allow multiple savepoints, but you need to carefully manage them because:
+with Save Points, 
 
-> When you rollback(savepoint1), all changes after savepoint1 are undone — which includes everything after savepoint1, even if you created savepoint2 in between. After rolling back to an earlier savepoint, any later savepoints are automatically invalidated by the JDBC driver and cannot be used anymore.
+```java
+Transaction
+    // Step 1: Insert director and return generated ID
+    .begin(SqlBuilder.prepareSql("INSERT INTO director(name) VALUES (?)")
+            .param("Christopher Nolan")
+            .queryGeneratedKeys(rs -> rs.getLong(1)))
+
+    // Step 2: Use directorId to fetch directorName
+    .thenApply(directorId -> SqlBuilder
+            .prepareSql("SELECT name FROM director WHERE id = ?")
+            .param(directorId)
+            .queryForString())
+
+    .savePoint("savepoint_nolan_additional_works", directorName -> SqlBuilder
+            .prepareSql("INSERT INTO movie(title, directed_by) VALUES (?, ?), (?, ?)")
+            .param("Tenet")
+            .param(directorName)
+            .paramNull() // NOTNULL Error
+            .param(directorName))
+
+    // Execute as one transaction
+    .execute(dataSource);
+```

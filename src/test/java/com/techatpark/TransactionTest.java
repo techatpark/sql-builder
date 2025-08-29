@@ -155,7 +155,6 @@ class TransactionTest extends BaseTest {
     }
 
     @Test
-    @Disabled
     //  Savepoints allow you to selectively discard parts of the transaction, while committing the rest.
     //  After defining a savepoint with SAVEPOINT, you can if needed roll back to the savepoint with ROLLBACK
     //  TO. All the transaction's database changes between defining
