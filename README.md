@@ -22,6 +22,7 @@ Add dependency to your project (With **JDK 17+**)
 ```
 ### Gradle
 ```groovy
+
 implementation 'org.tamilnadujug:sql-builder:1.0-SNAPSHOT'
 ```
 
@@ -219,4 +220,3 @@ Transaction
     // Execute as one transaction
     .execute(dataSource);
 ```
-
